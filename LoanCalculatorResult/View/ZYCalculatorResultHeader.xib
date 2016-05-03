@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="105" id="dG0-JL-25X" customClass="ZYCalculatorResultHeader">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dG0-JL-25X" id="jSG-w4-FOg">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="期次" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d1V-Dt-qOM">
+                        <rect key="frame" x="0.0" y="0.0" width="64" height="43"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.52549019610000003" blue="0.81960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="偿还利息" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="idt-o7-ovU">
+                        <rect key="frame" x="64" y="0.0" width="64" height="43"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.52549019610000003" blue="0.81960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="偿还本金" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nwg-li-8Kt">
+                        <rect key="frame" x="128" y="0.0" width="64" height="43"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.52549019610000003" blue="0.81960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="还款额" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pg8-gt-qzb">
+                        <rect key="frame" x="192" y="0.0" width="64" height="43"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.52549019610000003" blue="0.81960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="剩余本金" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qLw-NN-l8w">
+                        <rect key="frame" x="256" y="0.0" width="64" height="43"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.52549019610000003" blue="0.81960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="idt-o7-ovU" firstAttribute="top" secondItem="jSG-w4-FOg" secondAttribute="top" id="6iG-xx-TQk"/>
+                    <constraint firstAttribute="bottom" secondItem="pg8-gt-qzb" secondAttribute="bottom" id="BrS-wd-j2N"/>
+                    <constraint firstAttribute="bottom" secondItem="d1V-Dt-qOM" secondAttribute="bottom" id="ICe-0p-qHv"/>
+                    <constraint firstItem="nwg-li-8Kt" firstAttribute="leading" secondItem="idt-o7-ovU" secondAttribute="trailing" id="Pbk-Jp-YH4"/>
+                    <constraint firstAttribute="bottom" secondItem="nwg-li-8Kt" secondAttribute="bottom" id="Rd8-JG-od6"/>
+                    <constraint firstItem="d1V-Dt-qOM" firstAttribute="top" secondItem="jSG-w4-FOg" secondAttribute="top" id="UCK-no-ZK4"/>
+                    <constraint firstItem="idt-o7-ovU" firstAttribute="width" secondItem="nwg-li-8Kt" secondAttribute="width" id="VYr-7J-YnV"/>
+                    <constraint firstAttribute="trailing" secondItem="qLw-NN-l8w" secondAttribute="trailing" id="XvS-qb-Ibf"/>
+                    <constraint firstItem="nwg-li-8Kt" firstAttribute="width" secondItem="pg8-gt-qzb" secondAttribute="width" id="Yo2-rY-ZmJ"/>
+                    <constraint firstItem="idt-o7-ovU" firstAttribute="leading" secondItem="d1V-Dt-qOM" secondAttribute="trailing" id="cWd-ic-4Xp"/>
+                    <constraint firstAttribute="bottom" secondItem="qLw-NN-l8w" secondAttribute="bottom" id="dfk-zW-87K"/>
+                    <constraint firstItem="pg8-gt-qzb" firstAttribute="leading" secondItem="nwg-li-8Kt" secondAttribute="trailing" id="dhW-WB-nng"/>
+                    <constraint firstItem="qLw-NN-l8w" firstAttribute="leading" secondItem="pg8-gt-qzb" secondAttribute="trailing" id="f6p-tg-biw"/>
+                    <constraint firstItem="d1V-Dt-qOM" firstAttribute="leading" secondItem="jSG-w4-FOg" secondAttribute="leading" id="lhC-eT-c2n"/>
+                    <constraint firstItem="pg8-gt-qzb" firstAttribute="width" secondItem="qLw-NN-l8w" secondAttribute="width" id="rV1-LS-5Le"/>
+                    <constraint firstItem="qLw-NN-l8w" firstAttribute="top" secondItem="jSG-w4-FOg" secondAttribute="top" id="rYX-K2-JFe"/>
+                    <constraint firstItem="d1V-Dt-qOM" firstAttribute="width" secondItem="idt-o7-ovU" secondAttribute="width" id="uem-VK-ley"/>
+                    <constraint firstItem="nwg-li-8Kt" firstAttribute="top" secondItem="jSG-w4-FOg" secondAttribute="top" id="vdM-gm-XMc"/>
+                    <constraint firstItem="pg8-gt-qzb" firstAttribute="top" secondItem="jSG-w4-FOg" secondAttribute="top" id="vzw-63-9Y0"/>
+                    <constraint firstAttribute="bottom" secondItem="idt-o7-ovU" secondAttribute="bottom" id="xde-0G-GAR"/>
+                </constraints>
+            </tableViewCellContentView>
+            <point key="canvasLocation" x="286" y="293"/>
+        </tableViewCell>
+    </objects>
+</document>

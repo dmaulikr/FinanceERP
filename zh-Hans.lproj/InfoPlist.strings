@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  FinanceERP
+
+  Created by zhangyu on 16/4/12.
+  Copyright © 2016年 张昱. All rights reserved.
+*/
+CFBundleDisplayName = "金融ERP";
+cancel = "取消";
