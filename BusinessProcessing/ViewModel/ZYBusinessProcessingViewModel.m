@@ -31,13 +31,23 @@
 }
 - (void)requestBussinessProcess:(ZYUser*)user loadMore:(BOOL)loadMore
 {
-    self.pageNum = loadMore?self.pageNum+1:0;
+    self.pageNum = loadMore?self.pageNum+1:1;
     ZYBusinessProcessRequest *request = [ZYBusinessProcessRequest request];
     request.user_id = user.pid;
     request.page = self.pageNum;
     request.rows = self.pageSize;
     request.is_my_biz = self.isMyBussiness;
-    _refreshing = YES;
+    request.product_id = [self.businessProcessProductType.pid longLongValue];
+    request.dynamic_name = self.businessProcessState;
+    self.noMoreData = NO;
+    if(loadMore)
+    {
+        self.loadmore = YES;
+    }
+    else
+    {
+        self.refreshing = YES;
+    }
     [[[ZYRoute route] businessProcessList:request] subscribeNext:^(NSArray *productArr) {
         if(!loadMore)
         {
@@ -47,6 +57,21 @@
         if(self.businessProcessingArr.count==0)
         {
             self.placeHolderViewType = ZYPlaceHolderViewTypeNoData;
+        }
+        if(loadMore)
+        {
+            if(productArr.count<20)
+            {
+                self.noMoreData = YES;
+            }
+            else
+            {
+                self.loadmore = NO;
+            }
+        }
+        else
+        {
+            self.refreshing = NO;
         }
         [self reloadDataSource];
     } error:^(NSError *error) {
@@ -62,9 +87,24 @@
         {
             self.error = error.domain;
         }
-        self.refreshing = NO;
+        if(loadMore)
+        {
+            self.loadmore = NO;
+        }
+        else
+        {
+            self.refreshing = NO;
+        }
     } completed:^{
-        self.refreshing = NO;
+        
+    }];
+}
+- (void)requestBussinessStateCount:(ZYUser*)user
+{
+    ZYBussinessStateCountRequest *request = [ZYBussinessStateCountRequest request];
+    request.user_id = user.pid;
+    [[[ZYRoute route] businessProcessStateCount:request] subscribeNext:^(NSDictionary *result) {
+        self.businessStateCount = result;
     }];
 }
 - (NSArray*)businessProcessingStateArr
@@ -72,7 +112,27 @@
     /**
      *  固定文字 不会随意修改
      */
-    return @[@"全部状态",@"待发放贷款",@"待赎楼",@"待取旧证",@"待注销抵押",@"待过户",@"待取新证",@"待抵押",@"待回款"];
+    NSArray *states = @[@"全部状态",@"发放贷款",@"赎楼",@"取旧证",@"注销抵押",@"过户",@"取新证",@"抵押",@"回款"];
+    NSMutableArray *stateWithCount = [NSMutableArray arrayWithCapacity:states.count];
+    if(self.businessStateCount.count>0)
+    {
+        for(int i=0;i<states.count;i++)
+        {
+            NSNumber *count = self.businessStateCount[states[i]];
+            NSString *state = nil;
+            if(count!=nil)
+            {
+                state = [NSString stringWithFormat:@"%@(%@)",states[i],count];
+            }
+            else
+            {
+                state = [NSString stringWithFormat:@"%@(0)",states[i]];
+            }
+            [stateWithCount addObject:state];
+        }
+        return stateWithCount;
+    }
+    return states;
 }
 - (RACSignal*)businessProcessingSearchHistorySignal
 {

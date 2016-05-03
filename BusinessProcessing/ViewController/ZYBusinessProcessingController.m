@@ -13,7 +13,7 @@
 #import "ZYFadeTransion.h"
 #import "ZYBusinessProcessCell.h"
 
-@interface ZYBusinessProcessingController ()<ZYFilterBarDelegate,UIViewControllerTransitioningDelegate,UISearchBarDelegate>
+@interface ZYBusinessProcessingController ()<ZYFilterBarDelegate,UIViewControllerTransitioningDelegate>
 
 @end
 
@@ -30,6 +30,10 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    if(_isMyBussiness)
+    {
+        self.navigationItem.title = @"我的业务";
+    }
     [self buildUI];
     [self blendViewModel];
 }
@@ -41,14 +45,9 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     
     CGFloat barHeight = 40;
     CGFloat navHeight = 64;
-    filterBar = [[ZYFilterBar alloc] initWithController:self frame:CGRectMake(0, 64, FUll_SCREEN_WIDTH/2.f, barHeight) delegate:self];
+    filterBar = [[ZYFilterBar alloc] initWithController:self frame:CGRectMake(0, 64, FUll_SCREEN_WIDTH, barHeight) delegate:self];
     filterBar.showKey = @"product_name";
     [self.view addSubview:filterBar];
-    
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(filterBar.width, 64, FUll_SCREEN_WIDTH/2.f, barHeight)];
-    searchBar.delegate = self;
-    searchBar.searchBarStyle = UISearchBarStyleMinimal;
-    [self.view addSubview:searchBar];
     
     CGFloat lineWidth = 1/[UIScreen mainScreen].scale;
     UIView *line = [[UIView alloc] init];
@@ -96,21 +95,45 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
             [tableViewCtl stopRefresh];
         }
     }];
+    [[RACObserve(viewModel, loadmore) skip:1] subscribeNext:^(NSNumber *refreshing) {
+        if(refreshing.boolValue)
+        {
+            [tableViewCtl beginLoadmore];
+        }
+        else
+        {
+            [tableViewCtl stopLoadmore];
+        }
+    }];
+    [RACObserve(viewModel, noMoreData) subscribeNext:^(NSNumber *refreshing) {
+        if(refreshing.boolValue)
+        {
+            [tableViewCtl noMoreData];
+        }
+    }];
+    [RACObserve(viewModel, searchKeywordModel) subscribeNext:^(ZYSearchHistoryModel *search) {
+        if(search)
+        {
+            [tableViewCtl beginRefresh];
+        }
+    }];
     [tableViewCtl.refreshSignal subscribeNext:^(id x) {
         [viewModel requestBussinessProcess:[ZYUser user] loadMore:NO];
+        [viewModel requestBussinessStateCount:[ZYUser user]];
     }];
     [tableViewCtl.loadmoreSignal subscribeNext:^(id x) {
         [viewModel requestBussinessProcess:[ZYUser user] loadMore:YES];
     }];
     RACChannelTo(viewModel,isMyBussiness) = RACChannelTo(self,isMyBussiness);
     
+    [RACObserve(viewModel, businessStateCount) subscribeNext:^(id x) {
+        [filterBar reloadDataSource];
+    }];
+    
     [viewModel loadCache:[ZYUser user]];
 }
-#pragma mark - searchBar delegate
-- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
-{
+- (IBAction)searchButtonPressed:(id)sender {
     [self performSegueWithIdentifier:@"search" sender:[self.viewModel businessProcessingSearchHistorySignal]];
-    return NO;
 }
 #pragma mark - filter代理
 - (NSArray*)filterBarTitles:(ZYFilterBar *)bar
@@ -138,11 +161,31 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     if(index==0&&level==0)
     {
         [bar changeTitle:self.viewModel.businessProcessingProductArr[row] atIndex:index];
+        if(row==0)
+        {
+            self.viewModel.businessProcessProductType = nil;
+        }
+        else
+        {
+            ZYProductModel *model = object;
+            self.viewModel.businessProcessProductType = model;
+        }
+        [tableViewCtl beginRefresh];
         return NO;
     }
     if(index==1&&level==0)
     {
         [bar changeTitle:self.viewModel.businessProcessingStateArr[row] atIndex:index];
+        if(row==0)
+        {
+            self.viewModel.businessProcessState = nil;
+        }
+        else
+        {
+            NSString *model = object;
+            self.viewModel.businessProcessState = model;
+        }
+        [tableViewCtl beginRefresh];
         return NO;
     }
     return YES;

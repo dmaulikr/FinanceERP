@@ -20,6 +20,7 @@
     return @[@"user_id",
              @"is_my_biz",
              @"product_id",
+             @"dynamic_name",
              @"rows",
              @"page",];
 }

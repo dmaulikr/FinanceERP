@@ -21,6 +21,7 @@
 #import "ZYProductModel.h"
 #import "ZYBusinessProcessRequest.h"
 #import "ZYBusinessProcessModel.h"
+#import "ZYBussinessStateCountRequest.h"
 
 @interface ZYRoute : NSObject
 
@@ -46,4 +47,6 @@
  */
 - (RACSignal*)businessProcessList:(ZYBusinessProcessRequest*)myRequest;
 - (id)businessProcessListCacheWith:(ZYBusinessProcessRequest*)myRequest;
+
+- (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest;
 @end

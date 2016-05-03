@@ -10,7 +10,7 @@
 
 @interface ZYBusinessProcessRequest : ZYRequest
 
-//@property (nonatomic, copy) NSString *dynamic_name;
+@property (nonatomic, copy) NSString *dynamic_name;
 //
 //@property (nonatomic, copy) NSString *project_name;
 //

@@ -16,6 +16,7 @@
 #import "ZYTools.h"
 #import "ZYNavCenterView.h"
 #import "ZYBusinessProcessingController.h"
+#import "ZYWebController.h"
 
 @interface ZYHomePageViewController ()
 
@@ -158,7 +159,7 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     [[scrollAdCell.bannerTapSignal map:^id(NSNumber *index) {
         return viewModel.bannerArr[[index longLongValue]];
     }] subscribeNext:^(ZYBannerItem *item) {
-        
+        [self performSegueWithIdentifier:@"web" sender:item.adv_url];
     }];
     
     
@@ -218,6 +219,11 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     {
         ZYBusinessProcessingController *controller = [segue destinationViewController];
         controller.isMyBussiness = [sender boolValue];
+    }
+    if([segue.identifier isEqualToString:@"web"])
+    {
+        ZYWebController *controller = [segue destinationViewController];
+        controller.url = sender;
     }
 }
 

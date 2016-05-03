@@ -38,11 +38,11 @@
     foreclosureHouseCell.cellImageName = @"prim01";
     foreclosureHouseCell.cellTitleText = @"赎楼";
     foreclosureHouseCell.cellSubTitleText = @"详细介绍";
-//    [foreclosureHouseCell.cellButtonPressSignal subscribeNext:^(id x) {
-//        @strongify(self)
-//        [self performSegueWithIdentifier:@"foreclosureHouse" sender:nil];
-//    }];
-//    
+    [foreclosureHouseCell.cellButtonPressSignal subscribeNext:^(id x) {
+        @strongify(self)
+        [self performSegueWithIdentifier:@"foreclosureHouse" sender:nil];
+    }];
+//
 //    downPaymentMortgageCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
 //        @strongify(self)
 //        [self tip:@"功能尚未开通，敬请期待"];

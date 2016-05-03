@@ -284,10 +284,6 @@
 - (RACSignal*)businessProcessList:(ZYBusinessProcessRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        if(myRequest.cacheJson)
-        {
-            [subscriber sendNext:myRequest.cacheJson];//先显示缓存
-        }
         if(![ZYTools checkLogin])///需要验证是否登陆
         {
             [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
@@ -326,5 +322,38 @@
         return [ZYBusinessProcessModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
     }
     return nil;
+}
+- (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest
+{
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        NSArray *arr = [ZYProductModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+        NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:arr.count];
+        for(NSDictionary *dict in arr)
+        {
+            if(dict[@"count"]!=nil&&dict[@"dynamic_name"]!=nil)
+            {
+                [result setObject:dict[@"count"] forKey:dict[@"dynamic_name"]];
+            }
+        }
+        return result;
+    }];
 }
 @end

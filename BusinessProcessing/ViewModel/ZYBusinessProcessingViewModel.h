@@ -23,6 +23,8 @@
 @property(nonatomic,strong)NSMutableArray *businessProcessingArr;
 - (void)requestBussinessProcess:(ZYUser*)user loadMore:(BOOL)loadMore;
 @property(nonatomic,assign)BOOL refreshing;
+@property(nonatomic,assign)BOOL loadmore;
+@property(nonatomic,assign)BOOL noMoreData;
 
 @property(nonatomic,assign)BOOL isMyBussiness;//是否是我的业务
 @property(nonatomic,assign)NSInteger pageNum;
@@ -47,6 +49,12 @@
 @property(nonatomic,strong)NSString *businessProcessState;
 
 @property(nonatomic,strong)NSString *error;
+
+/**
+ *  状态数量
+ */
+@property(nonatomic,strong)NSDictionary *businessStateCount;
+- (void)requestBussinessStateCount:(ZYUser*)user;
 
 - (void)loadCache:(ZYUser*)user;
 @end

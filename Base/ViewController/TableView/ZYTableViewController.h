@@ -33,6 +33,11 @@
 
 - (void)beginRefresh;
 - (void)stopRefresh;
+
+- (void)beginLoadmore;
+- (void)stopLoadmore;
+
+- (void)noMoreData;
 /**
  *  网络支持 包括下拉刷新 还有无数据时候 空的占位的 view
  */

@@ -19,17 +19,23 @@
 @property (nonatomic, copy) NSString *product_name;
 
 @property (nonatomic, copy) NSString *project_pass_date;
-
+/**
+ *  项目状态
+ */
 @property (nonatomic, assign) NSInteger project_status;
 
 @property (nonatomic, assign) long long loan_money;
 
 @property (nonatomic, assign) NSInteger project_id;
-
+/**
+ *  办理状态
+ */
 @property (nonatomic, assign) NSInteger apply_handle_status;
 
 @property (nonatomic, assign) NSInteger biz_handle_id;
-
+/**
+ *  收费状态
+ */
 @property (nonatomic, assign) NSInteger rec_status;
 
 @end

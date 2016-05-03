@@ -95,6 +95,7 @@
                 <outlet property="cellDateLabel" destination="STb-MU-uhj" id="hEB-05-gpj"/>
                 <outlet property="cellPriceLabel" destination="Ztc-j9-7l6" id="zX4-Gl-5N9"/>
                 <outlet property="cellStateLabel" destination="deY-l7-gRJ" id="Lu0-yK-K2A"/>
+                <outlet property="cellStateLabelCenterY" destination="Jg8-zQ-7x0" id="6aa-NU-XRf"/>
                 <outlet property="cellSubTitleLabel" destination="5nF-6a-KDr" id="NCu-JS-Qbc"/>
                 <outlet property="cellTitleLabel" destination="rwG-Co-tfK" id="7QX-Ac-mGO"/>
             </connections>

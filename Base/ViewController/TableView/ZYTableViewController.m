@@ -38,9 +38,11 @@
         self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             [self refresh];
         }];
-        self.tableView.mj_footer = [MJRefreshAutoFooter footerWithRefreshingBlock:^{
+        MJRefreshBackNormalFooter *footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
             [self loadmore];
         }];
+        footer.automaticallyHidden = YES;
+        self.tableView.mj_footer = footer;
     }
     else
     {
@@ -194,23 +196,11 @@
 - (void)setNetworkSupport:(BOOL)networkSupport
 {
     _networkSupport = networkSupport;
-    if(networkSupport)
-    {
-        self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-            [self refresh];
-        }];
-        self.tableView.mj_footer = [MJRefreshAutoFooter footerWithRefreshingBlock:^{
-            [self loadmore];
-        }];
-    }
-    else
-    {
-        self.tableView.mj_header = nil;
-        self.tableView.mj_footer = nil;
-    }
 }
 
-- (void)refresh{}
+- (void)refresh{
+    [self.tableView.mj_footer resetNoMoreData];
+}
 - (RACSignal*)refreshSignal
 {
     if(_refreshSignal==nil)
@@ -235,6 +225,18 @@
 - (void)stopRefresh
 {
     [self.tableView.mj_header endRefreshing];
+}
+- (void)beginLoadmore
+{
+    [self.tableView.mj_footer beginRefreshing];
+}
+- (void)stopLoadmore
+{
+    [self.tableView.mj_footer endRefreshing];
+}
+- (void)noMoreData
+{
+    [self.tableView.mj_footer endRefreshingWithNoMoreData];
 }
 - (void)reloadData
 {

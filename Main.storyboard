@@ -217,7 +217,18 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="业务办理" id="Zah-hB-rn8"/>
+                    <navigationItem key="navigationItem" title="业务办理" id="Zah-hB-rn8">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="gBt-kD-IVn">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="fTo-qs-PrL">
+                                <rect key="frame" x="564" y="11" width="16" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="search"/>
+                                <connections>
+                                    <action selector="searchButtonPressed:" destination="Das-o8-RED" eventType="touchUpInside" id="ujy-dU-Taw"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <segue destination="M2m-ya-TXl" kind="presentation" identifier="search" id="Rj7-wx-Rb0"/>
                     </connections>
@@ -504,11 +515,58 @@
                         <outlet property="myTableView" destination="bYR-xA-jRZ" id="8oY-tm-nN8"/>
                         <segue destination="hdg-y4-FDh" kind="show" identifier="applyList" id="dhM-GE-bq7"/>
                         <segue destination="Das-o8-RED" kind="show" identifier="processing" id="yDE-LL-Zxg"/>
+                        <segue destination="lol-6D-Lw2" kind="show" identifier="web" id="Lsp-yV-tsD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7tc-NX-DKF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1588" y="-898"/>
+        </scene>
+        <!--Web Controller-->
+        <scene sceneID="ija-VP-6nv">
+            <objects>
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="lol-6D-Lw2" customClass="ZYWebController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jos-F5-7FD"/>
+                        <viewControllerLayoutGuide type="bottom" id="n5m-es-bmk"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="O1z-im-Mdg">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YIT-Fo-sIf">
+                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="deviceRGB"/>
+                                <connections>
+                                    <outlet property="delegate" destination="lol-6D-Lw2" id="lFT-MM-Pex"/>
+                                </connections>
+                            </webView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="73w-Pe-cG3">
+                                <rect key="frame" x="0.0" y="64" width="600" height="4"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="4" id="RkQ-Eq-Xfx"/>
+                                </constraints>
+                            </progressView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="n5m-es-bmk" firstAttribute="top" secondItem="YIT-Fo-sIf" secondAttribute="bottom" id="45I-Gs-MAU"/>
+                            <constraint firstItem="73w-Pe-cG3" firstAttribute="leading" secondItem="O1z-im-Mdg" secondAttribute="leading" id="4af-nq-JHy"/>
+                            <constraint firstAttribute="trailing" secondItem="YIT-Fo-sIf" secondAttribute="trailing" id="Y5B-fE-ad6"/>
+                            <constraint firstItem="YIT-Fo-sIf" firstAttribute="top" secondItem="jos-F5-7FD" secondAttribute="bottom" id="ZBC-sb-6l6"/>
+                            <constraint firstItem="73w-Pe-cG3" firstAttribute="top" secondItem="jos-F5-7FD" secondAttribute="bottom" id="hFw-SE-DLV"/>
+                            <constraint firstItem="YIT-Fo-sIf" firstAttribute="leading" secondItem="O1z-im-Mdg" secondAttribute="leading" id="iLh-DN-jju"/>
+                            <constraint firstAttribute="trailing" secondItem="73w-Pe-cG3" secondAttribute="trailing" id="oWq-zz-tLK"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="progressView" destination="73w-Pe-cG3" id="wrw-Gv-Fak"/>
+                        <outlet property="webView" destination="YIT-Fo-sIf" id="Dn5-99-IPg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KML-Fw-23V" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2268" y="-1652"/>
         </scene>
         <!--Search View Controller-->
         <scene sceneID="sug-mU-3KU">
@@ -805,6 +863,7 @@
     <resources>
         <image name="loginBg" width="360" height="174"/>
         <image name="logo" width="135" height="35"/>
+        <image name="search" width="16" height="16"/>
         <image name="tool-ic1n" width="64" height="64"/>
         <image name="tool-ic2n" width="64" height="64"/>
         <image name="tool-ic3n" width="64" height="64"/>
