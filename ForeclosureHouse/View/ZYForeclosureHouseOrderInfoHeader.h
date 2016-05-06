@@ -10,4 +10,6 @@
 
 @interface ZYForeclosureHouseOrderInfoHeader : ZYTableViewCell
 
+@property(nonatomic,assign)BOOL contentTitleHidden;
+
 @end

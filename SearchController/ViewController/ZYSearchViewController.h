@@ -18,4 +18,6 @@ ZY_VIEW_MODEL_PROPERTY(ZYSearchViewModel)
  */
 @property(nonatomic,assign)BOOL netSearch;
 
+@property(nonatomic,strong)NSString *placeHolder;
+
 @end

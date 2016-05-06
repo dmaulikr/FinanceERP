@@ -14,7 +14,7 @@
 
 @interface ZYTableViewController ()<UITableViewDataSource,UITableViewDelegate,CYLTableViewPlaceHolderDelegate>
 
-
+@property(nonatomic,strong)id sender;
 
 @end
 
@@ -36,10 +36,10 @@
     if(_networkSupport)
     {
         self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-            [self refresh];
+            [self refresh:_sender];
         }];
         MJRefreshBackNormalFooter *footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
-            [self loadmore];
+            [self loadmore:_sender];
         }];
         footer.automaticallyHidden = YES;
         self.tableView.mj_footer = footer;
@@ -198,40 +198,48 @@
     _networkSupport = networkSupport;
 }
 
-- (void)refresh{
+- (void)refresh:(id)sender{
     [self.tableView.mj_footer resetNoMoreData];
 }
 - (RACSignal*)refreshSignal
 {
     if(_refreshSignal==nil)
     {
-        _refreshSignal = [self rac_signalForSelector:@selector(refresh)];
+        _refreshSignal = [self rac_signalForSelector:@selector(refresh:)];
     }
-    return _refreshSignal;
+    return [_refreshSignal map:^id(RACTuple *value) {
+        return value.first;
+    }];
 }
-- (void)loadmore{}
+- (void)loadmore:(id)sender{}
 - (RACSignal*)loadmoreSignal
 {
     if(_loadmoreSignal==nil)
     {
-        _loadmoreSignal = [self rac_signalForSelector:@selector(loadmore)];
+        _loadmoreSignal = [self rac_signalForSelector:@selector(loadmore:)];
     }
-    return _loadmoreSignal;
+    return [_loadmoreSignal map:^id(RACTuple *value) {
+        return value.first;
+    }];
 }
-- (void)beginRefresh
+- (void)beginRefresh:(id)sender
 {
+    _sender = sender;
     [self.tableView.mj_header beginRefreshing];
 }
-- (void)stopRefresh
+- (void)stopRefresh:(id)sender
 {
+    _sender = sender;
     [self.tableView.mj_header endRefreshing];
 }
-- (void)beginLoadmore
+- (void)beginLoadmore:(id)sender
 {
+    _sender = sender;
     [self.tableView.mj_footer beginRefreshing];
 }
-- (void)stopLoadmore
+- (void)stopLoadmore:(id)sender
 {
+    _sender = sender;
     [self.tableView.mj_footer endRefreshing];
 }
 - (void)noMoreData

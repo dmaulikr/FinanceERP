@@ -12,7 +12,7 @@
 
 @property (nonatomic, copy) NSString *dynamic_name;
 //
-//@property (nonatomic, copy) NSString *project_name;
+@property (nonatomic, copy) NSString *project_name;
 //
 //@property (nonatomic, assign) NSInteger project_status;
 //

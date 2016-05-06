@@ -9,9 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface ZYStoreModel : NSObject
-/**
- *  默认没有写的权限
- */
-@property(nonatomic,assign)BOOL write;
+
 
 @end

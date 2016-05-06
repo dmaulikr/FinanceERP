@@ -23,14 +23,17 @@
 {
     self = [super initWithTitle:title];
     if (self) {
-        
+        [self initSection];
     }
     return self;
 }
 - (void)initSection
 {
     costInfoChargeTypeCell = [ZYSegmentedCell cellWithActionBlock:nil];
-    costInfoChargeTypeCell.cellSegmentedTitles = [ZYForeclosureHouseValueModel costInfoChargeTypeArr];
+    costInfoChargeTypeCell.showKey = @"title";
+    [[ZYForeclosureHouseViewModel costInfoChargeTypeArrSignal] subscribeNext:^(NSMutableArray *arr) {
+        costInfoChargeTypeCell.cellSegmentedArr = arr;
+    }];
     costInfoChargeTypeCell.cellTitle = @"收入方式";
     
     costInfoInterestIncomeCell = [ZYInputCell cellWithActionBlock:nil];
@@ -72,15 +75,14 @@
     }];
 
 }
-- (void)blendModel:(ZYForeclosureHouseValueModel*)model
+- (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
-    [self initSection];
-    RACChannelTo(model,costInfoChargeType) = RACChannelTo(costInfoChargeTypeCell,cellSegmentedSelecedIndex);
-    RACChannelTo(model,costInfoInterestIncome) = RACChannelTo(costInfoInterestIncomeCell,cellText);
-    RACChannelTo(model,costInfoPoundage) = RACChannelTo(costInfoPoundageCell,cellText);
-    RACChannelTo(model,costInfoWaitForCosting) = RACChannelTo(costInfoWaitForCostingCell,cellText);
-    RACChannelTo(model,costInfoSubsidy) = RACChannelTo(costInfoSubsidyCell,cellText);
-    RACChannelTo(model,costInfoCommission) = RACChannelTo(costInfoCommissionCell,cellText);
+    RACChannelTo(costInfoChargeTypeCell,cellSegmentedSelecedObj) = RACChannelTo(model,costInfoChargeType);
+    RACChannelTo(costInfoInterestIncomeCell,cellText) = RACChannelTo(model,costInfoInterestIncome);
+    RACChannelTo(costInfoPoundageCell,cellText) = RACChannelTo(model,costInfoPoundage);
+    RACChannelTo(costInfoWaitForCostingCell,cellText) = RACChannelTo(model,costInfoWaitForCosting);
+    RACChannelTo(costInfoSubsidyCell,cellText) = RACChannelTo(model,costInfoSubsidy);
+    RACChannelTo(costInfoCommissionCell,cellText) = RACChannelTo(model,costInfoCommission);
     
     RAC(costInfoChargeTypeCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(costInfoInterestIncomeCell,userInteractionEnabled) = RACObserve(self, edit);

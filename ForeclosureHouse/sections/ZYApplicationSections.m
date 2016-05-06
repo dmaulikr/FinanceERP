@@ -24,7 +24,7 @@
 {
     self = [super initWithTitle:title];
     if (self) {
-        
+        [self initSection];
     }
     return self;
 }
@@ -67,14 +67,13 @@
     }];
 
 }
-- (void)blendModel:(ZYForeclosureHouseValueModel*)model
+- (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
-    [self initSection];
-    RACChannelTo(model,applicationDate) = RACChannelTo(applicationDateCell,selecedObj);
-    RACChannelTo(model,applicationLinkman) = RACChannelTo(applicationLinkmanCell,cellText);
-    RACChannelTo(model,applicationTelephone) = RACChannelTo(applicationTelephoneCell,cellText);
-    RACChannelTo(model,applicationExplain) = RACChannelTo(applicationExplainCell,cellContent);
-    RACChannelTo(model,applicationRemarks) = RACChannelTo(applicationRemarksCell,cellContent);
+    RACChannelTo(applicationDateCell,cellText) = RACChannelTo(model,applicationDate);
+    RACChannelTo(applicationLinkmanCell,cellText) = RACChannelTo(model,applicationLinkman);
+    RACChannelTo(applicationTelephoneCell,cellText) = RACChannelTo(model,applicationTelephone);
+    RACChannelTo(applicationExplainCell,cellContent) = RACChannelTo(model,applicationExplain);
+    RACChannelTo(applicationRemarksCell,cellContent) = RACChannelTo(model,applicationRemarks);
     
     RAC(applicationDateCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(applicationLinkmanCell,userInteractionEnabled) = RACObserve(self, edit);

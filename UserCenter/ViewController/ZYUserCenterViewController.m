@@ -74,7 +74,7 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
         NSMutableDictionary *usernamepasswordKVPairs = [NSMutableDictionary dictionary];
         [ZYTools saveKeychain:[ZYTools appVersionToken] data:usernamepasswordKVPairs];//清除账号信息
         [ZYTools clearCache];//清除缓存
-        
+        [ZYStore copyDB];//还原数据库
         [[NSNotificationCenter defaultCenter] postNotificationName:LOGOUT_NOTIFICATION object:nil];
     }];
     

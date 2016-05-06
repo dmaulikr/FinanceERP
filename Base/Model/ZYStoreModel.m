@@ -7,6 +7,7 @@
 //
 
 #import "ZYStoreModel.h"
+#import <LKDBHelper/LKDBUtils.h>
 
 @implementation ZYStoreModel
 

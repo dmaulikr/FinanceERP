@@ -32,6 +32,7 @@
         tailLable.textColor = TITLE_COLOR;
         tailLable.textAlignment = NSTextAlignmentCenter;
         [self addSubview:tailLable];
+        RACChannelTo(tailLable,hidden) = RACChannelTo(self,contentTitleHidden);
         tailLable.text = @"备注";
         
         CGFloat lableWidth = 94;

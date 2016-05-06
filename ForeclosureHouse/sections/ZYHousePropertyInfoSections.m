@@ -22,7 +22,7 @@
 {
     self = [super initWithTitle:title];
     if (self) {
-        
+        [self initSection];
     }
     return self;
 }
@@ -66,15 +66,15 @@
     footCell.lineHidden = YES;
 
 }
-- (void)blendModel:(ZYForeclosureHouseValueModel*)model
+- (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
-    [self initSection];
-    RACChannelTo(model,housePropertyInfoName) = RACChannelTo(housePropertyInfoName,cellText);
-    RACChannelTo(model,housePropertyInfoArea) = RACChannelTo(housePropertyInfoArea,cellText);
-    RACChannelTo(model,housePropertyInfoOrigePrice) = RACChannelTo(housePropertyInfoOrigePrice,cellText);
-    RACChannelTo(model,housePropertyInfoHousePropertyCardNumber) = RACChannelTo(housePropertyInfoHousePropertyCardNumber,cellText);
-    RACChannelTo(model,housePropertyInfoDealPrice) = RACChannelTo(housePropertyInfoDealPrice,cellText);
-    RACChannelTo(model,housePropertyInfoAssessmentPrice) = RACChannelTo(housePropertyInfoAssessmentPrice,cellText);
+
+    RACChannelTo(housePropertyInfoName,cellText) = RACChannelTo(model,housePropertyInfoName);
+    RACChannelTo(housePropertyInfoArea,cellText) = RACChannelTo(model,housePropertyInfoArea);
+    RACChannelTo(housePropertyInfoOrigePrice,cellText) = RACChannelTo(model,housePropertyInfoOrigePrice);
+    RACChannelTo(housePropertyInfoHousePropertyCardNumber,cellText) = RACChannelTo(model,housePropertyInfoHousePropertyCardNumber);
+    RACChannelTo(housePropertyInfoDealPrice,cellText) = RACChannelTo(model,housePropertyInfoDealPrice);
+    RACChannelTo(housePropertyInfoAssessmentPrice,cellText) = RACChannelTo(model,housePropertyInfoAssessmentPrice);
     
     RAC(housePropertyInfoName,userInteractionEnabled) = RACObserve(self, edit);
     RAC(housePropertyInfoArea,userInteractionEnabled) = RACObserve(self, edit);

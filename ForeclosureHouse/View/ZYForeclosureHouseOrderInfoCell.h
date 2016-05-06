@@ -17,4 +17,6 @@
 @property(nonatomic,strong)RACSignal *buttonPressedSignal;
 
 @property(nonatomic,assign)BOOL buttonRotate;
+@property(nonatomic,assign)BOOL buttonRotateHidden;
+
 @end

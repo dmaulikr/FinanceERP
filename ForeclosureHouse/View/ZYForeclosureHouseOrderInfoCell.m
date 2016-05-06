@@ -35,6 +35,7 @@
         _dropButton = [[UIButton alloc] initWithFrame:CGRectMake(FUll_SCREEN_WIDTH-tailLableWidth-GAP, 0, tailLableWidth, [ZYForeclosureHouseOrderInfoCell defaultHeight])];
         [_dropButton setImage:[UIImage imageNamed:@"drop"] forState:UIControlStateNormal];
         [_dropButton addTarget:self action:@selector(dropButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        RACChannelTo(_dropButton,hidden) = RACChannelTo(self,buttonRotateHidden);
         [self addSubview:_dropButton];
         
         CGFloat steperHeight = 29;

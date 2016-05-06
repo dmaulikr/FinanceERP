@@ -39,7 +39,7 @@
     
     ZYDoubleButtonCell *buttonView;
 }
-ZY_VIEW_MODEL_GET(ZYForeclosureHouseSubViewModel)
+ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -81,11 +81,11 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseSubViewModel)
 }
 - (void)blendSections:(ZYSections*)sections
 {
-    ZYForeclosureHouseSubViewModel *viewModel = self.viewModel;
-    [housePropertyInfoSections blendModel:viewModel.valueModel];
-    [bothSideInfoSections blendModel:viewModel.valueModel];
-    [originalBankSections blendModel:viewModel.valueModel];
-    [currentBankSections blendModel:viewModel.valueModel];
+    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
+    [housePropertyInfoSections blendModel:viewModel];
+    [bothSideInfoSections blendModel:viewModel];
+    [originalBankSections blendModel:viewModel];
+    [currentBankSections blendModel:viewModel];
     
     [RACObserve(housePropertyInfoSections, sections) subscribeNext:^(id x) {
         [self reloadTableViewAtIndex:0];
@@ -160,11 +160,11 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseSubViewModel)
 {
     topBar.highlightIndex = index;
 }
-- (instancetype)initWithModel:(ZYForeclosureHouseValueModel*)model
+- (instancetype)initWithModel:(ZYForeclosureHouseViewModel*)model
 {
     self = [super init];
     if (self) {
-        self.viewModel.valueModel = model;
+        _viewModel = model;
     }
     return self;
 }

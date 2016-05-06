@@ -119,6 +119,7 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
         {
             viewModel.navLoading = NO;//登录成功
             viewModel.navState = @"首页";
+            [ZYStore updateDB];//登录成功后 更新数据库
         }
         [founctionButtonCell reloadFunctionButton:[ZYUser user]];
         [viewModel requestBannerArr:[ZYUser user]];

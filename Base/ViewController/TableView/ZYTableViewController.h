@@ -31,11 +31,10 @@
 - (void)reloadData;
 - (void)reloadDataWithType:(ZYPlaceHolderViewType)type;
 
-- (void)beginRefresh;
-- (void)stopRefresh;
-
-- (void)beginLoadmore;
-- (void)stopLoadmore;
+- (void)beginRefresh:(id)sender;
+- (void)stopRefresh:(id)sender;
+- (void)beginLoadmore:(id)sender;
+- (void)stopLoadmore:(id)sender;
 
 - (void)noMoreData;
 /**

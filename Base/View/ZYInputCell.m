@@ -96,7 +96,12 @@
 {
     _cellText = cellText;
     _cellTextField.text = cellText;
+    if(_checkInput)
+    {
+        [self setCellTitle:self.cellTitle];
+    }
 }
+
 - (void)setCellTailText:(NSString *)cellTailText
 {
     _cellTailText = cellTailText;

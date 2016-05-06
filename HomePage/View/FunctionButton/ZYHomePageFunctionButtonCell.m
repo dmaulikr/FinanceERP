@@ -26,8 +26,15 @@
     }
     return self;
 }
+- (void)removeAllButtons
+{
+    [buttonArr enumerateObjectsUsingBlock:^(UIButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj removeFromSuperview];
+    }];
+}
 - (void)reloadFunctionButton:(ZYUser*)user
 {
+    [self removeAllButtons];
     NSArray *titleArr;
     NSArray *imgArr;
     if([user isManager])

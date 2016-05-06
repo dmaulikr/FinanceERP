@@ -26,8 +26,10 @@
     [super layoutSubviews];
     NSInteger steps = tabTitles.count;
     CGFloat width = (FUll_SCREEN_WIDTH-(steps+1)*GAP)/steps;
-    _buttonArr = [NSMutableArray arrayWithCapacity:4];
-    [tabTitles enumerateObjectsUsingBlock:^(NSString * _Nonnull title, NSUInteger idx, BOOL * _Nonnull stop) {
+    _buttonArr = [NSMutableArray arrayWithCapacity:steps];
+    NSInteger idx = 0;
+    for(NSString *title in tabTitles)
+    {
         UIButton *stepButton = [UIButton buttonWithType:UIButtonTypeSystem];
         stepButton.frame = CGRectMake(GAP+idx*(GAP+width), GAP, width, self.height-GAP);
         [stepButton setTitle:title forState:UIControlStateNormal];
@@ -41,7 +43,9 @@
         stepButton.tag = idx;
         [self addSubview:stepButton];
         [_buttonArr addObject:stepButton];
-    }];
+        idx++;
+    }
+    [self setHighlightIndex:0];
 }
 - (void)setHighlightIndex:(NSInteger)highlightIndex
 {

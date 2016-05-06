@@ -311,7 +311,12 @@
         return nil;
     }];
     return [signal map:^id(id value) {
-        return [ZYBusinessProcessModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+        NSArray *arr = [ZYBusinessProcessModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+        for(ZYBusinessProcessModel *model in arr)
+        {
+            model.keyword = myRequest.project_name;//纪录关键字
+        }
+        return arr;
     }];
 }
 - (id)businessProcessListCacheWith:(ZYBusinessProcessRequest*)myRequest
@@ -344,7 +349,7 @@
         return nil;
     }];
     return [signal map:^id(id value) {
-        NSArray *arr = [ZYProductModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+        NSArray *arr = value[@"result_list"];
         NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:arr.count];
         for(NSDictionary *dict in arr)
         {
@@ -355,5 +360,71 @@
         }
         return result;
     }];
+}
+- (RACSignal*)foreclosureHouseInfo:(ZYForeclosureHouseRequest*)myRequest
+{
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        if(![ZYTools checkLogin])///需要验证是否登陆
+        {
+            [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
+            [subscriber sendCompleted];
+        }
+        else
+        {
+            [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+                id value = request.responseJSONObject;
+                if(REQUEST_SUCCESS(value))
+                {
+                    [subscriber sendNext:value];
+                    [subscriber sendCompleted];
+                }
+                else
+                {
+                    
+                    [subscriber sendError:ERROR(value)];
+                }
+            } failure:^(__kindof YTKBaseRequest *request) {
+                [subscriber sendError:NET_ERROR];
+            }];
+        }
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return [ZYForeclosureHouseModel mj_objectWithKeyValues:value];
+    }];
+}
+
+- (RACSignal*)banks:(ZYBanksRequest*)myRequest
+{
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return [ZYBankModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+    }];
+}
+- (id)banksCacheWith:(ZYBanksRequest*)myRequest
+{
+    if(myRequest.cacheJson)
+    {
+        id value = myRequest.cacheJson;///使用缓存
+        return [ZYBankModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+    }
+    return nil;
 }
 @end

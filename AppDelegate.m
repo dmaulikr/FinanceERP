@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "ZYHomePageViewController.h"
 #import <YTKNetworkConfig.h>
+#import "ZYStore.h"
 
 @interface AppDelegate ()
 
@@ -29,11 +30,16 @@
 {
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60) forBarMetrics:UIBarMetricsDefault];
     
+    
     [[IQKeyboardManager sharedManager] setEnable:YES];
     [[IQKeyboardManager sharedManager] setKeyboardDistanceFromTextField:88.f];
     [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO];
     [[IQKeyboardManager sharedManager] setShouldResignOnTouchOutside:YES];
     //基础路径
     [YTKNetworkConfig sharedInstance].baseUrl = [NSString stringWithFormat:@"%@BMS/mobileApi",HOST];
+    
+    //复制数据库到 document文件下  便于读写
+    [ZYStore copyDBWhenNotExit];
+    [[[ZYStore alloc] init] creatData];
 }
 @end

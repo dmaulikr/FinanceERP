@@ -12,6 +12,7 @@
 #import "ZYSearchViewController.h"
 #import "ZYFadeTransion.h"
 #import "ZYBusinessProcessCell.h"
+#import "ZYForeclosureHouseController.h"
 
 @interface ZYBusinessProcessingController ()<ZYFilterBarDelegate,UIViewControllerTransitioningDelegate>
 
@@ -70,7 +71,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
         cell.model = viewModel.businessProcessingArr[row];
         return cell;
     } actionBlock:^(UITableView *tableView, NSInteger row) {
-        
+        [self performSegueWithIdentifier:@"info" sender:viewModel.businessProcessingArr[row]];
     }];
     tableViewCtl.sections = @[section];
 }
@@ -86,23 +87,15 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
         [tableViewCtl reloadDataWithType:viewModel.placeHolderViewType];
     }];
     [RACObserve(viewModel, refreshing) subscribeNext:^(NSNumber *refreshing) {
-        if(refreshing.boolValue)
+        if(!refreshing.boolValue)
         {
-            [tableViewCtl beginRefresh];
-        }
-        else
-        {
-            [tableViewCtl stopRefresh];
+            [tableViewCtl stopRefresh:nil];
         }
     }];
     [[RACObserve(viewModel, loadmore) skip:1] subscribeNext:^(NSNumber *refreshing) {
-        if(refreshing.boolValue)
+        if(!refreshing.boolValue)
         {
-            [tableViewCtl beginLoadmore];
-        }
-        else
-        {
-            [tableViewCtl stopLoadmore];
+            [tableViewCtl stopLoadmore:nil];
         }
     }];
     [RACObserve(viewModel, noMoreData) subscribeNext:^(NSNumber *refreshing) {
@@ -114,14 +107,29 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     [RACObserve(viewModel, searchKeywordModel) subscribeNext:^(ZYSearchHistoryModel *search) {
         if(search)
         {
-            [tableViewCtl beginRefresh];
+            [tableViewCtl beginRefresh:@(YES)];//是否是搜索
         }
     }];
-    [tableViewCtl.refreshSignal subscribeNext:^(id x) {
+    [tableViewCtl.refreshSignal subscribeNext:^(NSNumber *isSearch) {
+        if(!isSearch.boolValue)
+        {
+            viewModel.searchKeywordModel = nil;
+        }
+        if(!isSearch.boolValue)
+        {
+            viewModel.searchKeywordModel = nil;
+        }
         [viewModel requestBussinessProcess:[ZYUser user] loadMore:NO];
-        [viewModel requestBussinessStateCount:[ZYUser user]];
+        if(!_isMyBussiness)
+        {
+            [viewModel requestBussinessStateCount:[ZYUser user]];
+        }
     }];
-    [tableViewCtl.loadmoreSignal subscribeNext:^(id x) {
+    [tableViewCtl.loadmoreSignal subscribeNext:^(NSNumber *isSearch) {
+        if(!isSearch.boolValue)
+        {
+            viewModel.searchKeywordModel = nil;
+        }
         [viewModel requestBussinessProcess:[ZYUser user] loadMore:YES];
     }];
     RACChannelTo(viewModel,isMyBussiness) = RACChannelTo(self,isMyBussiness);
@@ -131,6 +139,8 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     }];
     
     [viewModel loadCache:[ZYUser user]];
+    
+    [tableViewCtl beginRefresh:@(NO)];
 }
 - (IBAction)searchButtonPressed:(id)sender {
     [self performSegueWithIdentifier:@"search" sender:[self.viewModel businessProcessingSearchHistorySignal]];
@@ -170,7 +180,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
             ZYProductModel *model = object;
             self.viewModel.businessProcessProductType = model;
         }
-        [tableViewCtl beginRefresh];
+        [tableViewCtl beginRefresh:@(NO)];
         return NO;
     }
     if(index==1&&level==0)
@@ -185,7 +195,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
             NSString *model = object;
             self.viewModel.businessProcessState = model;
         }
-        [tableViewCtl beginRefresh];
+        [tableViewCtl beginRefresh:@(NO)];
         return NO;
     }
     return YES;
@@ -198,9 +208,16 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if([segue.identifier isEqualToString:@"info"])
+    {
+        ZYForeclosureHouseController *controller = [segue destinationViewController];
+        controller.edit = NO;
+        controller.projectID = [(ZYBusinessProcessModel*)sender project_id];
+    }
     if([segue.identifier isEqualToString:@"search"])
     {
         ZYSearchViewController *controller = [segue destinationViewController];
+        controller.placeHolder = @"请输入产品名称";
         controller.netSearch = YES;
         RACSignal *signal = sender;
         NSString *key = @"searchKeyword";

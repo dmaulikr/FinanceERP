@@ -38,4 +38,8 @@
  */
 @property (nonatomic, assign) NSInteger rec_status;
 
+/**
+ *  搜索关键字
+ */
+@property (nonatomic, copy)NSString *keyword;
 @end

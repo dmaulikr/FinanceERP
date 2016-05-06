@@ -22,6 +22,10 @@
 #import "ZYBusinessProcessRequest.h"
 #import "ZYBusinessProcessModel.h"
 #import "ZYBussinessStateCountRequest.h"
+#import "ZYForeclosureHouseRequest.h"
+#import "ZYForeclosureHouseModel.h"
+#import "ZYBanksRequest.h"
+#import "ZYBankModel.h"
 
 @interface ZYRoute : NSObject
 
@@ -49,4 +53,9 @@
 - (id)businessProcessListCacheWith:(ZYBusinessProcessRequest*)myRequest;
 
 - (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest;
+
+- (RACSignal*)foreclosureHouseInfo:(ZYForeclosureHouseRequest*)myRequest;
+
+- (RACSignal*)banks:(ZYBanksRequest*)myRequest;
+- (id)banksCacheWith:(ZYBanksRequest*)myRequest;
 @end

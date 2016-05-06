@@ -11,7 +11,9 @@
 @interface ZYInputCell : ZYTableViewCell
 
 @property(nonatomic,strong)NSString *cellTitle;
+
 @property(nonatomic,strong)NSString *cellText;
+
 @property(nonatomic,strong)NSString *cellPlaceHolder;
 @property(nonatomic,strong)NSString *cellTailText;
 

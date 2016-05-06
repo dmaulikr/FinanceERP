@@ -54,10 +54,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (void)webViewDidStartLoad:(UIWebView *)webView
-{
-    
-}
 /*
 #pragma mark - Navigation
 

@@ -6,10 +6,14 @@
 //  Copyright © 2016年 张昱. All rights reserved.
 //
 
-#import "ZYReadModel.h"
+#import "ZYStoreModel.h"
 
-@interface ZYIntermediaryModel : ZYReadModel
 
-@property(nonatomic,strong)NSString *name;
+@interface ZYIntermediaryModel : ZYStoreModel
 
+@property(nonatomic,strong)NSString *look_desc;
+
+@property(nonatomic,assign)NSInteger pid;
+
+@property(nonatomic,assign)NSInteger rowid;
 @end

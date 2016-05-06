@@ -22,7 +22,8 @@
              @"product_id",
              @"dynamic_name",
              @"rows",
-             @"page",];
+             @"page",
+             @"project_name"];
 }
 - (NSInteger)cacheTimeInSeconds
 {

@@ -21,6 +21,6 @@
 }
 - (NSInteger)cacheTimeInSeconds
 {
-    return 24*60*60;//一天缓存
+    return 24*60*60*30;//一天缓存
 }
 @end

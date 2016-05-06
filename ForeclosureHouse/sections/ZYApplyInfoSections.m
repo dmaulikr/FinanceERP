@@ -13,7 +13,7 @@
     ZYInputCell *applyInfoBorrowerNameCell;
     ZYInputCell *applyInfoBorrowerCardNumberCell;
     ZYInputCell *applyInfoBorrowerTelphoneCell;
-    ZYInputCell *applyInfoHousePropertyCardNumberCell;
+//    ZYInputCell *applyInfoHousePropertyCardNumberCell;
     ZYInputCell *applyInfoAddressCell;
     
     ZYDoubleButtonCell *buttonCell;
@@ -22,7 +22,7 @@
 {
     self = [super initWithTitle:title];
     if (self) {
-        
+        [self initSection];
     }
     return self;
 }
@@ -32,7 +32,7 @@
     applyInfoBorrowerNameCell = [ZYInputCell cellWithActionBlock:^{
         @strongify(self)
         applyInfoBorrowerNameCell.showKey = @"name";
-        [self cellSearch:applyInfoBorrowerNameCell withDataSourceSignal:[ZYForeclosureHouseValueModel borrowersSignal] showKey:@"name"];
+        [self cellSearch:applyInfoBorrowerNameCell withDataSourceSignal:[ZYForeclosureHouseViewModel borrowersSignal] showKey:@"name"];
     }];
     applyInfoBorrowerNameCell.cellTitle = @"借款人";
     applyInfoBorrowerNameCell.cellPlaceHolder = @"请输入或者选择借款人";
@@ -49,10 +49,10 @@
     applyInfoBorrowerTelphoneCell.cellTitle = @"联系电话";
     applyInfoBorrowerTelphoneCell.cellPlaceHolder = @"请输入联系电话";
     
-    applyInfoHousePropertyCardNumberCell = [ZYInputCell cellWithActionBlock:nil];
-    applyInfoHousePropertyCardNumberCell.cellTitle = @"房产证号";
-    applyInfoHousePropertyCardNumberCell.onlyInt = YES;
-    applyInfoHousePropertyCardNumberCell.cellPlaceHolder = @"请输入房产证号";
+//    applyInfoHousePropertyCardNumberCell = [ZYInputCell cellWithActionBlock:nil];
+//    applyInfoHousePropertyCardNumberCell.cellTitle = @"房产证号";
+//    applyInfoHousePropertyCardNumberCell.onlyInt = YES;
+//    applyInfoHousePropertyCardNumberCell.cellPlaceHolder = @"请输入房产证号";
     
     applyInfoAddressCell = [ZYInputCell cellWithActionBlock:nil];
     applyInfoAddressCell.cellTitle = @"联系地址";
@@ -66,15 +66,14 @@
         [self cellLastStep];
     }];
 }
-- (void)blendModel:(ZYForeclosureHouseValueModel*)model
+- (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
-    [self initSection];
-    RACChannelTo(model,applyInfoBorrowerName) = RACChannelTo(applyInfoBorrowerNameCell,cellText);
+    RACChannelTo(applyInfoBorrowerNameCell,cellText) = RACChannelTo(model,applyInfoBorrowerName);
     
-    RACChannelTo(model,applyInfoBorrowerCardNumber) = RACChannelTo(applyInfoBorrowerCardNumberCell,cellText);
-    RACChannelTo(model,applyInfoBorrowerTelphone) = RACChannelTo(applyInfoBorrowerTelphoneCell,cellText);
-    RACChannelTo(model,applyInfoHousePropertyCardNumber) = RACChannelTo(applyInfoHousePropertyCardNumberCell,cellText);
-    RACChannelTo(model,applyInfoAddress) = RACChannelTo(applyInfoAddressCell,cellText);
+    RACChannelTo(applyInfoBorrowerCardNumberCell,cellText) = RACChannelTo(model,applyInfoBorrowerCardNumber);
+    RACChannelTo(applyInfoBorrowerTelphoneCell,cellText) = RACChannelTo(model,applyInfoBorrowerTelphone);
+//    RACChannelTo(model,applyInfoHousePropertyCardNumber) = RACChannelTo(applyInfoHousePropertyCardNumberCell,cellText);
+    RACChannelTo(applyInfoAddressCell,cellText) = RACChannelTo(model,applyInfoAddress);
     
     [RACObserve(applyInfoBorrowerNameCell, selecedObj) subscribeNext:^(id x) {
        if([x isKindOfClass:[ZYBorrowerModel class]])
@@ -87,7 +86,7 @@
     RAC(applyInfoBorrowerNameCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(applyInfoBorrowerCardNumberCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(applyInfoBorrowerTelphoneCell,userInteractionEnabled) = RACObserve(self, edit);
-    RAC(applyInfoHousePropertyCardNumberCell,userInteractionEnabled) = RACObserve(self, edit);
+//    RAC(applyInfoHousePropertyCardNumberCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(applyInfoAddressCell,userInteractionEnabled) = RACObserve(self, edit);
     
     [RACObserve(self, edit) subscribeNext:^(id x) {
@@ -97,7 +96,7 @@
             section = [ZYSection sectionWithCells:@[applyInfoBorrowerNameCell,
                                                     applyInfoBorrowerCardNumberCell,
                                                     applyInfoBorrowerTelphoneCell,
-                                                    applyInfoHousePropertyCardNumberCell,
+//                                                    applyInfoHousePropertyCardNumberCell,
                                                     applyInfoAddressCell,
                                                     buttonCell]];
         }
@@ -106,7 +105,7 @@
             section = [ZYSection sectionWithCells:@[applyInfoBorrowerNameCell,
                                                     applyInfoBorrowerCardNumberCell,
                                                     applyInfoBorrowerTelphoneCell,
-                                                    applyInfoHousePropertyCardNumberCell,
+//                                                    applyInfoHousePropertyCardNumberCell,
                                                     applyInfoAddressCell]];
         }
         self.sections = @[section];
@@ -117,7 +116,7 @@
     NSArray *errorArr = @[applyInfoBorrowerNameCell,
                           applyInfoBorrowerCardNumberCell,
                           applyInfoBorrowerTelphoneCell,
-                          applyInfoHousePropertyCardNumberCell,
+//                          applyInfoHousePropertyCardNumberCell,
                           applyInfoAddressCell];
     NSString *result = nil;
     for(id cell in errorArr)

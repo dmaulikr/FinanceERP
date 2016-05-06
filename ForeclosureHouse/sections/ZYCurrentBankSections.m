@@ -33,7 +33,7 @@
 {
     self = [super initWithTitle:title];
     if (self) {
-        
+        [self initSection];
     }
     return self;
 }
@@ -42,9 +42,9 @@
     @weakify(self)
     newBankCell = [ZYSelectCell cellWithActionBlock:^{
         @strongify(self)
-        [self cellSearch:newBankCell withDataSourceSignal:[ZYForeclosureHouseValueModel bankSearchSignal] showKey:@"name"];
+        [self cellSearch:newBankCell withDataSourceSignal:[ZYForeclosureHouseViewModel bankSearchSignal] showKey:@"look_desc"];
     }];
-    newBankCell.showKey = @"name";
+    newBankCell.showKey = @"look_desc";
     newBankCell.cellTitle = @"新贷款银行";
     
     newBankLoanMoneyCell = [ZYInputCell cellWithActionBlock:nil];
@@ -69,7 +69,11 @@
     
     newBankLoanTypeCell = [ZYSegmentedCell cellWithActionBlock:nil];
     newBankLoanTypeCell.cellTitle = @"贷款方式";
-    newBankLoanTypeCell.cellSegmentedTitles = @[@"商业贷款",@"公积金贷款",@"混合贷款",@"一次付清"];
+    newBankLoanTypeCell.showKey = @"title";
+    [[ZYForeclosureHouseViewModel loanTypeArrSignal] subscribeNext:^(NSArray *arr) {
+        newBankLoanTypeCell.cellSegmentedArr = arr;
+    }];
+    
     
     newBankForeclosureAccountCell = [ZYInputCell cellWithActionBlock:nil];
     newBankForeclosureAccountCell.cellTitle = @"赎楼账号";
@@ -79,9 +83,9 @@
     
     newBankPublicFundBankCell = [ZYSelectCell cellWithActionBlock:^{
         @strongify(self)
-        [self cellSearch:newBankPublicFundBankCell withDataSourceSignal:[ZYForeclosureHouseValueModel bankSearchSignal] showKey:@"name"];
+        [self cellSearch:newBankPublicFundBankCell withDataSourceSignal:[ZYForeclosureHouseViewModel bankSearchSignal] showKey:@"look_desc"];
     }];
-    newBankPublicFundBankCell.showKey = @"name";
+    newBankPublicFundBankCell.showKey = @"look_desc";
     newBankPublicFundBankCell.cellTitle = @"公积金银行";
     newBankPublicFundBankCell.cellNullable = YES;
     
@@ -126,22 +130,21 @@
     footCell.lineHidden = YES;
 
 }
-- (void)blendModel:(ZYForeclosureHouseValueModel*)model
+- (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
-    [self initSection];
-    RACChannelTo(model,bank) = RACChannelTo(newBankCell,selecedObj);
-    RACChannelTo(model,bankLoanType) = RACChannelTo(newBankLoanTypeCell,cellSegmentedSelecedIndex);
-    RACChannelTo(model,bankPublicFundBank) = RACChannelTo(newBankPublicFundBankCell,selecedObj);
-    RACChannelTo(model,bankJusticeDate) = RACChannelTo(newBankJusticeDateCell,selecedObj);
-    RACChannelTo(model,bankContractDate) = RACChannelTo(newBankContractDateCell,selecedObj);
-    RACChannelTo(model,bankLoanMoney) = RACChannelTo(newBankLoanMoneyCell,cellText);
-    RACChannelTo(model,bankLinkman) = RACChannelTo(newBankLinkmanCell,cellText);
-    RACChannelTo(model,bankTelephone) = RACChannelTo(newBankTelephoneCell,cellText);
-    RACChannelTo(model,bankForeclosureAccount) = RACChannelTo(newBankForeclosureAccountCell,cellText);
-    RACChannelTo(model,bankPublicFundMoney) = RACChannelTo(newBankPublicFundMoneyCell,cellText);
-    RACChannelTo(model,bankSuperviseOrganization) = RACChannelTo(newBankSuperviseOrganizationCell,cellText);
-    RACChannelTo(model,bankSuperviseMoney) = RACChannelTo(newBankSuperviseMoneyCell,cellText);
-    RACChannelTo(model,bankSuperviseAccount) = RACChannelTo(newBankSuperviseAccountCell,cellText);
+    RACChannelTo(newBankCell,selecedObj) = RACChannelTo(model,bank);
+    RACChannelTo(newBankLoanTypeCell,cellSegmentedSelecedObj) = RACChannelTo(model,bankLoanType);
+    RACChannelTo(newBankPublicFundBankCell,selecedObj) = RACChannelTo(model,bankPublicFundBank);
+    RACChannelTo(newBankJusticeDateCell,cellText) = RACChannelTo(model,bankJusticeDate);
+    RACChannelTo(newBankContractDateCell,cellText) = RACChannelTo(model,bankContractDate);
+    RACChannelTo(newBankLoanMoneyCell,cellText) = RACChannelTo(model,bankLoanMoney);
+    RACChannelTo(newBankLinkmanCell,cellText) = RACChannelTo(model,bankLinkman);
+    RACChannelTo(newBankTelephoneCell,cellText) = RACChannelTo(model,bankTelephone);
+    RACChannelTo(newBankForeclosureAccountCell,cellText) = RACChannelTo(model,bankForeclosureAccount);
+    RACChannelTo(newBankPublicFundMoneyCell,cellText) = RACChannelTo(model,bankPublicFundMoney);
+    RACChannelTo(newBankSuperviseOrganizationCell,cellText) = RACChannelTo(model,bankSuperviseOrganization);
+    RACChannelTo(newBankSuperviseMoneyCell,cellText) = RACChannelTo(model,bankSuperviseMoney);
+    RACChannelTo(newBankSuperviseAccountCell,cellText) = RACChannelTo(model,bankSuperviseAccount);
     
     RAC(newBankCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(newBankLoanTypeCell,userInteractionEnabled) = RACObserve(self, edit);

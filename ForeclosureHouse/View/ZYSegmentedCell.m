@@ -47,15 +47,40 @@
     _cellTitle = cellTitle;
     _cellTitleLabel.text = cellTitle;
 }
-- (void)setCellSegmentedTitles:(NSArray *)cellSegmentedTitles
+- (void)setCellSegmentedArr:(NSArray *)cellSegmentedArr
 {
-    _cellSegmentedTitles = cellSegmentedTitles;
+    _cellSegmentedArr = cellSegmentedArr;
     [_cellSegmentedControl removeAllSegments];
-    [cellSegmentedTitles enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [_cellSegmentedControl insertSegmentWithTitle:obj atIndex:idx animated:NO];
+    NSInteger idx = 0;
+    for(id obj in cellSegmentedArr)
+    {
+        if([obj isKindOfClass:[NSString class]])
+        {
+            [_cellSegmentedControl insertSegmentWithTitle:obj atIndex:idx animated:NO];
+        }
+        else if (self.showKey.length>0)
+        {
+            [_cellSegmentedControl insertSegmentWithTitle:[obj valueForKey:self.showKey] atIndex:idx animated:NO];
+            if([[obj valueForKey:self.showKey] isEqualToString:[_cellSegmentedSelecedObj valueForKey:self.showKey]])
+            {
+                self.cellSegmentedSelecedIndex = idx;
+            }
+        }
+        idx++;
+    }
+}
+- (void)setCellSegmentedSelecedObj:(id)cellSegmentedSelecedObj
+{
+    _cellSegmentedSelecedObj = cellSegmentedSelecedObj;
+    [_cellSegmentedArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if([[obj valueForKey:self.showKey] isEqualToString:[cellSegmentedSelecedObj valueForKey:self.showKey]])
+        {
+            self.cellSegmentedSelecedIndex = idx;
+        }
     }];
 }
 - (void)segmentedPressed:(UISegmentedControl*)sender {
+    self.cellSegmentedSelecedObj = [_cellSegmentedArr objectAtIndex:sender.selectedSegmentIndex];
 }
 - (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
 {

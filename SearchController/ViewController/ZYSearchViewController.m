@@ -37,6 +37,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.searchBar.placeholder = self.placeHolder;
     [self buildUI];
     [self blendViewModel];
 }

@@ -231,6 +231,7 @@
                     </navigationItem>
                     <connections>
                         <segue destination="M2m-ya-TXl" kind="presentation" identifier="search" id="Rj7-wx-Rb0"/>
+                        <segue destination="XWB-Uq-suO" kind="show" identifier="info" id="KI6-R4-mVu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6HN-EP-bjk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -541,10 +542,10 @@
                                     <outlet property="delegate" destination="lol-6D-Lw2" id="lFT-MM-Pex"/>
                                 </connections>
                             </webView>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="73w-Pe-cG3">
-                                <rect key="frame" x="0.0" y="64" width="600" height="4"/>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="73w-Pe-cG3">
+                                <rect key="frame" x="0.0" y="64" width="600" height="2"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="4" id="RkQ-Eq-Xfx"/>
+                                    <constraint firstAttribute="height" constant="2" id="RkQ-Eq-Xfx"/>
                                 </constraints>
                             </progressView>
                         </subviews>
@@ -872,5 +873,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Rj7-wx-Rb0"/>
+        <segue reference="KI6-R4-mVu"/>
     </inferredMetricsTieBreakers>
 </document>

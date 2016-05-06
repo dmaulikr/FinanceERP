@@ -107,7 +107,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
                     orderInfoSections,
                     applicationSections];
     
-    subSliderViewCtl = [[ZYForeclosureHouseSubController alloc] initWithModel:self.viewModel.valueModel];
+    subSliderViewCtl = [[ZYForeclosureHouseSubController alloc] initWithModel:self.viewModel];
     subSliderViewCtl.edit = self.edit;
     
     _labelArr = [NSMutableArray arrayWithCapacity:10];
@@ -140,23 +140,23 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         self.progressWidth.constant = (self.contentWidth.constant/steps)/2.f;
     
     [self buildTableViewController];
-    
-    [bussinessInfoSections blendModel:self.viewModel.valueModel];//首页优先加载 减少同时加载的应用压力
-    [RACObserve(bussinessInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:0];
-    }];
-    [self.viewModel.valueModel reset];
 }
 - (void)blendViewModel
 {
     ZYForeclosureHouseViewModel *viewModel = self.viewModel;
-    [applyInfoSections blendModel:viewModel.valueModel];
+    
+    RACChannelTo(viewModel,projectID) = RACChannelTo(self,projectID);
+    
+    [bussinessInfoSections blendModel:viewModel];
+    [applyInfoSections blendModel:viewModel];
     [subSliderViewCtl blendSections:foreclosureHouseInfoSections];//这个特殊子页面 需要绑定一个section
-    [costInfoSections blendModel:viewModel.valueModel];
-    [orderInfoSections blendModel:viewModel.valueModel];
-    [applicationSections blendModel:viewModel.valueModel];
+    [costInfoSections blendModel:viewModel];
+    [orderInfoSections blendModel:viewModel];
+    [applicationSections blendModel:viewModel];
     
-    
+    [RACObserve(bussinessInfoSections, sections) subscribeNext:^(id x) {
+        [self reloadTableViewAtIndex:0];
+    }];
     [RACObserve(applyInfoSections, sections) subscribeNext:^(id x) {
         [self reloadTableViewAtIndex:1];
     }];
@@ -273,17 +273,20 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         }
     }];
     [RACObserve(self, selecedDate) subscribeNext:^(NSDate *date) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd"];
+        NSString *dateStr = [formatter stringFromDate:date];
         if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
         {
-            [(ZYSelectCell*)firstResponderCell setSelecedObj:date];
+            [(ZYSelectCell*)firstResponderCell setCellText:dateStr];
         }
         if([firstResponderCell isKindOfClass:[ZYInputCell class]])
         {
-            [(ZYInputCell*)firstResponderCell setSelecedObj:date];
+            [(ZYInputCell*)firstResponderCell setCellText:dateStr];
         }
     }];
     
-    [self.viewModel.valueModel reset];
+    [self.viewModel foreclosureHouseRequest];
 }
 - (ZYSections*)sliderController:(ZYSliderViewController*)controller sectionsWithPage:(NSInteger)page
 {

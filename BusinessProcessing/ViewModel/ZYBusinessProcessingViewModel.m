@@ -39,6 +39,7 @@
     request.is_my_biz = self.isMyBussiness;
     request.product_id = [self.businessProcessProductType.pid longLongValue];
     request.dynamic_name = self.businessProcessState;
+    request.project_name = self.searchKeywordModel.searchKeyword;
     self.noMoreData = NO;
     if(loadMore)
     {
@@ -58,6 +59,8 @@
         {
             self.placeHolderViewType = ZYPlaceHolderViewTypeNoData;
         }
+        [self reloadDataSource];
+        
         if(loadMore)
         {
             if(productArr.count<20)
@@ -73,7 +76,7 @@
         {
             self.refreshing = NO;
         }
-        [self reloadDataSource];
+        
     } error:^(NSError *error) {
         if(error.code==404)
         {

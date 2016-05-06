@@ -30,7 +30,7 @@
 {
     self = [super initWithTitle:title];
     if (self) {
-        
+        [self initSection];
     }
     return self;
 }
@@ -40,9 +40,9 @@
     
     originalBankNameCell = [ZYSelectCell cellWithActionBlock:^{
         @strongify(self)
-        [self cellSearch:originalBankNameCell withDataSourceSignal:[ZYForeclosureHouseValueModel bankSearchSignal] showKey:@"name"];
+        [self cellSearch:originalBankNameCell withDataSourceSignal:[ZYForeclosureHouseViewModel bankSearchSignal] showKey:@"look_desc"];
     }];
-    originalBankNameCell.showKey = @"name";
+    originalBankNameCell.showKey = @"look_desc";
     originalBankNameCell.cellTitle = @"原贷款银行";
     
     originalBankLoanMoneyCell = [ZYInputCell cellWithActionBlock:nil];
@@ -106,20 +106,20 @@
     footCell.lineHidden = YES;
 
 }
-- (void)blendModel:(ZYForeclosureHouseValueModel*)model
+- (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
-    [self initSection];
-    RACChannelTo(model,originalBankName) = RACChannelTo(originalBankNameCell,selecedObj);
-    RACChannelTo(model,originalBankLoanMoney) = RACChannelTo(originalBankLoanMoneyCell,cellText);
-    RACChannelTo(model,originalBankDebt) = RACChannelTo(originalBankDebtCell,cellText);
-    RACChannelTo(model,originalBankLoanEndTime) = RACChannelTo(originalBankLoanEndTimeCell,selecedObj);
+    RACChannelTo(originalBankNameCell,selecedObj) = RACChannelTo(model,originalBankName);
+
+    RACChannelTo(originalBankLoanMoneyCell,cellText) = RACChannelTo(model,originalBankLoanMoney);
+    RACChannelTo(originalBankDebtCell,cellText) = RACChannelTo(model,originalBankDebt);
+    RACChannelTo(originalBankLoanEndTimeCell,cellText) = RACChannelTo(model,originalBankLoanEndTime);
     
-    RACChannelTo(model,originalBankLinkman) = RACChannelTo(originalBankLinkmanCell,cellText);
-    RACChannelTo(model,originalBankTelephone) = RACChannelTo(originalBankTelephoneCell,cellText);
-    RACChannelTo(model,originalBankThirdPartyLoan) = RACChannelTo(originalBankThirdPartyLoanCell,cellText);
-    RACChannelTo(model,originalBankThirdPartyCardNumber) = RACChannelTo(originalBankThirdPartyCardNumberCell,cellText);
-    RACChannelTo(model,originalBankThirdPartyTelephone) = RACChannelTo(originalBankThirdPartyTelephoneCell,cellText);
-    RACChannelTo(model,originalBankThirdPartyAddress) = RACChannelTo(originalBankThirdPartyAddressCell,cellText);
+    RACChannelTo(originalBankLinkmanCell,cellText) = RACChannelTo(model,originalBankLinkman);
+    RACChannelTo(originalBankTelephoneCell,cellText) = RACChannelTo(model,originalBankTelephone);
+    RACChannelTo(originalBankThirdPartyLoanCell,cellText) = RACChannelTo(model,originalBankThirdPartyLoan);
+    RACChannelTo(originalBankThirdPartyCardNumberCell,cellText) = RACChannelTo(model,originalBankThirdPartyCardNumber);
+    RACChannelTo(originalBankThirdPartyTelephoneCell,cellText) = RACChannelTo(model,originalBankThirdPartyTelephone);
+    RACChannelTo(originalBankThirdPartyAddressCell,cellText) = RACChannelTo(model,originalBankThirdPartyAddress);
     
     RAC(originalBankNameCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(originalBankLoanMoneyCell,userInteractionEnabled) = RACObserve(self, edit);

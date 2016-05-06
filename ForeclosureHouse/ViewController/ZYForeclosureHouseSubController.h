@@ -7,11 +7,11 @@
 //
 
 #import "ZYSliderViewController.h"
-#import "ZYForeclosureHouseSubViewModel.h"
+#import "ZYForeclosureHouseViewModel.h"
 #import "ZYSections.h"
 @interface ZYForeclosureHouseSubController : ZYSliderViewController
-ZY_VIEW_MODEL_PROPERTY(ZYForeclosureHouseSubViewModel)
-- (instancetype)initWithModel:(ZYForeclosureHouseValueModel*)model;
+ZY_VIEW_MODEL_PROPERTY(ZYForeclosureHouseViewModel)
+- (instancetype)initWithModel:(ZYForeclosureHouseViewModel*)model;
 /**
  *  绑定一个sections 用于向外界传递信号
  *

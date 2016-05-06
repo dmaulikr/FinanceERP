@@ -48,12 +48,6 @@
         {
             self.cellText = selecedObj;
         }
-        else if ([selecedObj isKindOfClass:[NSDate class]])
-        {
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateFormat:@"yyyy-MM-dd"];
-            self.cellText = [formatter stringFromDate:selecedObj];
-        }
         else if (self.showKey.length!=0)
         {
             self.cellText = [selecedObj valueForKey:self.showKey];
@@ -97,6 +91,7 @@
         [self setCellTitle:self.cellTitle];
     }
 }
+
 - (void)setCellNullable:(BOOL)cellNullable
 {
     _cellNullable = cellNullable;

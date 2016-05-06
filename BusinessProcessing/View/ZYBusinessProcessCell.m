@@ -38,7 +38,18 @@
 - (void)setModel:(ZYBusinessProcessModel *)model
 {
     _model = model;
-    _cellTitleLabel.text = model.project_name;
+    
+    if(model.keyword)
+    {
+        NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:model.project_name];
+        [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:[model.project_name rangeOfString:model.keyword]];
+        _cellTitleLabel.attributedText = str;
+    }
+    else
+    {
+        _cellTitleLabel.text = model.project_name;
+    }
+    
     _cellSubTitleLabel.text = model.product_name;
     _cellPriceLabel.text = [NSString stringWithFormat:@"%lld",model.loan_money];
     _cellDateLabel.text = model.project_pass_date;
