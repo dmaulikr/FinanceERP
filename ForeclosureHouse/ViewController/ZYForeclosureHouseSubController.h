@@ -13,14 +13,9 @@
 ZY_VIEW_MODEL_PROPERTY(ZYForeclosureHouseViewModel)
 - (instancetype)initWithModel:(ZYForeclosureHouseViewModel*)model;
 /**
- *  绑定一个sections 用于向外界传递信号
- *
- *  @param sections 一个表格 对应一个sections  用于数据绑定
- */
-- (void)blendSections:(ZYSections*)sections;
-
-/**
  *  是否可以编辑
  */
 @property(nonatomic,assign)BOOL edit;
+
+- (void)blendSections:(ZYSections*)sections;
 @end

@@ -10,7 +10,6 @@
 #import "ZYBussinessInfoSections.h"
 #import "ZYApplyInfoSections.h"
 #import "ZYHousePropertyInfoSections.h"
-#import "ZYBothSideInfoSections.h"
 #import "ZYOriginalBankSections.h"
 #import "ZYCurrentBankSections.h"
 #import "ZYOrderInfoSections.h"
@@ -81,42 +80,249 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
     [super updateViewConstraints];
     self.contentWidth.constant = 1.5*FUll_SCREEN_WIDTH;
 }
+- (ZYSections*)buildSection:(Class)class
+{
+    
+    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
+    if(class == [ZYBussinessInfoSections class])
+    {
+        ZYBussinessInfoSections *sections = [[class alloc] initWithTitle:@"业务信息"];
+        sections.edit = self.edit;
+        [sections.showSectionSignal subscribeNext:^(RACTuple *value) {
+            [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:0];
+        }];
+        [[RACSignal merge:@[sections.pickerByDataSourceSignal,sections.pickerBySignalSignal]] subscribeNext:^(RACTuple *value) {
+            [self picker:value];
+        }];
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self showDatePickerView:YES];
+        }];
+        [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self performSegueWithIdentifier:@"search" sender:value];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                [self nextPage];
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
+            [self lastPage];
+        }];
+        [sections blendModel:viewModel];
+        return sections;
+    }
+    else if(class == [ZYApplyInfoSections class])
+    {
+        ZYApplyInfoSections *sections = [[class alloc] initWithTitle:@"申请信息"];
+        sections.edit = self.edit;
+        [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self performSegueWithIdentifier:@"search" sender:value];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                [self nextPage];
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
+            [self lastPage];
+        }];
+        [sections blendModel:viewModel];
+        return sections;
+    }
+    else if(class == [ZYSections class])
+    {
+        return nil;
+    }
+    else if(class == [ZYCostInfoSections class])
+    {
+        ZYCostInfoSections *sections = [[class alloc] initWithTitle:@"费用信息"];
+        sections.edit = self.edit;
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                [self nextPage];
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
+            [self lastPage];
+        }];
+        [sections blendModel:viewModel];
+        return sections;
+    }
+    else if(class == [ZYOrderInfoSections class])
+    {
+        ZYOrderInfoSections *sections = [[class alloc] initWithTitle:@"赎楼清单"];
+        sections.edit = self.edit;
+        [[sections showSectionSignal] subscribeNext:^(RACTuple *value) {
+            [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:4];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                [self nextPage];
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
+            [self lastPage];
+        }];
+        [sections blendModel:viewModel];
+        return sections;
+    }
+    else if(class == [ZYApplicationSections class])
+    {
+        ZYApplicationSections *sections = [[class alloc] initWithTitle:@"申请办理"];
+        sections.edit = self.edit;
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self showDatePickerView:YES];
+        }];
+        [[(ZYApplicationSections*)sections saveSignal] subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                //保存
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [[(ZYApplicationSections*)sections submitSignal] subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                //提交
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error.length==0)
+            {
+                [self nextPage];
+            }
+            else
+            {
+                [self tip:error];
+            }
+        }];
+        [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
+            [self lastPage];
+        }];
+        [sections blendModel:viewModel];
+        return sections;
+    }
+    return nil;
+}
+- (void)picker:(RACTuple*)value
+{
+    if([value.first isKindOfClass:[ZYSelectCell class]])
+    {
+        firstResponderCell = (ZYSelectCell*)value.first;
+        self.selecedRow = [(ZYSelectCell*)firstResponderCell selecedIndex];
+    }
+    if([value.first isKindOfClass:[ZYInputCell class]])
+    {
+        firstResponderCell = (ZYInputCell*)value.first;
+        self.selecedRow = [(ZYInputCell*)firstResponderCell selecedIndex];
+    }
+    
+    NSString *showKey = value.third;
+    self.pickerShowValueKey = showKey;
+    if([value.second isKindOfClass:[NSArray class]])
+    {
+        NSArray *dataSource = value.second;
+        self.components = @[dataSource];
+    }
+    else if([value.second isKindOfClass:[RACSignal class]])
+    {
+        RACSignal *signal = value.second;
+        [signal subscribeNext:^(NSArray *dataSource) {
+            self.components = @[dataSource];
+        }];
+    }
+    [self showPickerView:YES];
+}
 - (void)buildUI
 {
+    self.singelLoad = YES;
+    
     [self buildPickerView];
     self.pickerViewTapBlankHidden = YES;
     [self buildDatePickerView];
     self.datePickerViewTapBlankHidden = YES;
     
-    bussinessInfoSections = [[ZYBussinessInfoSections alloc] initWithTitle:@"业务信息"];
-    bussinessInfoSections.edit = self.edit;
-    applyInfoSections = [[ZYApplyInfoSections alloc] initWithTitle:@"申请信息 "];
-    applyInfoSections.edit = self.edit;
-    foreclosureHouseInfoSections = [[ZYSections alloc] initWithTitle:@"赎楼信息"];
-    costInfoSections = [[ZYCostInfoSections alloc] initWithTitle:@"费用信息"];
-    costInfoSections.edit = self.edit;
-    orderInfoSections = [[ZYOrderInfoSections alloc] initWithTitle:@"赎楼清单"];
-    orderInfoSections.edit = self.edit;
-    applicationSections = [[ZYApplicationSections alloc] initWithTitle:@"申请办理"];
-    applicationSections.edit = self.edit;
+    NSArray *titles = @[@"业务信息",@"申请信息",@"赎楼信息",@"费用信息",@"赎楼清单",@"申请办理"];
     
-    sectionsArr = @[bussinessInfoSections,
-                    applyInfoSections,
-                    foreclosureHouseInfoSections,
-                    costInfoSections,
-                    orderInfoSections,
-                    applicationSections];
+    sectionsArr = @[[ZYBussinessInfoSections class],
+                    [ZYApplyInfoSections class],
+                    [ZYSections class],
+                    [ZYCostInfoSections class],
+                    [ZYOrderInfoSections class],
+                    [ZYApplicationSections class]];
     
     subSliderViewCtl = [[ZYForeclosureHouseSubController alloc] initWithModel:self.viewModel];
     subSliderViewCtl.edit = self.edit;
+    ZYSections *sections = [[ZYSections alloc] initWithTitle:@"赎楼信息"];
+    [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+        firstResponderCell = (ZYSelectCell*)value.first;
+        [self showDatePickerView:YES];
+    }];
+    [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
+        firstResponderCell = (ZYSelectCell*)value.first;
+        [self performSegueWithIdentifier:@"search" sender:value];
+    }];
+    [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+        NSString *error = value.first;
+        if(error.length==0)
+        {
+            [self nextPage];
+        }
+        else
+        {
+            [self tip:error];
+        }
+    }];
+    [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
+        [self lastPage];
+    }];
+    [subSliderViewCtl blendSections:sections];
     
     _labelArr = [NSMutableArray arrayWithCapacity:10];
     _viewArr = [NSMutableArray arrayWithCapacity:10];
     
     steps = sectionsArr.count;
     stepWidth = 1.5*FUll_SCREEN_WIDTH/steps;
-    [sectionsArr enumerateObjectsUsingBlock:^(ZYSections * _Nonnull sections, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSString *title = sections.title;
+    [titles enumerateObjectsUsingBlock:^(NSString * _Nonnull title, NSUInteger idx, BOOL * _Nonnull stop) {
+        
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(stepWidth/2.f+idx*stepWidth-30, -30, 60, 15)];
         label.font = FONT(12);
         label.textAlignment = NSTextAlignmentCenter;
@@ -140,118 +346,10 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         self.progressWidth.constant = (self.contentWidth.constant/steps)/2.f;
     
     [self buildTableViewController];
+    
 }
 - (void)blendViewModel
 {
-    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
-    
-    RACChannelTo(viewModel,projectID) = RACChannelTo(self,projectID);
-    
-    [bussinessInfoSections blendModel:viewModel];
-    [applyInfoSections blendModel:viewModel];
-    [subSliderViewCtl blendSections:foreclosureHouseInfoSections];//这个特殊子页面 需要绑定一个section
-    [costInfoSections blendModel:viewModel];
-    [orderInfoSections blendModel:viewModel];
-    [applicationSections blendModel:viewModel];
-    
-    [RACObserve(bussinessInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:0];
-    }];
-    [RACObserve(applyInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:1];
-    }];
-    [RACObserve(costInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:3];
-    }];
-    [RACObserve(orderInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:4];
-    }];
-    [RACObserve(applicationSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:5];
-    }];
-    
-    [bussinessInfoSections.showSectionSignal subscribeNext:^(RACTuple *value) {
-        [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:0];
-    }];
-    [orderInfoSections.showSectionSignal subscribeNext:^(RACTuple *value) {
-        [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:4];
-    }];
-    [[RACSignal merge:@[bussinessInfoSections.pickerByDataSourceSignal,bussinessInfoSections.pickerBySignalSignal]] subscribeNext:^(RACTuple *value) {
-        if([value.first isKindOfClass:[ZYSelectCell class]])
-        {
-            firstResponderCell = (ZYSelectCell*)value.first;
-            self.selecedRow = [(ZYSelectCell*)firstResponderCell selecedIndex];
-        }
-        if([value.first isKindOfClass:[ZYInputCell class]])
-        {
-            firstResponderCell = (ZYInputCell*)value.first;
-            self.selecedRow = [(ZYInputCell*)firstResponderCell selecedIndex];
-        }
-        
-        NSString *showKey = value.third;
-        self.pickerShowValueKey = showKey;
-        if([value.second isKindOfClass:[NSArray class]])
-        {
-            NSArray *dataSource = value.second;
-            self.components = @[dataSource];
-        }
-        else if([value.second isKindOfClass:[RACSignal class]])
-        {
-            RACSignal *signal = value.second;
-            [signal subscribeNext:^(NSArray *dataSource) {
-                self.components = @[dataSource];
-            }];
-        }
-        [self showPickerView:YES];
-    }];
-    
-    [[RACSignal merge:@[bussinessInfoSections.datePickerSignal,foreclosureHouseInfoSections.datePickerSignal,applicationSections.datePickerSignal]] subscribeNext:^(RACTuple *value) {
-        firstResponderCell = (ZYSelectCell*)value.first;
-        [self showDatePickerView:YES];
-    }];
-    
-    [[RACSignal merge:@[bussinessInfoSections.searchBySignalSignal,applyInfoSections.searchBySignalSignal,foreclosureHouseInfoSections.searchBySignalSignal]] subscribeNext:^(RACTuple *value) {
-        firstResponderCell = (ZYSelectCell*)value.first;
-        [self performSegueWithIdentifier:@"search" sender:value];
-    }];
-    
-    [[RACSignal merge:@[bussinessInfoSections.nextStepSignal,applyInfoSections.nextStepSignal,costInfoSections.nextStepSignal,costInfoSections.nextStepSignal,orderInfoSections.nextStepSignal,foreclosureHouseInfoSections.nextStepSignal]] subscribeNext:^(RACTuple *value) {
-        NSString *error = value.first;
-        if(error.length==0)
-        {
-            [self nextPage];
-        }
-        else
-        {
-            [self tip:error];
-        }
-    }];
-    [[RACSignal merge:@[applyInfoSections.lastStepSignal,costInfoSections.lastStepSignal,costInfoSections.lastStepSignal,orderInfoSections.lastStepSignal,applicationSections.lastStepSignal,foreclosureHouseInfoSections.lastStepSignal]] subscribeNext:^(RACTuple *value) {
-        [self lastPage];
-    }];
-    [applicationSections.saveSignal subscribeNext:^(RACTuple *value) {
-        NSString *error = value.first;
-        if(error.length==0)
-        {
-            //保存
-        }
-        else
-        {
-            [self tip:error];
-        }
-    }];
-    [applicationSections.submitSignal subscribeNext:^(RACTuple *value) {
-        NSString *error = value.first;
-        if(error.length==0)
-        {
-            //提交
-        }
-        else
-        {
-            [self tip:error];
-        }
-    }];
-    
     [RACObserve(self, selecedRow) subscribeNext:^(NSNumber *index) {
         if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
         {
@@ -285,12 +383,161 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             [(ZYInputCell*)firstResponderCell setCellText:dateStr];
         }
     }];
-    
-    [self.viewModel foreclosureHouseRequest];
+
+    RACChannelTo(self.viewModel,projectID) = RACChannelTo(self,projectID);
+    [self.viewModel reset];//初始化
+    [self.viewModel foreclosureHouseRequest];//请求数据
 }
+//- (void)blendViewModel
+//{
+//    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
+//    
+//    RACChannelTo(viewModel,projectID) = RACChannelTo(self,projectID);
+//    
+//    [bussinessInfoSections blendModel:viewModel];
+//    [applyInfoSections blendModel:viewModel];
+//    [subSliderViewCtl blendSections:foreclosureHouseInfoSections];//这个特殊子页面 需要绑定一个section
+//    [costInfoSections blendModel:viewModel];
+//    [orderInfoSections blendModel:viewModel];
+//    [applicationSections blendModel:viewModel];
+//    
+//    [RACObserve(bussinessInfoSections, sections) subscribeNext:^(id x) {
+//        [self reloadTableViewAtIndex:0];
+//    }];
+//    [RACObserve(applyInfoSections, sections) subscribeNext:^(id x) {
+//        [self reloadTableViewAtIndex:1];
+//    }];
+//    [RACObserve(costInfoSections, sections) subscribeNext:^(id x) {
+//        [self reloadTableViewAtIndex:3];
+//    }];
+//    [RACObserve(orderInfoSections, sections) subscribeNext:^(id x) {
+//        [self reloadTableViewAtIndex:4];
+//    }];
+//    [RACObserve(applicationSections, sections) subscribeNext:^(id x) {
+//        [self reloadTableViewAtIndex:5];
+//    }];
+//    
+//    [bussinessInfoSections.showSectionSignal subscribeNext:^(RACTuple *value) {
+//        [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:0];
+//    }];
+//    [orderInfoSections.showSectionSignal subscribeNext:^(RACTuple *value) {
+//        [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:4];
+//    }];
+//    [[RACSignal merge:@[bussinessInfoSections.pickerByDataSourceSignal,bussinessInfoSections.pickerBySignalSignal]] subscribeNext:^(RACTuple *value) {
+//        if([value.first isKindOfClass:[ZYSelectCell class]])
+//        {
+//            firstResponderCell = (ZYSelectCell*)value.first;
+//            self.selecedRow = [(ZYSelectCell*)firstResponderCell selecedIndex];
+//        }
+//        if([value.first isKindOfClass:[ZYInputCell class]])
+//        {
+//            firstResponderCell = (ZYInputCell*)value.first;
+//            self.selecedRow = [(ZYInputCell*)firstResponderCell selecedIndex];
+//        }
+//        
+//        NSString *showKey = value.third;
+//        self.pickerShowValueKey = showKey;
+//        if([value.second isKindOfClass:[NSArray class]])
+//        {
+//            NSArray *dataSource = value.second;
+//            self.components = @[dataSource];
+//        }
+//        else if([value.second isKindOfClass:[RACSignal class]])
+//        {
+//            RACSignal *signal = value.second;
+//            [signal subscribeNext:^(NSArray *dataSource) {
+//                self.components = @[dataSource];
+//            }];
+//        }
+//        [self showPickerView:YES];
+//    }];
+//    
+//    [[RACSignal merge:@[bussinessInfoSections.datePickerSignal,foreclosureHouseInfoSections.datePickerSignal,applicationSections.datePickerSignal]] subscribeNext:^(RACTuple *value) {
+//        firstResponderCell = (ZYSelectCell*)value.first;
+//        [self showDatePickerView:YES];
+//    }];
+//    
+//    [[RACSignal merge:@[bussinessInfoSections.searchBySignalSignal,applyInfoSections.searchBySignalSignal,foreclosureHouseInfoSections.searchBySignalSignal]] subscribeNext:^(RACTuple *value) {
+//        firstResponderCell = (ZYSelectCell*)value.first;
+//        [self performSegueWithIdentifier:@"search" sender:value];
+//    }];
+//    
+//    [[RACSignal merge:@[bussinessInfoSections.nextStepSignal,applyInfoSections.nextStepSignal,costInfoSections.nextStepSignal,costInfoSections.nextStepSignal,orderInfoSections.nextStepSignal,foreclosureHouseInfoSections.nextStepSignal]] subscribeNext:^(RACTuple *value) {
+//        NSString *error = value.first;
+//        if(error.length==0)
+//        {
+//            [self nextPage];
+//        }
+//        else
+//        {
+//            [self tip:error];
+//        }
+//    }];
+//    [[RACSignal merge:@[applyInfoSections.lastStepSignal,costInfoSections.lastStepSignal,costInfoSections.lastStepSignal,orderInfoSections.lastStepSignal,applicationSections.lastStepSignal,foreclosureHouseInfoSections.lastStepSignal]] subscribeNext:^(RACTuple *value) {
+//        [self lastPage];
+//    }];
+//    [applicationSections.saveSignal subscribeNext:^(RACTuple *value) {
+//        NSString *error = value.first;
+//        if(error.length==0)
+//        {
+//            //保存
+//        }
+//        else
+//        {
+//            [self tip:error];
+//        }
+//    }];
+//    [applicationSections.submitSignal subscribeNext:^(RACTuple *value) {
+//        NSString *error = value.first;
+//        if(error.length==0)
+//        {
+//            //提交
+//        }
+//        else
+//        {
+//            [self tip:error];
+//        }
+//    }];
+//    
+//    [RACObserve(self, selecedRow) subscribeNext:^(NSNumber *index) {
+//        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
+//        {
+//            [(ZYSelectCell*)firstResponderCell setSelecedIndex:index.longLongValue];
+//        }
+//        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
+//        {
+//            [(ZYSelectCell*)firstResponderCell setSelecedIndex:index.longLongValue];
+//        }
+//    }];
+//    [RACObserve(self, selecedObj) subscribeNext:^(id obj) {
+//        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
+//        {
+//            [(ZYSelectCell*)firstResponderCell setSelecedObj:obj];
+//        }
+//        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
+//        {
+//            [(ZYInputCell*)firstResponderCell setSelecedObj:obj];
+//        }
+//    }];
+//    [RACObserve(self, selecedDate) subscribeNext:^(NSDate *date) {
+//        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//        [formatter setDateFormat:@"yyyy-MM-dd"];
+//        NSString *dateStr = [formatter stringFromDate:date];
+//        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
+//        {
+//            [(ZYSelectCell*)firstResponderCell setCellText:dateStr];
+//        }
+//        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
+//        {
+//            [(ZYInputCell*)firstResponderCell setCellText:dateStr];
+//        }
+//    }];
+//    
+//    
+//}
 - (ZYSections*)sliderController:(ZYSliderViewController*)controller sectionsWithPage:(NSInteger)page
 {
-    return sectionsArr[page];
+    return [self buildSection:sectionsArr[page]];
 }
 - (NSInteger)countOfControllerSliderController:(ZYSliderViewController *)controller
 {

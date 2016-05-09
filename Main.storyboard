@@ -47,7 +47,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RhK-7V-mhh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="897" y="-897"/>
+            <point key="canvasLocation" x="893" y="-1185"/>
         </scene>
         <!--信贷工具-->
         <scene sceneID="FA8-lu-4fP">
@@ -236,7 +236,65 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6HN-EP-bjk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1588" y="-93"/>
+            <point key="canvasLocation" x="2288" y="-785"/>
+        </scene>
+        <!--我的客户-->
+        <scene sceneID="Mbt-zK-mVi">
+            <objects>
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="nLP-YA-eEg" customClass="ZYMyCustomerController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="l2O-8n-WZc"/>
+                        <viewControllerLayoutGuide type="bottom" id="Gq4-8H-TPd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Sxb-kg-2cl">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="zGI-tF-WWr">
+                                <rect key="frame" x="0.0" y="108" width="600" height="443"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="eVy-r7-KR4">
+                                <rect key="frame" x="0.0" y="64" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="eWS-aw-85T"/>
+                                </constraints>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="nLP-YA-eEg" id="zxc-9i-WMG"/>
+                                </connections>
+                            </searchBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="eVy-r7-KR4" firstAttribute="top" secondItem="l2O-8n-WZc" secondAttribute="bottom" id="3Ws-uL-vNR"/>
+                            <constraint firstItem="eVy-r7-KR4" firstAttribute="leading" secondItem="Sxb-kg-2cl" secondAttribute="leading" id="8n4-ji-uKc"/>
+                            <constraint firstItem="zGI-tF-WWr" firstAttribute="leading" secondItem="Sxb-kg-2cl" secondAttribute="leading" id="Awp-9s-cXo"/>
+                            <constraint firstItem="zGI-tF-WWr" firstAttribute="top" secondItem="eVy-r7-KR4" secondAttribute="bottom" id="PWK-zm-idu"/>
+                            <constraint firstAttribute="trailing" secondItem="eVy-r7-KR4" secondAttribute="trailing" id="WU0-Bv-rV9"/>
+                            <constraint firstAttribute="trailing" secondItem="zGI-tF-WWr" secondAttribute="trailing" id="hHn-sL-mF7"/>
+                            <constraint firstItem="Gq4-8H-TPd" firstAttribute="top" secondItem="zGI-tF-WWr" secondAttribute="bottom" id="vFs-EB-kBj"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="我的客户" id="MeL-1Q-pKb"/>
+                    <connections>
+                        <outlet property="searchBar" destination="eVy-r7-KR4" id="x2E-FJ-0t9"/>
+                        <outlet property="searchDisplayController" destination="rJL-Zx-KZy" id="nRc-MZ-miP"/>
+                        <outlet property="tableView" destination="zGI-tF-WWr" id="3Ad-xk-vEH"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oO2-M1-NXw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="rJL-Zx-KZy">
+                    <connections>
+                        <outlet property="delegate" destination="nLP-YA-eEg" id="wdN-4D-4WF"/>
+                        <outlet property="searchBar" destination="eVy-r7-KR4" id="1hJ-E2-al9"/>
+                        <outlet property="searchContentsController" destination="nLP-YA-eEg" id="jXh-eB-d7E"/>
+                        <outlet property="searchResultsDataSource" destination="nLP-YA-eEg" id="Vni-uB-N1I"/>
+                        <outlet property="searchResultsDelegate" destination="nLP-YA-eEg" id="1GK-gU-Ir7"/>
+                    </connections>
+                </searchDisplayController>
+            </objects>
+            <point key="canvasLocation" x="2288" y="-57"/>
         </scene>
         <!--房贷计算器-->
         <scene sceneID="NP4-IL-Fnv">
@@ -517,11 +575,12 @@
                         <segue destination="hdg-y4-FDh" kind="show" identifier="applyList" id="dhM-GE-bq7"/>
                         <segue destination="Das-o8-RED" kind="show" identifier="processing" id="yDE-LL-Zxg"/>
                         <segue destination="lol-6D-Lw2" kind="show" identifier="web" id="Lsp-yV-tsD"/>
+                        <segue destination="nLP-YA-eEg" kind="show" identifier="customer" id="8zo-NM-bBl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7tc-NX-DKF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1588" y="-898"/>
+            <point key="canvasLocation" x="1588" y="-1190"/>
         </scene>
         <!--Web Controller-->
         <scene sceneID="ija-VP-6nv">
@@ -567,7 +626,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KML-Fw-23V" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2268" y="-1652"/>
+            <point key="canvasLocation" x="2288" y="-2228"/>
         </scene>
         <!--Search View Controller-->
         <scene sceneID="sug-mU-3KU">
@@ -629,7 +688,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tCN-LN-d0d" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2970" y="-1652"/>
+            <point key="canvasLocation" x="2994" y="-2228"/>
         </scene>
         <!--产品列表-->
         <scene sceneID="lQc-Wn-20G">
@@ -664,7 +723,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7J7-iY-lC6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2268" y="-898"/>
+            <point key="canvasLocation" x="2288" y="-1530"/>
         </scene>
         <!--赎楼-->
         <scene sceneID="5f1-8W-erD">
@@ -731,7 +790,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="P8u-iU-T7P" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2970" y="-897"/>
+            <point key="canvasLocation" x="2994" y="-1530"/>
         </scene>
         <!--房贷计算器-->
         <scene sceneID="oOJ-fr-WnS">
@@ -872,7 +931,7 @@
         <image name="tool-ic5n" width="64" height="64"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Rj7-wx-Rb0"/>
+        <segue reference="yg5-wZ-R3p"/>
         <segue reference="KI6-R4-mVu"/>
     </inferredMetricsTieBreakers>
 </document>

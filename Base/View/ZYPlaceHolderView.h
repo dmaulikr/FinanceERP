@@ -18,4 +18,5 @@ typedef enum : NSUInteger {
 
 - (instancetype)initWithFrame:(CGRect)frame type:(ZYPlaceHolderViewType)type;
 
+@property(nonatomic,strong)NSString *title;
 @end

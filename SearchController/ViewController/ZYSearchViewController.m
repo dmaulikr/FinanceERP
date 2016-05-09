@@ -10,7 +10,9 @@
 #import "ZYTableViewCell.h"
 #import "ZYBankModel.h"
 #import "ZYSearchCleanCell.h"
-@interface ZYSearchViewController ()<UISearchBarDelegate,UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate>
+#import <CYLTableViewPlaceHolder.h>
+
+@interface ZYSearchViewController ()<UISearchBarDelegate,UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate,CYLTableViewPlaceHolderDelegate>
 
 @property(nonatomic,weak)IBOutlet UITableView *tableView;
 @property(nonatomic,weak)IBOutlet UISearchBar *searchBar;
@@ -105,13 +107,28 @@
     {
         [[self.viewModel searchSignal] subscribeNext:^(id x) {
             self.viewModel.dataSourceArr = x;
-            [self.tableView reloadData];
+            if(self.netSearch)
+            {
+                [self.tableView reloadData];
+            }
+            else
+            {
+                [self.tableView cyl_reloadData];
+            }
+            
         }];
     }
     else
     {
         [[self.viewModel searchWithText:searchText] subscribeNext:^(id x) {
-            [self.tableView reloadData];
+            if(self.netSearch)
+            {
+                [self.tableView reloadData];
+            }
+            else
+            {
+                [self.tableView cyl_reloadData];
+            }
         }];
     }
 }
@@ -202,4 +219,10 @@
     [self dismissViewControllerAnimated:YES completion:^{
     }];
 }
+- (UIView*)makePlaceHolderView
+{
+    ZYPlaceHolderView *view = [[ZYPlaceHolderView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, self.tableView.height) type:self.viewModel.tablePlaceHolderType];
+    return view;
+}
+
 @end

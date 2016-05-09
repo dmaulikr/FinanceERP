@@ -18,21 +18,19 @@
 - (void)requestProduceListWith:(ZYUser*)user;
 
 @property(nonatomic,strong)NSArray *businessProcessingStateArr;
-
+@property(nonatomic,strong)NSArray *businessProcessingStateShowArr;
 
 @property(nonatomic,strong)NSMutableArray *businessProcessingArr;
 - (void)requestBussinessProcess:(ZYUser*)user loadMore:(BOOL)loadMore;
 @property(nonatomic,assign)BOOL refreshing;
 @property(nonatomic,assign)BOOL loadmore;
 @property(nonatomic,assign)BOOL noMoreData;
+//搜索无数据时候 显示类型
+@property(nonatomic,assign)ZYPlaceHolderViewType tablePlaceHolderType;
 
 @property(nonatomic,assign)BOOL isMyBussiness;//是否是我的业务
 @property(nonatomic,assign)NSInteger pageNum;
 @property(nonatomic,assign)NSInteger pageSize;
-/**
- *  数据异常时候 提示
- */
-@property(nonatomic,assign)ZYPlaceHolderViewType placeHolderViewType;
 
 
 /**

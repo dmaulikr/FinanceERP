@@ -1,16 +1,15 @@
 //
-//  ZYBothSideInfoSections.h
+//  ZYSellerInfoSections.h
 //  FinanceERP
 //
-//  Created by zhangyu on 16/4/20.
+//  Created by zhangyu on 16/5/9.
 //  Copyright © 2016年 张昱. All rights reserved.
 //
 
 #import "ZYSections.h"
-
 #import "ZYForeclosureHouseViewModel.h"
 
-@interface ZYBothSideInfoSections : ZYSections
+@interface ZYSellerInfoSections : ZYSections
 - (void)blendModel:(ZYForeclosureHouseViewModel*)model;
 @property(nonatomic,strong)NSString *error;
 

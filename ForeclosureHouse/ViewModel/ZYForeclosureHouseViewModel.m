@@ -13,31 +13,36 @@
 {
     self = [super init];
     if (self) {
-        self.bussinessInfoComeFromType = [[ZYForeclosureHouseComeFromTypeModel getUsingLKDBHelper] searchSingle:[ZYForeclosureHouseComeFromTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
-        self.bussinessInfoOrderType = [[ZYForeclosureHouseOrderTypeModel getUsingLKDBHelper] searchSingle:[ZYForeclosureHouseOrderTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
-        self.bussinessInfoTransactionType = [[ZYForeclosureHouseTransactionTypeModel getUsingLKDBHelper] searchSingle:[ZYForeclosureHouseTransactionTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
-        self.bankLoanType = [[ZYBankLoanTypeModel getUsingLKDBHelper] searchSingle:[ZYBankLoanTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
-        self.costInfoChargeType = [[ZYCostInfoChargeTypeModel getUsingLKDBHelper] searchSingle:[ZYCostInfoChargeTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
-        self.orderInfoPaperArr = [[ZYPaperModel getUsingLKDBHelper] search:[ZYPaperModel class] where:nil orderBy:@"rowid" offset:0 count:INT64_MAX];
+        
     }
     return self;
+}
+- (void)reset
+{
+    self.bussinessInfoComeFromType = [[ZYForeclosureHouseComeFromTypeModel getUsingLKDBHelper] searchSingle:[ZYForeclosureHouseComeFromTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
+    self.bussinessInfoOrderType = [[ZYForeclosureHouseOrderTypeModel getUsingLKDBHelper] searchSingle:[ZYForeclosureHouseOrderTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
+    self.bussinessInfoTransactionType = [[ZYForeclosureHouseTransactionTypeModel getUsingLKDBHelper] searchSingle:[ZYForeclosureHouseTransactionTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
+    self.bankLoanType = [[ZYBankLoanTypeModel getUsingLKDBHelper] searchSingle:[ZYBankLoanTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
+    self.costInfoChargeType = [[ZYCostInfoChargeTypeModel getUsingLKDBHelper] searchSingle:[ZYCostInfoChargeTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
+    self.orderInfoPaperArr = [[ZYPaperModel getUsingLKDBHelper] search:[ZYPaperModel class] where:nil orderBy:@"rowid" offset:0 count:INT64_MAX];
 }
 - (void)loadData:(ZYForeclosureHouseModel*)model
 {
     self.bussinessInfoComeFromType = [self foreclosureHouseBussinessInfoComeFromType:model.business_source];
     switch (self.bussinessInfoComeFromType.type) {
         case ZYForeclosureHouseBussinessInfoComeFromBank:
-            self.bussinessInfoComeFromBank = [self bank:model.business_source_no];
+            self.bussinessInfoComeFromObj = [self bank:model.business_source_no];
             break;
         case ZYForeclosureHouseBussinessInfoComeFromIntermediary:
-            self.bussinessInfoComeFromIntermediary = [self intermediaryModel:model.business_source_no];
+            self.bussinessInfoComeFromObj = [self intermediaryModel:model.business_source_no];
             break;
         case ZYForeclosureHouseBussinessInfoComeFromFriend:
             break;
         case ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization:
-            self.bussinessInfoComeFromCooperativeOrganization = [self cooperativeOrganizationModel:model.business_source_no];
+            self.bussinessInfoComeFromObj = [self cooperativeOrganizationModel:model.business_source_no];
             break;
         case ZYForeclosureHouseBussinessInfoComeFromOther:
+            self.bussinessInfoComeFromOther = model.other_source;
             break;
         default:
             break;
@@ -46,7 +51,7 @@
 #pragma mark - 第一页
     self.bussinessInfoArea = model.address;
     self.bussinessInfoLoanMoney = [NSString stringWithFormat:@"%.2f",model.loan_money];
-    self.bussinessInfoDays = [NSString stringWithFormat:@"%ld",(long)model.loan_days];;
+    self.bussinessInfoDays = [NSString stringWithFormat:@"%ld",(long)model.loan_days];
     self.bussinessInfoDate = model.rece_date;
     self.bussinessInfoAccount = model.payment_account;
     self.bussinessInfoUsername = model.payment_name;

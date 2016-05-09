@@ -86,7 +86,8 @@
 - (void)showDatePickerView:(BOOL)show;
 
 @property(nonatomic,assign)BOOL datePickerViewTapBlankHidden;
-
+//逐个页面加载 很多页面时候 这样可以提高进入页面速度
+@property(nonatomic,assign)BOOL singelLoad;
 /**
  *  键盘
  */

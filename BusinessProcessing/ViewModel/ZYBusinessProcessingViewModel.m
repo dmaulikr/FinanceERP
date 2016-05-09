@@ -55,10 +55,6 @@
             [self.businessProcessingArr removeAllObjects];
         }
         [self.businessProcessingArr addObjectsFromArray:productArr];
-        if(self.businessProcessingArr.count==0)
-        {
-            self.placeHolderViewType = ZYPlaceHolderViewTypeNoData;
-        }
         [self reloadDataSource];
         
         if(loadMore)
@@ -80,10 +76,6 @@
     } error:^(NSError *error) {
         if(error.code==404)
         {
-            if(self.businessProcessingArr.count==0)
-            {
-                self.placeHolderViewType = ZYPlaceHolderViewTypeNoNet;
-            }
             [self reloadDataSource];
         }
         else
@@ -110,7 +102,7 @@
         self.businessStateCount = result;
     }];
 }
-- (NSArray*)businessProcessingStateArr
+- (NSArray*)businessProcessingStateShowArr
 {
     /**
      *  固定文字 不会随意修改
@@ -135,6 +127,14 @@
         }
         return stateWithCount;
     }
+    return states;
+}
+- (NSArray*)businessProcessingStateArr
+{
+    /**
+     *  固定文字 不会随意修改
+     */
+    NSArray *states = @[@"全部状态",@"发放贷款",@"赎楼",@"取旧证",@"注销抵押",@"过户",@"取新证",@"抵押",@"回款"];
     return states;
 }
 - (RACSignal*)businessProcessingSearchHistorySignal

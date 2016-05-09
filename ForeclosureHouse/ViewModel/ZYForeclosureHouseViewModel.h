@@ -38,16 +38,15 @@
 + (RACSignal*)intermediaryArrSignal;
 + (RACSignal*)borrowersSignal;
 
-
+- (void)reset;
 #pragma mark - 页面展示数据
 
 
 #pragma mark - 第一页
 @property(nonatomic,strong)ZYForeclosureHouseComeFromTypeModel *bussinessInfoComeFromType;
 
-@property(nonatomic,strong)ZYBankModel *bussinessInfoComeFromBank;
-@property(nonatomic,strong)ZYCooperativeOrganizationModel *bussinessInfoComeFromCooperativeOrganization;
-@property(nonatomic,strong)ZYIntermediaryModel *bussinessInfoComeFromIntermediary;
+@property(nonatomic,strong)id bussinessInfoComeFromObj;
+@property(nonatomic,strong)NSString *bussinessInfoComeFromOther;
 
 @property(nonatomic,strong)NSString *bussinessInfoArea;
 @property(nonatomic,strong)NSString *bussinessInfoLoanMoney;

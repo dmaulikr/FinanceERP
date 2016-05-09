@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ZYBankModel.h"
+#import "ZYPlaceHolderView.h"
 
 @interface ZYSearchViewModel : NSObject
 /**
@@ -26,6 +27,8 @@
 @property(nonatomic,strong)NSArray *dataSourceArr;
 
 @property(nonatomic,assign)BOOL loading;
+
+@property(nonatomic,assign)ZYPlaceHolderViewType tablePlaceHolderType;
 /**
  *  本地搜索
  */

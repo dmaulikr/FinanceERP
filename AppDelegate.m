@@ -40,6 +40,6 @@
     
     //复制数据库到 document文件下  便于读写
     [ZYStore copyDBWhenNotExit];
-    [[[ZYStore alloc] init] creatData];
+//    [[[ZYStore alloc] init] creatData];
 }
 @end

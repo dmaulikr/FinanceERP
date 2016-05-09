@@ -1,24 +1,19 @@
 //
-//  ZYBothSideInfoSections.m
-//  FinanceERP
+//  ZYBuyerInfoSections.m
+//  
 //
-//  Created by zhangyu on 16/4/20.
-//  Copyright © 2016年 张昱. All rights reserved.
+//  Created by zhangyu on 16/5/9.
+//
 //
 
-#import "ZYBothSideInfoSections.h"
+#import "ZYBuyerInfoSections.h"
 
-@implementation ZYBothSideInfoSections
+@implementation ZYBuyerInfoSections
 {
     ZYInputCell *bothSideInfoSellerNameCell;
     ZYInputCell *bothSideInfoSellerCardNumberCell;
     ZYInputCell *bothSideInfoSellerTelephoneCell;
     ZYInputCell *bothSideInfoSellerAddressCell;
-    
-    ZYInputCell *bothSideInfoBuyerNameCell;
-    ZYInputCell *bothSideInfoBuyerCardNumberCell;
-    ZYInputCell *bothSideInfoBuyerTelephoneCell;
-    ZYInputCell *bothSideInfoBuyerAddressCell;
     
     ZYTableViewCell *footCell;
 }
@@ -53,31 +48,10 @@
     bothSideInfoSellerAddressCell.cellPlaceHolder = @"请输入家庭住址";
     
     
-    
-    bothSideInfoBuyerNameCell = [ZYInputCell cellWithActionBlock:nil];
-    bothSideInfoBuyerNameCell.cellTitle = @"买家名称";
-    bothSideInfoBuyerNameCell.cellPlaceHolder = @"请输入买家名称";
-    
-    bothSideInfoBuyerCardNumberCell = [ZYInputCell cellWithActionBlock:nil];
-    bothSideInfoBuyerCardNumberCell.cellTitle = @"身份证号";
-    bothSideInfoBuyerCardNumberCell.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-    bothSideInfoBuyerCardNumberCell.cellRegular = [NSString checkCardNum];
-    bothSideInfoBuyerCardNumberCell.cellPlaceHolder = @"请输入身份证号";
-    
-    bothSideInfoBuyerTelephoneCell = [ZYInputCell cellWithActionBlock:nil];
-    bothSideInfoBuyerTelephoneCell.cellTitle = @"联系电话";
-    bothSideInfoBuyerTelephoneCell.cellPlaceHolder = @"请输入联系电话";
-    bothSideInfoBuyerTelephoneCell.onlyInt = YES;
-    bothSideInfoBuyerTelephoneCell.maxLength = 11;
-    
-    bothSideInfoBuyerAddressCell = [ZYInputCell cellWithActionBlock:nil];
-    bothSideInfoBuyerAddressCell.cellTitle = @"家庭住址";
-    bothSideInfoBuyerAddressCell.cellPlaceHolder = @"请输入家庭住址";
-    
     footCell = [ZYTableViewCell cellWithStyle:UITableViewCellStyleDefault height:[ZYDoubleButtonCell defaultHeight] actionBlock:nil];
     footCell.selectionStyle = UITableViewCellSelectionStyleNone;
     footCell.lineHidden = YES;
-
+    
 }
 - (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
@@ -86,20 +60,11 @@
     RACChannelTo(bothSideInfoSellerTelephoneCell,cellText) = RACChannelTo(model,bothSideInfoSellerTelephone);
     RACChannelTo(bothSideInfoSellerAddressCell,cellText) = RACChannelTo(model,bothSideInfoSellerAddress);
     
-    RACChannelTo(bothSideInfoBuyerNameCell,cellText) = RACChannelTo(model,bothSideInfoBuyerName);
-    RACChannelTo(bothSideInfoBuyerCardNumberCell,cellText) = RACChannelTo(model,bothSideInfoBuyerCardNumber);
-    RACChannelTo(bothSideInfoBuyerTelephoneCell,cellText) = RACChannelTo(model,bothSideInfoBuyerTelephone);
-    RACChannelTo(bothSideInfoBuyerAddressCell,cellText) = RACChannelTo(model,bothSideInfoBuyerAddress);
-    
     RAC(bothSideInfoSellerNameCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(bothSideInfoSellerCardNumberCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(bothSideInfoSellerTelephoneCell,userInteractionEnabled) = RACObserve(self, edit);
     RAC(bothSideInfoSellerAddressCell,userInteractionEnabled) = RACObserve(self, edit);
-    
-    RAC(bothSideInfoBuyerNameCell,userInteractionEnabled) = RACObserve(self, edit);
-    RAC(bothSideInfoBuyerCardNumberCell,userInteractionEnabled) = RACObserve(self, edit);
-    RAC(bothSideInfoBuyerTelephoneCell,userInteractionEnabled) = RACObserve(self, edit);
-    RAC(bothSideInfoBuyerAddressCell,userInteractionEnabled) = RACObserve(self, edit);
+
     
     [RACObserve(self, edit) subscribeNext:^(id x) {
         ZYSection *section;
@@ -109,21 +74,14 @@
                                                     bothSideInfoSellerCardNumberCell,
                                                     bothSideInfoSellerTelephoneCell,
                                                     bothSideInfoSellerAddressCell,
-                                                    bothSideInfoBuyerNameCell,
-                                                    bothSideInfoBuyerCardNumberCell,
-                                                    bothSideInfoBuyerTelephoneCell,
-                                                    bothSideInfoBuyerAddressCell,footCell]];
+                                                    footCell]];
         }
         else
         {
             section = [ZYSection sectionWithCells:@[bothSideInfoSellerNameCell,
                                                     bothSideInfoSellerCardNumberCell,
                                                     bothSideInfoSellerTelephoneCell,
-                                                    bothSideInfoSellerAddressCell,
-                                                    bothSideInfoBuyerNameCell,
-                                                    bothSideInfoBuyerCardNumberCell,
-                                                    bothSideInfoBuyerTelephoneCell,
-                                                    bothSideInfoBuyerAddressCell]];
+                                                    bothSideInfoSellerAddressCell]];
         }
         self.sections = @[section];
     }];
@@ -133,11 +91,7 @@
     NSArray *errorArr = @[bothSideInfoSellerNameCell,
                           bothSideInfoSellerCardNumberCell,
                           bothSideInfoSellerTelephoneCell,
-                          bothSideInfoSellerAddressCell,
-                          bothSideInfoBuyerNameCell,
-                          bothSideInfoBuyerCardNumberCell,
-                          bothSideInfoBuyerTelephoneCell,
-                          bothSideInfoBuyerAddressCell];
+                          bothSideInfoSellerAddressCell];
     NSString *result = nil;
     for(id cell in errorArr)
     {
@@ -157,5 +111,4 @@
     errorArr = nil;
     return result;
 }
-
 @end

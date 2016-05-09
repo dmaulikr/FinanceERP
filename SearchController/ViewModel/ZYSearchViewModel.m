@@ -27,6 +27,7 @@
         self.searchSignal = searchSignal;
         _filterDict = [NSMutableDictionary dictionaryWithCapacity:10];
         _initialArr = [NSMutableArray arrayWithCapacity:10];
+        self.tablePlaceHolderType = ZYPlaceHolderViewTypeNoSearchData;
     }
     return self;
 }

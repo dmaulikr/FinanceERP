@@ -9,7 +9,10 @@
 #import "ZYPlaceHolderView.h"
 
 @implementation ZYPlaceHolderView
-
+{
+    UIImageView *imageView;
+    UILabel *label;
+}
 - (instancetype)initWithFrame:(CGRect)frame type:(ZYPlaceHolderViewType)type
 {
     self = [super init];
@@ -29,7 +32,7 @@
             case ZYPlaceHolderViewTypeNoSearchData:
             {
                 imageName = @"hint_search_no_data";
-                tip = @"搜索无数据，请更换条件再试";
+                tip = @"没有搜索到您要的结果，请更换条件再试哦";
             }
                 break;
             case ZYPlaceHolderViewTypeNoNet:
@@ -43,11 +46,11 @@
         }
         UIImage *image = [UIImage imageNamed:imageName];
         
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((width-image.size.width)/2.f, (height-image.size.height)/2.f-50, image.size.width, image.size.height)];
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake((width-image.size.width)/2.f, (height-image.size.height)/2.f-50, image.size.width, image.size.height)];
         imageView.image = image;
         [self addSubview:imageView];
         
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, imageView.Y+imageView.height+GAP, width, 20)];
+        label = [[UILabel alloc] initWithFrame:CGRectMake(0, imageView.Y+imageView.height+GAP, width, 20)];
         label.text = tip;
         label.textAlignment = NSTextAlignmentCenter;
         label.textColor = TITLE_COLOR;
@@ -55,6 +58,11 @@
         
     }
     return self;
+}
+- (void)setTitle:(NSString *)title
+{
+    _title = title;
+    label.text = title;
 }
 /*
 // Only override drawRect: if you perform custom drawing.

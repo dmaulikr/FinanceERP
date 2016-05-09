@@ -110,6 +110,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     ZYSection *organicSection = self.sections[section];
+    [self showSection:!organicSection.hasFold sectionIndex:section];
     return organicSection.headerTitle;
 }
 

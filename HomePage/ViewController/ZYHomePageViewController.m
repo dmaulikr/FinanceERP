@@ -193,6 +193,9 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
             case 2:
                 [self performSegueWithIdentifier:@"processing" sender:@(YES)];
                 break;
+            case 3:
+                [self performSegueWithIdentifier:@"customer" sender:@(YES)];
+                break;
             default:
                 break;
         }

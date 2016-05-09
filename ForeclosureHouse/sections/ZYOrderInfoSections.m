@@ -193,13 +193,13 @@
            contentCell.userInteractionEnabled = self.edit;
            RACChannelTo(contentCell,cellText) = RACChannelTo(paper,orderInfoPaperContent);
            ZYSection *contentSection = [ZYSection sectionWithCells:@[contentCell]];
-           
+           contentSection.hasFold = YES;
            [sectionArr addObject:infoSection];
            if(self.edit)
            {
                [infoCell.buttonPressedSignal subscribeNext:^(id x) {
-                   infoCell.buttonRotate = infoSection.hasFold;
-                   if(infoSection.hasFold)
+                   infoCell.buttonRotate = contentSection.hasFold;
+                   if(contentSection.hasFold)
                    {
                        [self showSection:YES sectionIndex:idx*2];
                        [contentCell becomeFirstResponder];

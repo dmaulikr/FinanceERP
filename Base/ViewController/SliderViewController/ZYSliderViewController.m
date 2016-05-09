@@ -20,7 +20,6 @@
 {
     NSMutableArray *tableViewArr;
     
-    NSInteger currentPage;
     CGFloat width;
     CGFloat height;
     
@@ -53,8 +52,19 @@
             CGRect rect = [self sliderController:self frameWithPage:i];
             tableViewCtl.frame = rect;
             [self.scrollView addSubview:tableViewCtl.view];
-            ZYSections *sections = [self sliderController:self sectionsWithPage:i];
-            tableViewCtl.sections = sections.sections;
+            if(!self.singelLoad)
+            {
+                ZYSections *sections = [self sliderController:self sectionsWithPage:i];
+                tableViewCtl.sections = sections.sections;
+            }
+            else
+            {
+                if(i==0)
+                {
+                    ZYSections *sections = [self sliderController:self sectionsWithPage:i];
+                    tableViewCtl.sections = sections.sections;
+                }
+            }
             [tableViewArr addObject:tableViewCtl];
         }
         else
@@ -94,15 +104,15 @@
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    NSInteger lastPage = currentPage;
-    currentPage = (NSInteger)((scrollView.contentOffset.x) / width);
-    if(currentPage>lastPage)///向右
+    NSInteger lastPage = _currentPage;
+    _currentPage = (NSInteger)((scrollView.contentOffset.x) / width);
+    if(_currentPage>lastPage)///向右
     {
-        [self sliderController:self didChangePage:currentPage direction:ZYSliderToRight];
+        [self sliderController:self didChangePage:_currentPage direction:ZYSliderToRight];
     }
-    else if(currentPage<lastPage)
+    else if(_currentPage<lastPage)
     {
-        [self sliderController:self didChangePage:currentPage direction:ZYSliderToLeft];
+        [self sliderController:self didChangePage:_currentPage direction:ZYSliderToLeft];
     }
     else
     {
@@ -116,19 +126,45 @@
             direction = ZYSliderToLeft;
         }
         CGFloat rate = scrollView.contentOffset.x/(scrollView.contentSize.width-width);
-        [self sliderController:self changingPage:currentPage direction:direction rate:rate];
+        [self sliderController:self changingPage:_currentPage direction:direction rate:rate];
     }
     
     offX = scrollView.contentOffset.x;
+}
+-(void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    
+    if(!self.singelLoad)
+        return;
+    
+    for (ZYTableViewController *tableCtl in tableViewArr) {
+        if([tableCtl isKindOfClass:[ZYTableViewController class]])
+        {
+            tableCtl.sections = nil;
+        }
+    }
+    
+    ZYSections *sections = [self sliderController:self sectionsWithPage:_currentPage];
+    ZYTableViewController *tableViewCtl = tableViewArr[_currentPage];
+    if([tableViewCtl isKindOfClass:[ZYTableViewController class]])
+    {
+        tableViewCtl.sections = sections.sections;
+    }
 }
 - (void)changePage:(NSInteger)index
 {
     if(index>=totalNumber)
         return;
-    [self.scrollView setContentOffset:CGPointMake(index*width, 0) animated:YES];
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.scrollView setContentOffset:CGPointMake(index*width, 0)];
+    } completion:^(BOOL finished) {
+        [self scrollViewDidEndDecelerating:self.scrollView];
+        [self scrollViewDidScroll:self.scrollView];
+    }];
 }
 - (void)showSection:(BOOL)show sectionIndex:(NSInteger)sectionIndex page:(NSInteger)page
 {
+    if(page>=tableViewArr.count)
+        return;
     ZYTableViewController *tableCtl = [tableViewArr objectAtIndex:page];
     if([tableCtl isKindOfClass:[ZYTableViewController class]])
     {
@@ -137,15 +173,15 @@
 }
 - (void)nextPage
 {
-    if(currentPage==totalNumber-1)
+    if(_currentPage==totalNumber-1)
         return;
-    [self changePage:currentPage+1];
+    [self changePage:_currentPage+1];
 }
 - (void)lastPage
 {
-    if(currentPage==0)
+    if(_currentPage==0)
         return;
-    [self changePage:currentPage-1];
+    [self changePage:_currentPage-1];
 }
 #pragma mark - 重写以下方法
 

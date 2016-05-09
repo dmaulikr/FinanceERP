@@ -84,7 +84,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     [viewModel requestProduceListWith:[ZYUser user]];
     
     [[viewModel rac_signalForSelector:@selector(reloadDataSource)] subscribeNext:^(id x) {
-        [tableViewCtl reloadDataWithType:viewModel.placeHolderViewType];
+        [tableViewCtl reloadDataWithType:viewModel.tablePlaceHolderType];
     }];
     [RACObserve(viewModel, refreshing) subscribeNext:^(NSNumber *refreshing) {
         if(!refreshing.boolValue)
@@ -111,12 +111,10 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
         }
     }];
     [tableViewCtl.refreshSignal subscribeNext:^(NSNumber *isSearch) {
+        viewModel.tablePlaceHolderType = ZYPlaceHolderViewTypeNoSearchData;
         if(!isSearch.boolValue)
         {
-            viewModel.searchKeywordModel = nil;
-        }
-        if(!isSearch.boolValue)
-        {
+            viewModel.tablePlaceHolderType = ZYPlaceHolderViewTypeNoData;
             viewModel.searchKeywordModel = nil;
         }
         [viewModel requestBussinessProcess:[ZYUser user] loadMore:NO];
@@ -158,7 +156,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     }
     if(level==0&&index==1)
     {
-        return self.viewModel.businessProcessingStateArr;
+        return self.viewModel.businessProcessingStateShowArr;
     }
     return nil;
 }
@@ -192,7 +190,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
         }
         else
         {
-            NSString *model = object;
+            NSString *model = self.viewModel.businessProcessingStateArr[row];
             self.viewModel.businessProcessState = model;
         }
         [tableViewCtl beginRefresh:@(NO)];
@@ -203,6 +201,11 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
 - (void)filterBarTitles:(ZYFilterBar *)bar selecedIndex:(NSInteger)selecedIndex
 {
     
+}
+- (UIView*)makePlaceHolderView
+{
+    ZYPlaceHolderView *view = [[ZYPlaceHolderView alloc] initWithFrame:CGRectMake(0, 0, tableViewCtl.frame.size.width, tableViewCtl.frame.size.height) type:self.viewModel.tablePlaceHolderType];
+    return view;
 }
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

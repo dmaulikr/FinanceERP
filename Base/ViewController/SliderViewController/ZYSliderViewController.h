@@ -18,6 +18,8 @@ typedef enum : NSUInteger {
 } ZYSliderDirection;
 
 @interface ZYSliderViewController : ZYViewController
+
+@property(nonatomic,assign)NSInteger currentPage;
 /**
  *  子类重写该方法
  *

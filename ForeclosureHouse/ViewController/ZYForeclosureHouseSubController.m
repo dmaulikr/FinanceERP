@@ -10,7 +10,8 @@
 #import "ZYBussinessInfoSections.h"
 #import "ZYApplyInfoSections.h"
 #import "ZYHousePropertyInfoSections.h"
-#import "ZYBothSideInfoSections.h"
+#import "ZYSellerInfoSections.h"
+#import "ZYBuyerInfoSections.h"
 #import "ZYOriginalBankSections.h"
 #import "ZYCurrentBankSections.h"
 #import "ZYOrderInfoSections.h"
@@ -22,15 +23,13 @@
 
 @interface ZYForeclosureHouseSubController ()
 
+@property(nonatomic,strong)NSString *error;
+
+@property(nonatomic,weak)ZYSections *currentSections;
 @end
 
 @implementation ZYForeclosureHouseSubController
 {
-    ZYHousePropertyInfoSections *housePropertyInfoSections;
-    ZYBothSideInfoSections *bothSideInfoSections;
-    ZYOriginalBankSections *originalBankSections;
-    ZYCurrentBankSections *currentBankSections;
-    
     NSArray *sectionsArr;
     
     ZYTopTabBar *topBar;
@@ -38,6 +37,8 @@
     ZYTableViewCell *firstResponderCell;
     
     ZYDoubleButtonCell *buttonView;
+    
+    ZYSections *mainSections;
 }
 ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
 - (void)viewDidLoad {
@@ -45,26 +46,73 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
     // Do any additional setup after loading the view.
     [self buildUI];
 }
+- (ZYSections*)buildSection:(Class)class
+{
+    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
+    if(class == [ZYHousePropertyInfoSections class])
+    {
+        ZYHousePropertyInfoSections *sections = [[class alloc] initWithTitle:@"物业信息"];
+        [sections blendModel:viewModel];
+        sections.edit = self.edit;
+        return sections;
+    }
+    else if(class == [ZYSellerInfoSections class])
+    {
+        ZYSellerInfoSections *sections = [[class alloc] initWithTitle:@"卖方信息"];
+        [sections blendModel:viewModel];
+        sections.edit = self.edit;
+        return sections;
+    }
+    else if(class == [ZYBuyerInfoSections class])
+    {
+        ZYBuyerInfoSections *sections = [[class alloc] initWithTitle:@"买方信息"];
+        [sections blendModel:viewModel];
+        sections.edit = self.edit;
+        return sections;
+    }
+    else if(class == [ZYOriginalBankSections class])
+    {
+        ZYOriginalBankSections *sections = [[class alloc] initWithTitle:@"原贷款银行信息"];
+        [sections blendModel:viewModel];
+        sections.edit = self.edit;
+        [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [mainSections cellSearch:value.first withDataSourceSignal:value.second showKey:value.third];
+        }];
+        return sections;
+    }
+    else if(class == [ZYCurrentBankSections class])
+    {
+        ZYCurrentBankSections *sections = [[class alloc] initWithTitle:@"新贷款银行信息"];
+        [sections blendModel:viewModel];
+        sections.edit = self.edit;
+        [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [mainSections cellSearch:value.first withDataSourceSignal:value.second showKey:value.third];
+        }];
+        return sections;
+    }
+    return nil;
+}
 - (void)buildUI
 {
-    housePropertyInfoSections = [[ZYHousePropertyInfoSections alloc] initWithTitle:@"物业信息"];
-    bothSideInfoSections = [[ZYBothSideInfoSections alloc] initWithTitle:@"买卖双方信息"];
-    originalBankSections = [[ZYOriginalBankSections alloc] initWithTitle:@"原贷款银行信息"];
-    currentBankSections = [[ZYCurrentBankSections alloc] initWithTitle:@"新贷款银行信息"];
     
-    sectionsArr = @[housePropertyInfoSections,
-                    bothSideInfoSections,
-                    originalBankSections,
-                    currentBankSections,];
-    [self buildTableViewController];
+    self.singelLoad = YES;
     
-    NSMutableArray *titleArr = [NSMutableArray arrayWithCapacity:4];
-    for(ZYSections *sections in sectionsArr)
-    {
-        [titleArr addObject:sections.title];
-    }
+    [self buildPickerView];
+    self.pickerViewTapBlankHidden = YES;
+    [self buildDatePickerView];
+    self.datePickerViewTapBlankHidden = YES;
     
-    topBar = [[ZYTopTabBar alloc] initWithTabs:titleArr];
+    NSArray *titles = @[@"物业信息",@"卖方信息",@"买方信息",@"原贷款银行",@"新贷款银行"];
+
+    sectionsArr = @[[ZYHousePropertyInfoSections class],
+                    [ZYSellerInfoSections class],
+                    [ZYBuyerInfoSections class],
+                    [ZYOriginalBankSections class],
+                    [ZYCurrentBankSections class]];
+    
+    topBar = [[ZYTopTabBar alloc] initWithTabs:titles];
     topBar.backgroundColor = [UIColor whiteColor];
     topBar.frame = CGRectMake(0, 0, FUll_SCREEN_WIDTH, 50);
     [self.view addSubview:topBar];
@@ -73,76 +121,55 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         [self changePage:index.longLongValue];
     }];
     
+    [self buildTableViewController];
+    
     buttonView = [ZYDoubleButtonCell cellWithActionBlock:nil];
     buttonView.frame = CGRectMake(0, FUll_SCREEN_HEIGHT-50-64-[ZYDoubleButtonCell defaultHeight], FUll_SCREEN_WIDTH, [ZYDoubleButtonCell defaultHeight]);
     buttonView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:buttonView];
-    buttonView.hidden = !self.edit;
+    RAC(buttonView,hidden) = [RACObserve(self,edit) map:^id(NSNumber *value) {
+        return @(!value.boolValue);
+    }];
+    
+    [[buttonView leftButtonPressedSignal] subscribeNext:^(id x) {
+        if(self.currentPage==0)
+        {
+            [mainSections cellLastStep];
+        }
+        else
+        {
+            [self lastPage];
+        }
+    }];
+    [[buttonView rightButtonPressedSignal] subscribeNext:^(id x) {
+        
+        if([[self.currentSections valueForKey:@"error"] length]==0)
+        {
+            if(self.currentPage == sectionsArr.count-1)
+            {
+                [mainSections cellNextStep:nil];
+            }
+            else
+            {
+                [self nextPage];
+            }
+        }
+        else
+        {
+            [self tip:[self.currentSections valueForKey:@"error"]];
+        }
+    }];
 }
 - (void)blendSections:(ZYSections*)sections
 {
-    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
-    [housePropertyInfoSections blendModel:viewModel];
-    [bothSideInfoSections blendModel:viewModel];
-    [originalBankSections blendModel:viewModel];
-    [currentBankSections blendModel:viewModel];
+//    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
+    mainSections = sections;
     
-    [RACObserve(housePropertyInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:0];
-    }];
-    [RACObserve(bothSideInfoSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:1];
-    }];
-    [RACObserve(originalBankSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:2];
-    }];
-    [RACObserve(currentBankSections, sections) subscribeNext:^(id x) {
-        [self reloadTableViewAtIndex:3];
-    }];
-    
-    [[RACSignal merge:@[originalBankSections.searchBySignalSignal,currentBankSections.searchBySignalSignal]] subscribeNext:^(RACTuple *value) {
-        [sections cellSearch:value.first withDataSourceSignal:value.second showKey:value.third];
-    }];
-    [[RACSignal merge:@[originalBankSections.datePickerSignal,currentBankSections.datePickerSignal]] subscribeNext:^(RACTuple *value) {
-        [sections cellDatePicker:value.first onlyFutura:value.second];
-    }];
-    [[buttonView leftButtonPressedSignal] subscribeNext:^(id x) {
-        [sections cellLastStep];
-    }];
-    [[buttonView rightButtonPressedSignal] subscribeNext:^(id x) {
-        [sections cellNextStep:[self error]];
-    }];
-    
-    self.edit = _edit;
-}
-- (void)setEdit:(BOOL)edit
-{
-    _edit = edit;
-    housePropertyInfoSections.edit = edit;
-    bothSideInfoSections.edit = edit;
-    originalBankSections.edit = edit;
-    currentBankSections.edit = edit;
-}
-- (NSString*)error
-{
-    NSArray *errorArr = @[housePropertyInfoSections.error,
-                          bothSideInfoSections.error,
-                          originalBankSections.error,
-                          currentBankSections.error];
-    NSString *result = nil;
-    for(NSString *error in errorArr)
-    {
-        if(error.length>0&&result==nil)
-            result = error;
-        else
-            continue;
-    }
-    errorArr = nil;
-    return result;
 }
 - (ZYSections*)sliderController:(ZYSliderViewController*)controller sectionsWithPage:(NSInteger)page
 {
-    return sectionsArr[page];
+    self.currentSections = [self buildSection:sectionsArr[page]];
+    return self.currentSections;
 }
 - (NSInteger)countOfControllerSliderController:(ZYSliderViewController *)controller
 {
