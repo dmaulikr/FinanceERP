@@ -7,7 +7,9 @@
 //
 
 #import "ZYViewController.h"
+#import "ZYMyCustomerViewModel.h"
+#import "ZYMyCustomerCell.h"
 
 @interface ZYMyCustomerController : ZYViewController
-
+ZY_VIEW_MODEL_PROPERTY(ZYMyCustomerViewModel)
 @end

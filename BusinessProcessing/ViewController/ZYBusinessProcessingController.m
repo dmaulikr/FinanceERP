@@ -13,8 +13,13 @@
 #import "ZYFadeTransion.h"
 #import "ZYBusinessProcessCell.h"
 #import "ZYForeclosureHouseController.h"
+#import <CYLTableViewPlaceHolder.h>
+#import <MJRefresh.h>
+#import "ZYBusinessProcessStatueCell.h"
+#import "ZYBussinessProcessingStateEditController.h"
 
-@interface ZYBusinessProcessingController ()<ZYFilterBarDelegate,UIViewControllerTransitioningDelegate>
+@interface ZYBusinessProcessingController ()<ZYFilterBarDelegate,UIViewControllerTransitioningDelegate,UITableViewDataSource,UITableViewDelegate,CYLTableViewPlaceHolderDelegate>
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
@@ -23,125 +28,151 @@
     UIPercentDrivenInteractiveTransition *percentDrivenTransition;
     ZYFadeTransion *transion;
     
-    ZYTableViewController *tableViewCtl;
-    
     ZYFilterBar *filterBar;
 }
 ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    if(_isMyBussiness)
-    {
-        self.navigationItem.title = @"我的业务";
-    }
     [self buildUI];
     [self blendViewModel];
 }
 - (void)buildUI
 {
-    ZYBusinessProcessingViewModel *viewModel = self.viewModel;
-    
     transion = [[ZYFadeTransion alloc] init];
     
     CGFloat barHeight = 40;
     CGFloat navHeight = 64;
     filterBar = [[ZYFilterBar alloc] initWithController:self frame:CGRectMake(0, 64, FUll_SCREEN_WIDTH, barHeight) delegate:self];
+    filterBar.dropTableTopMargin = navHeight+barHeight;
     filterBar.showKey = @"product_name";
     [self.view addSubview:filterBar];
-    
-    CGFloat lineWidth = 1/[UIScreen mainScreen].scale;
-    UIView *line = [[UIView alloc] init];
-    line.backgroundColor = [UIColor colorWithHexString:@"e2e2e2"];
-    line.frame = CGRectMake(0, navHeight+barHeight-lineWidth, FUll_SCREEN_WIDTH, lineWidth);
-    [self.view addSubview:line];
 
-    tableViewCtl = [[ZYTableViewController alloc] init];
-    tableViewCtl.networkSupport = YES;
-    tableViewCtl.frame = CGRectMake(0, navHeight+barHeight, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-navHeight-barHeight);
-    [self.view addSubview:tableViewCtl.view];
-    [self addChildViewController:tableViewCtl];
     
-    
-    [tableViewCtl.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ZYBusinessProcessCell class]) bundle:nil] forCellReuseIdentifier:[ZYBusinessProcessCell defaultIdentifier]];
-    ZYSection *section = [ZYSection sectionSupportingReuseWithTitle:nil cellHeight:[ZYBusinessProcessCell defaultHeight] cellCount:^NSInteger(UITableView *tableView, NSInteger section) {
-        return viewModel.businessProcessingArr.count;
-    } cellForRowBlock:^UITableViewCell *(UITableView *tableView, NSInteger row) {
-        ZYBusinessProcessCell *cell = [tableView dequeueReusableCellWithIdentifier:[ZYBusinessProcessCell defaultIdentifier]];
-        cell.model = viewModel.businessProcessingArr[row];
-        return cell;
-    } actionBlock:^(UITableView *tableView, NSInteger row) {
-        [self performSegueWithIdentifier:@"info" sender:viewModel.businessProcessingArr[row]];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ZYBusinessProcessCell class]) bundle:nil] forCellReuseIdentifier:[ZYBusinessProcessCell defaultIdentifier]];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ZYBusinessProcessStatueCell class]) bundle:nil] forCellReuseIdentifier:[ZYBusinessProcessStatueCell defaultIdentifier]];
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self.tableView.mj_footer resetNoMoreData];
+        self.viewModel.searchKeywordModel = nil;
+        [self.viewModel requestBussinessProcessLoadMore:NO search:NO];
     }];
-    tableViewCtl.sections = @[section];
+    MJRefreshBackNormalFooter *footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        if(self.viewModel.searchKeywordModel)
+        {
+            [self.viewModel requestBussinessProcessLoadMore:YES search:YES];
+        }
+        else
+        {
+            [self.viewModel requestBussinessProcessLoadMore:YES search:NO];
+        }
+    }];
+    footer.automaticallyHidden = YES;
+    self.tableView.mj_footer = footer;
+    
+    [self.viewModel loadCache:[ZYUser user]];
+    [self.tableView.mj_header beginRefreshing];
+    
+    [self.viewModel requestBussinessStateCount:[ZYUser user]];
+    [self.viewModel requestProduceListWith:[ZYUser user]];
 }
 - (void)blendViewModel
 {
-    ZYBusinessProcessingViewModel *viewModel = self.viewModel;
-    [RACObserve(viewModel, businessProcessingProductArr) subscribeNext:^(id x) {
-        [filterBar reloadDataSource];
-    }];
-    [viewModel requestProduceListWith:[ZYUser user]];
-    
-    [[viewModel rac_signalForSelector:@selector(reloadDataSource)] subscribeNext:^(id x) {
-        [tableViewCtl reloadDataWithType:viewModel.tablePlaceHolderType];
-    }];
-    [RACObserve(viewModel, refreshing) subscribeNext:^(NSNumber *refreshing) {
-        if(!refreshing.boolValue)
+    [[RACObserve(self.viewModel, loading) skip:1] subscribeNext:^(NSNumber *loading) {
+        if(!loading.boolValue)
         {
-            [tableViewCtl stopRefresh:nil];
+            [self.tableView cyl_reloadData];
+            [self.tableView.mj_header endRefreshing];
+            [self.tableView.mj_footer endRefreshing];
+            [self stop];
         }
     }];
-    [[RACObserve(viewModel, loadmore) skip:1] subscribeNext:^(NSNumber *refreshing) {
-        if(!refreshing.boolValue)
+    [[RACObserve(self.viewModel, hasMore) skip:1] subscribeNext:^(NSNumber *loading) {
+        if(!loading.boolValue)
         {
-            [tableViewCtl stopLoadmore:nil];
+            [self.tableView cyl_reloadData];
+            [self.tableView.mj_header endRefreshing];
+            [self.tableView.mj_footer endRefreshingWithNoMoreData];
+            [self stop];
         }
     }];
-    [RACObserve(viewModel, noMoreData) subscribeNext:^(NSNumber *refreshing) {
-        if(refreshing.boolValue)
+    [[RACObserve(self.viewModel, error) skip:1] subscribeNext:^(NSString *error) {
+        [self tip:error touch:NO];
+    }];
+    [[RACObserve(self.viewModel, searchKeywordModel) skip:1] subscribeNext:^(ZYSearchHistoryModel *searchKeywordModel) {
+        if(searchKeywordModel)
         {
-            [tableViewCtl noMoreData];
+            [self loading:YES];
+            [self.tableView.mj_footer resetNoMoreData];
+            [self.viewModel requestBussinessProcessLoadMore:NO search:YES];
         }
     }];
-    [RACObserve(viewModel, searchKeywordModel) subscribeNext:^(ZYSearchHistoryModel *search) {
-        if(search)
-        {
-            [tableViewCtl beginRefresh:@(YES)];//是否是搜索
-        }
-    }];
-    [tableViewCtl.refreshSignal subscribeNext:^(NSNumber *isSearch) {
-        viewModel.tablePlaceHolderType = ZYPlaceHolderViewTypeNoSearchData;
-        if(!isSearch.boolValue)
-        {
-            viewModel.tablePlaceHolderType = ZYPlaceHolderViewTypeNoData;
-            viewModel.searchKeywordModel = nil;
-        }
-        [viewModel requestBussinessProcess:[ZYUser user] loadMore:NO];
-        if(!_isMyBussiness)
-        {
-            [viewModel requestBussinessStateCount:[ZYUser user]];
-        }
-    }];
-    [tableViewCtl.loadmoreSignal subscribeNext:^(NSNumber *isSearch) {
-        if(!isSearch.boolValue)
-        {
-            viewModel.searchKeywordModel = nil;
-        }
-        [viewModel requestBussinessProcess:[ZYUser user] loadMore:YES];
-    }];
-    RACChannelTo(viewModel,isMyBussiness) = RACChannelTo(self,isMyBussiness);
-    
-    [RACObserve(viewModel, businessStateCount) subscribeNext:^(id x) {
-        [filterBar reloadDataSource];
-    }];
-    
-    [viewModel loadCache:[ZYUser user]];
-    
-    [tableViewCtl beginRefresh:@(NO)];
 }
 - (IBAction)searchButtonPressed:(id)sender {
     [self performSegueWithIdentifier:@"search" sender:[self.viewModel businessProcessingSearchHistorySignal]];
+}
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.row==0)
+    {
+        ZYBusinessProcessCell *cell = [tableView dequeueReusableCellWithIdentifier:[ZYBusinessProcessCell defaultIdentifier]];
+        cell.model = self.viewModel.businessProcessingArr[indexPath.section];
+        return cell;
+    }
+    else
+    {
+        ZYBusinessProcessStatueCell *cell = [tableView dequeueReusableCellWithIdentifier:[ZYBusinessProcessStatueCell defaultIdentifier]];
+        cell.model = self.viewModel.businessProcessingArr[indexPath.section];
+        return cell;
+    }
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.viewModel.businessProcessingArr.count;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 2;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if(indexPath.row==0)
+    {
+        [self performSegueWithIdentifier:@"info" sender:self.viewModel.businessProcessingArr[indexPath.row]];
+    }
+    else if(indexPath.row==1)
+    {
+        [self performSegueWithIdentifier:@"edit" sender:self.viewModel.businessProcessingArr[indexPath.row]];
+    }
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.row==0)
+    {
+        return [ZYBusinessProcessCell defaultHeight];
+    }
+    if(indexPath.row==1)
+    {
+        return [ZYBusinessProcessStatueCell defaultHeight];
+    }
+    return 0;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 10.f;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 0.f;
+}
+- (UIView*)makePlaceHolderView
+{
+    ZYPlaceHolderView *view = [[ZYPlaceHolderView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, self.tableView.height) type:self.viewModel.tablePlaceHolderType];
+    return view;
+}
+- (BOOL)enableScrollWhenPlaceHolderViewShowing
+{
+    return YES;
 }
 #pragma mark - filter代理
 - (NSArray*)filterBarTitles:(ZYFilterBar *)bar
@@ -178,7 +209,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
             ZYProductModel *model = object;
             self.viewModel.businessProcessProductType = model;
         }
-        [tableViewCtl beginRefresh:@(NO)];
+        [_tableView.mj_header beginRefreshing];
         return NO;
     }
     if(index==1&&level==0)
@@ -193,7 +224,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
             NSString *model = self.viewModel.businessProcessingStateArr[row];
             self.viewModel.businessProcessState = model;
         }
-        [tableViewCtl beginRefresh:@(NO)];
+        [_tableView.mj_header beginRefreshing];
         return NO;
     }
     return YES;
@@ -202,11 +233,6 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
 {
     
 }
-- (UIView*)makePlaceHolderView
-{
-    ZYPlaceHolderView *view = [[ZYPlaceHolderView alloc] initWithFrame:CGRectMake(0, 0, tableViewCtl.frame.size.width, tableViewCtl.frame.size.height) type:self.viewModel.tablePlaceHolderType];
-    return view;
-}
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
@@ -214,8 +240,13 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     if([segue.identifier isEqualToString:@"info"])
     {
         ZYForeclosureHouseController *controller = [segue destinationViewController];
-        controller.edit = NO;
+        controller.edit = [(ZYBusinessProcessModel*)sender infoEdit];
         controller.projectID = [(ZYBusinessProcessModel*)sender project_id];
+    }
+    if([segue.identifier isEqualToString:@"edit"])
+    {
+        ZYBussinessProcessingStateEditController *controller = [segue destinationViewController];
+        controller.businessProcessingID = [(ZYBusinessProcessModel*)sender biz_handle_id];
     }
     if([segue.identifier isEqualToString:@"search"])
     {

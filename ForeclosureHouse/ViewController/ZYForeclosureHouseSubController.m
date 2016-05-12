@@ -34,7 +34,7 @@
     
     ZYTopTabBar *topBar;
     
-    ZYTableViewCell *firstResponderCell;
+//    ZYTableViewCell *firstResponderCell;
     
     ZYDoubleButtonCell *buttonView;
     
@@ -76,8 +76,10 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         [sections blendModel:viewModel];
         sections.edit = self.edit;
         [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
-            firstResponderCell = (ZYSelectCell*)value.first;
             [mainSections cellSearch:value.first withDataSourceSignal:value.second showKey:value.third];
+        }];
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            [mainSections cellDatePicker:value.first onlyFutura:value.second];
         }];
         return sections;
     }
@@ -87,8 +89,10 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         [sections blendModel:viewModel];
         sections.edit = self.edit;
         [sections.searchBySignalSignal subscribeNext:^(RACTuple *value) {
-            firstResponderCell = (ZYSelectCell*)value.first;
             [mainSections cellSearch:value.first withDataSourceSignal:value.second showKey:value.third];
+        }];
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            [mainSections cellDatePicker:value.first onlyFutura:value.second];
         }];
         return sections;
     }
@@ -112,9 +116,11 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
                     [ZYOriginalBankSections class],
                     [ZYCurrentBankSections class]];
     
-    topBar = [[ZYTopTabBar alloc] initWithTabs:titles];
+    topBar = [[ZYTopTabBar alloc] initWithTabs:titles frame:CGRectMake(0, 0, FUll_SCREEN_WIDTH, 50)];
     topBar.backgroundColor = [UIColor whiteColor];
-    topBar.frame = CGRectMake(0, 0, FUll_SCREEN_WIDTH, 50);
+    [topBar.tabButtonPressedSignal subscribeNext:^(NSNumber *index) {
+        [self changePage:index.longLongValue];
+    }];
     [self.view addSubview:topBar];
     
     [topBar.tabButtonPressedSignal subscribeNext:^(NSNumber *index) {
@@ -156,7 +162,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         }
         else
         {
-            [self tip:[self.currentSections valueForKey:@"error"]];
+            [self tip:[self.currentSections valueForKey:@"error"] touch:NO];
         }
     }];
 }
@@ -177,7 +183,11 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
 }
 - (CGRect)sliderController:(ZYSliderViewController*)controller frameWithPage:(NSInteger)page
 {
-    return CGRectMake(page*FUll_SCREEN_WIDTH, 50, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-100-64);
+    return CGRectMake(page*FUll_SCREEN_WIDTH, 0, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-100-64);
+}
+- (CGRect)frameOfScrollViewSliderController:(ZYSliderViewController *)controller
+{
+    return CGRectMake(0, 50, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-100-64);
 }
 - (void)sliderController:(ZYSliderViewController *)controller changingPage:(NSInteger)index direction:(ZYSliderDirection)direction rate:(CGFloat)rate
 {

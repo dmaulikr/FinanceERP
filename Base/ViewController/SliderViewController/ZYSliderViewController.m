@@ -91,7 +91,7 @@
 {
     if(_scrollView==nil)
     {
-        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, FUll_SCREEN_WIDTH,FUll_SCREEN_HEIGHT)];
+        _scrollView = [[UIScrollView alloc] initWithFrame:[self frameOfScrollViewSliderController:self]];
         _scrollView.userInteractionEnabled = YES;
         _scrollView.pagingEnabled = YES;
         _scrollView.scrollEnabled = YES;
@@ -103,6 +103,8 @@
 }
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if(scrollView!=self.scrollView)
+        return;
     
     NSInteger lastPage = _currentPage;
     _currentPage = (NSInteger)((scrollView.contentOffset.x) / width);
@@ -134,6 +136,8 @@
 -(void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     
     if(!self.singelLoad)
+        return;
+    if(scrollView!=self.scrollView)
         return;
     
     for (ZYTableViewController *tableCtl in tableViewArr) {
@@ -195,6 +199,10 @@
 }
 
 - (CGRect)sliderController:(ZYSliderViewController*)controller frameWithPage:(NSInteger)page
+{
+    return CGRectZero;
+}
+- (CGRect)frameOfScrollViewSliderController:(ZYSliderViewController*)controller
 {
     return CGRectZero;
 }

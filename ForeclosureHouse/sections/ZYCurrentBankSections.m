@@ -20,7 +20,7 @@
     ZYSelectCell *newBankPublicFundBankCell;
     ZYInputCell *newBankPublicFundMoneyCell;
     
-    ZYInputCell *newBankSuperviseOrganizationCell;
+    ZYSelectCell *newBankSuperviseOrganizationCell;
     ZYInputCell *newBankSuperviseMoneyCell;
     ZYInputCell *newBankSuperviseAccountCell;
     
@@ -96,9 +96,12 @@
     newBankPublicFundMoneyCell.cellNullable = YES;
     newBankPublicFundMoneyCell.cellPlaceHolder = @"请输入公积金贷款金额";
     
-    newBankSuperviseOrganizationCell = [ZYInputCell cellWithActionBlock:nil];
-    newBankSuperviseOrganizationCell.cellTitle = @"资金监管单位";
-    newBankSuperviseOrganizationCell.cellPlaceHolder = @"请输入资金监管单位";
+    newBankSuperviseOrganizationCell = [ZYSelectCell cellWithActionBlock:^{
+        @strongify(self)
+        [self cellSearch:newBankSuperviseOrganizationCell withDataSourceSignal:[ZYForeclosureHouseViewModel bankSearchSignal] showKey:@"look_desc"];
+    }];
+    newBankSuperviseOrganizationCell.showKey = @"look_desc";
+    newBankSuperviseOrganizationCell.cellTitle = @"资金监管银行";
     
     newBankSuperviseMoneyCell = [ZYInputCell cellWithActionBlock:nil];
     newBankSuperviseMoneyCell.cellTitle = @"资金监管金额";
@@ -142,7 +145,7 @@
     RACChannelTo(newBankTelephoneCell,cellText) = RACChannelTo(model,bankTelephone);
     RACChannelTo(newBankForeclosureAccountCell,cellText) = RACChannelTo(model,bankForeclosureAccount);
     RACChannelTo(newBankPublicFundMoneyCell,cellText) = RACChannelTo(model,bankPublicFundMoney);
-    RACChannelTo(newBankSuperviseOrganizationCell,cellText) = RACChannelTo(model,bankSuperviseOrganization);
+    RACChannelTo(newBankSuperviseOrganizationCell,selecedObj) = RACChannelTo(model,bankSuperviseOrganization);
     RACChannelTo(newBankSuperviseMoneyCell,cellText) = RACChannelTo(model,bankSuperviseMoney);
     RACChannelTo(newBankSuperviseAccountCell,cellText) = RACChannelTo(model,bankSuperviseAccount);
     

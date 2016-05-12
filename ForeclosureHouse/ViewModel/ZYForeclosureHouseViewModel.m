@@ -25,6 +25,15 @@
     self.bankLoanType = [[ZYBankLoanTypeModel getUsingLKDBHelper] searchSingle:[ZYBankLoanTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
     self.costInfoChargeType = [[ZYCostInfoChargeTypeModel getUsingLKDBHelper] searchSingle:[ZYCostInfoChargeTypeModel class] where:@{@"type":@(0)} orderBy:@"rowid"];
     self.orderInfoPaperArr = [[ZYPaperModel getUsingLKDBHelper] search:[ZYPaperModel class] where:nil orderBy:@"rowid" offset:0 count:INT64_MAX];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *dateStr = [formatter stringFromDate:[NSDate date]];
+    
+    self.bussinessInfoDate = dateStr;
+    self.bankJusticeDate = dateStr;
+    self.bankContractDate = dateStr;
+    self.applicationDate = dateStr;
 }
 - (void)loadData:(ZYForeclosureHouseModel*)model
 {
@@ -100,7 +109,7 @@
     self.bankForeclosureAccount = model.fore_account;
     self.bankPublicFundBank = [self bank:model.accumulation_fund_bank];
     self.bankPublicFundMoney = [NSString stringWithFormat:@"%.2f",model.accumulation_fund_money];
-//    self.bankSuperviseOrganization = model.supervise_department;
+    self.bankSuperviseOrganization = [self bank:model.supervise_department];;
     self.bankSuperviseMoney = [NSString stringWithFormat:@"%.2f",model.funds_money];
     self.bankSuperviseAccount = model.supervise_account;
     self.bankJusticeDate = model.notarization_date;

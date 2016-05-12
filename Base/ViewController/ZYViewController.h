@@ -94,8 +94,8 @@
 -(void)keyboardWillShow:(NSNotification*)aNotification;
 -(void)keyboardWillHidden:(NSNotification*)aNotification;
 
-- (void)loading;
+- (void)loading:(BOOL)touch;
 - (void)stop;
-- (void)tip:(NSString*)tip;
+- (void)tip:(NSString*)tip touch:(BOOL)touch;
 
 @end

@@ -68,7 +68,7 @@
     [RACObserve(viewModel, loading) subscribeNext:^(NSNumber *loading) {
         if(loading.boolValue)
         {
-            [self loading];
+            [self loading:NO];
         }
         else
         {

@@ -15,8 +15,17 @@
 
 #define REQUEST_SUCCESS(value) [[value objectForKey:@"success"] boolValue]
 
-#define ERROR_INFO(value) [value objectForKey:@"msg"]==nil?@"未知错误":[[value mj_keyValues] objectForKey:@"msg"]
-#define ERROR_CODE(value) @{@"code":[value objectForKey:@"error_code"]}
+#define ERROR_INFO(value) [value objectForKey:@"msg"]==nil?@"未知错误":[value objectForKey:@"msg"]
+#define ERROR_CODE(value) [value objectForKey:@"error_code"]==nil?@{}:@{@"code":[value objectForKey:@"error_code"]}
+
+#define CHECK_LOGIN if(![ZYTools checkLogin])\
+{\
+    [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];\
+    [subscriber sendCompleted];\
+    return nil;\
+}\
+
+
 @implementation ZYRoute
 + (instancetype)route
 {
@@ -102,29 +111,24 @@
 - (RACSignal*)bannersWith:(ZYBannerRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        if(![ZYTools checkLogin])///需要验证是否登陆
-        {
-            [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
-            [subscriber sendCompleted];//未登录时候停止发送消息
-        }
-        else
-        {
-            [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
-                id value = request.responseJSONObject;
-                if(REQUEST_SUCCESS(value))
-                {
-                    [subscriber sendNext:value];
-                    [subscriber sendCompleted];
-                }
-                else
-                {
-                    
-                    [subscriber sendError:ERROR(value)];
-                }
-            } failure:^(__kindof YTKBaseRequest *request) {
-                [subscriber sendError:NET_ERROR];
-            }];
-        }
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
         return nil;
     }];
     return [signal map:^id(id value) {
@@ -143,31 +147,24 @@
 - (RACSignal*)checkInWith:(ZYCheckInRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        if(![ZYTools checkLogin])///需要验证是否登陆
-        {
-            [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
-            [subscriber sendCompleted];
-        }
-        else
-        {
-            [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
-                id value = request.responseJSONObject;
-                if(REQUEST_SUCCESS(value))
-                {
-                    ZYCheckInModel *model = [ZYCheckInModel mj_objectWithKeyValues:value];
-                    model.to_day_is_sign = YES;//签到成功
-                    [subscriber sendNext:model];
-                    [subscriber sendCompleted];
-                }
-                else
-                {
-                    
-                    [subscriber sendError:ERROR(value)];
-                }
-            } failure:^(__kindof YTKBaseRequest *request) {
-                [subscriber sendError:NET_ERROR];
-            }];
-        }
+        CHECK_LOGIN///检查登陆
+        [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                ZYCheckInModel *model = [ZYCheckInModel mj_objectWithKeyValues:value];
+                model.to_day_is_sign = YES;//签到成功
+                [subscriber sendNext:model];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
         return nil;
     }];
     return [signal map:^id(id value) {
@@ -178,29 +175,23 @@
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
-        if(![ZYTools checkLogin])///需要验证是否登陆
-        {
-            [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
-            [subscriber sendCompleted];//未登录时候停止发送消息
-        }
-        else
-        {
-            [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
-                id value = request.responseJSONObject;
-                if(REQUEST_SUCCESS(value))
-                {
-                    [subscriber sendNext:value];
-                    [subscriber sendCompleted];
-                }
-                else
-                {
-                    
-                    [subscriber sendError:ERROR(value)];
-                }
-            } failure:^(__kindof YTKBaseRequest *request) {
-                [subscriber sendError:NET_ERROR];
-            }];
-        }
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
         return nil;
     }];
     return [signal map:^id(id value) {
@@ -211,28 +202,23 @@
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
-        if(![ZYTools checkLogin])///需要验证是否登陆
-        {
-            [subscriber sendCompleted];//未登录时候停止发送消息
-        }
-        else
-        {
-            [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
-                id value = request.responseJSONObject;
-                if(REQUEST_SUCCESS(value))
-                {
-                    [subscriber sendNext:value];
-                    [subscriber sendCompleted];
-                }
-                else
-                {
-                    [subscriber sendError:ERROR(value)];
-                }
-            } failure:^(__kindof YTKBaseRequest *request) {
-                [subscriber sendError:NET_ERROR];
-            }];
-            [myRequest startWithoutCache];//强制刷新
-        }
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
         return nil;
     }];
     return [signal map:^id(id value) {
@@ -284,29 +270,24 @@
 - (RACSignal*)businessProcessList:(ZYBusinessProcessRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        if(![ZYTools checkLogin])///需要验证是否登陆
-        {
-            [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
-            [subscriber sendCompleted];
-        }
-        else
-        {
-            [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
-                id value = request.responseJSONObject;
-                if(REQUEST_SUCCESS(value))
-                {
-                    [subscriber sendNext:value];
-                    [subscriber sendCompleted];
-                }
-                else
-                {
-                    [subscriber sendError:ERROR(value)];
-                }
-            } failure:^(__kindof YTKBaseRequest *request) {
-                [subscriber sendError:NET_ERROR];
-            }];
-            [myRequest startWithoutCache];//强制刷新
-        }
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
        
         return nil;
     }];
@@ -331,6 +312,9 @@
 - (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
         [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
             id value = request.responseJSONObject;
             if(REQUEST_SUCCESS(value))
@@ -364,29 +348,24 @@
 - (RACSignal*)foreclosureHouseInfo:(ZYForeclosureHouseRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        if(![ZYTools checkLogin])///需要验证是否登陆
-        {
-            [subscriber sendError:ERROR_(@"您尚未登陆，请先登录后操作")];
-            [subscriber sendCompleted];
-        }
-        else
-        {
-            [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
-                id value = request.responseJSONObject;
-                if(REQUEST_SUCCESS(value))
-                {
-                    [subscriber sendNext:value];
-                    [subscriber sendCompleted];
-                }
-                else
-                {
-                    
-                    [subscriber sendError:ERROR(value)];
-                }
-            } failure:^(__kindof YTKBaseRequest *request) {
-                [subscriber sendError:NET_ERROR];
-            }];
-        }
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
         return nil;
     }];
     return [signal map:^id(id value) {
@@ -426,5 +405,69 @@
         return [ZYBankModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
     }
     return nil;
+}
+- (RACSignal*)myCustomers:(ZYMyCustomerRequest*)myRequest
+{
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return [ZYCustomerModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+    }];
+}
+- (id)myCustomersCacheWith:(ZYMyCustomerRequest*)myRequest
+{
+    if(myRequest.cacheJson)
+    {
+        id value = myRequest.cacheJson;///使用缓存
+        return [ZYCustomerModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+    }
+    return nil;
+}
+- (RACSignal*)businessProcessStateList:(ZYBusinessProcessingStateRequest*)myRequest
+{
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return [ZYBusinessProcessingStateModel mj_objectWithKeyValues:value];;
+    }];
 }
 @end

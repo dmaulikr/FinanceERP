@@ -13,39 +13,41 @@
 {
     NSArray *tabTitles;
 }
-- (instancetype)initWithTabs:(NSArray*)tabs
+- (instancetype)initWithTabs:(NSArray*)tabs frame:(CGRect)frame
 {
-    self = [super init];
+    self = [super initWithFrame:frame];
     if (self) {
         tabTitles = tabs;
+        
+        NSInteger steps = tabTitles.count;
+        CGFloat width = (FUll_SCREEN_WIDTH-(steps+1)*GAP)/steps;
+        _buttonArr = [NSMutableArray arrayWithCapacity:steps];
+        NSInteger idx = 0;
+        for(NSString *title in tabTitles)
+        {
+            UIButton *stepButton = [UIButton buttonWithType:UIButtonTypeSystem];
+            stepButton.frame = CGRectMake(GAP+idx*(GAP+width), GAP, width, self.height-GAP);
+            [stepButton setTitle:title forState:UIControlStateNormal];
+            stepButton.backgroundColor = [UIColor clearColor];
+            [stepButton setTitleColor:[UIColor colorWithHexString:@"888888"] forState:UIControlStateNormal];
+            [stepButton addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            stepButton.titleLabel.numberOfLines = 2;
+            stepButton.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10);
+            stepButton.titleLabel.font = [UIFont systemFontOfSize:14];
+            stepButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+            stepButton.tag = idx;
+            [self addSubview:stepButton];
+            [_buttonArr addObject:stepButton];
+            idx++;
+        }
+        [self setHighlightIndex:0];
     }
     return self;
 }
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    NSInteger steps = tabTitles.count;
-    CGFloat width = (FUll_SCREEN_WIDTH-(steps+1)*GAP)/steps;
-    _buttonArr = [NSMutableArray arrayWithCapacity:steps];
-    NSInteger idx = 0;
-    for(NSString *title in tabTitles)
-    {
-        UIButton *stepButton = [UIButton buttonWithType:UIButtonTypeSystem];
-        stepButton.frame = CGRectMake(GAP+idx*(GAP+width), GAP, width, self.height-GAP);
-        [stepButton setTitle:title forState:UIControlStateNormal];
-        stepButton.backgroundColor = [UIColor clearColor];
-        [stepButton setTitleColor:[UIColor colorWithHexString:@"888888"] forState:UIControlStateNormal];
-        [stepButton addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        stepButton.titleLabel.numberOfLines = 2;
-        stepButton.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10);
-        stepButton.titleLabel.font = [UIFont systemFontOfSize:14];
-        stepButton.titleLabel.textAlignment = NSTextAlignmentCenter;
-        stepButton.tag = idx;
-        [self addSubview:stepButton];
-        [_buttonArr addObject:stepButton];
-        idx++;
-    }
-    [self setHighlightIndex:0];
+    
 }
 - (void)setHighlightIndex:(NSInteger)highlightIndex
 {
@@ -58,7 +60,8 @@
         }
     }];
 }
-- (void)tabButtonPressed:(UIButton*)button{}
+- (void)tabButtonPressed:(UIButton*)button{
+}
 - (void)drawRect:(CGRect)rect
 {
     CGFloat height = rect.size.height;

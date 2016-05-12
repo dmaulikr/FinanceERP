@@ -10,6 +10,11 @@
 
 @interface ZYStepView : UIView
 - (void)highlight:(BOOL)highlight;
+@property(nonatomic,strong)NSString *title;
 @property(nonatomic,strong)NSString *text;
 @property(nonatomic,strong)UIColor *highlightColor;
+
+@property(nonatomic,strong)RACSignal *tapSignal;
+
+- (instancetype)initWithPoint:(CGPoint)point;
 @end

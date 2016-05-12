@@ -15,7 +15,6 @@
     if (self) {
         self.pageSize = 20;
         self.pageNum = 1;
-        self.refreshing = YES;//默认上来刷新一次
     }
     return self;
 }
@@ -29,26 +28,22 @@
         self.businessProcessingProductArr = arr;
     }];
 }
-- (void)requestBussinessProcess:(ZYUser*)user loadMore:(BOOL)loadMore
+- (void)requestBussinessProcessLoadMore:(BOOL)loadMore search:(BOOL)search
 {
     self.pageNum = loadMore?self.pageNum+1:1;
     ZYBusinessProcessRequest *request = [ZYBusinessProcessRequest request];
-    request.user_id = user.pid;
+    request.user_id = [ZYUser user].pid;
     request.page = self.pageNum;
     request.rows = self.pageSize;
-    request.is_my_biz = self.isMyBussiness;
+    request.is_my_biz = NO;
     request.product_id = [self.businessProcessProductType.pid longLongValue];
     request.dynamic_name = self.businessProcessState;
-    request.project_name = self.searchKeywordModel.searchKeyword;
-    self.noMoreData = NO;
-    if(loadMore)
+    if(search)
     {
-        self.loadmore = YES;
+        request.project_name = self.searchKeywordModel.searchKeyword;
     }
-    else
-    {
-        self.refreshing = YES;
-    }
+    self.hasMore = YES;
+    self.loading = YES;
     [[[ZYRoute route] businessProcessList:request] subscribeNext:^(NSArray *productArr) {
         if(!loadMore)
         {
@@ -57,39 +52,18 @@
         [self.businessProcessingArr addObjectsFromArray:productArr];
         [self reloadDataSource];
         
-        if(loadMore)
+        if(productArr.count<20)
         {
-            if(productArr.count<20)
-            {
-                self.noMoreData = YES;
-            }
-            else
-            {
-                self.loadmore = NO;
-            }
+            self.hasMore = NO;
         }
         else
         {
-            self.refreshing = NO;
+            self.loading = NO;
         }
         
     } error:^(NSError *error) {
-        if(error.code==404)
-        {
-            [self reloadDataSource];
-        }
-        else
-        {
-            self.error = error.domain;
-        }
-        if(loadMore)
-        {
-            self.loadmore = NO;
-        }
-        else
-        {
-            self.refreshing = NO;
-        }
+        self.error = error.domain;
+        self.loading = NO;
     } completed:^{
         
     }];
@@ -140,7 +114,7 @@
 - (RACSignal*)businessProcessingSearchHistorySignal
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        [[ZYSearchHistoryModel getUsingLKDBHelper] search:[ZYSearchHistoryModel class] where:nil orderBy:@"searchDate" offset:0 count:INT64_MAX callback:^(NSMutableArray *array) {
+        [[ZYSearchHistoryModel getUsingLKDBHelper] search:[ZYSearchHistoryModel class] where:@{@"type":@(ZYHistoryTypeBusinessProcessing)} orderBy:@"searchDate" offset:0 count:INT64_MAX callback:^(NSMutableArray *array) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [subscriber sendNext:array];
             });
@@ -152,6 +126,8 @@
 - (void)setSearchKeywordModel:(ZYSearchHistoryModel *)searchKeywordModel
 {
     _searchKeywordModel = searchKeywordModel;
+    
+    searchKeywordModel.type = ZYHistoryTypeBusinessProcessing;
     LKDBHelper *helper = [ZYSearchHistoryModel getUsingLKDBHelper];
     if(![helper getTableCreatedWithClass:[ZYSearchHistoryModel class]])
     {
@@ -162,7 +138,7 @@
 - (void)cleanSearchHistory
 {
     LKDBHelper *helper = [ZYSearchHistoryModel getUsingLKDBHelper];
-    [helper deleteWithClass:[ZYSearchHistoryModel class] where:nil];
+    [helper deleteWithClass:[ZYSearchHistoryModel class] where:@{@"type":@(ZYHistoryTypeBusinessProcessing)}];
 }
 - (NSMutableArray*)businessProcessingArr
 {
@@ -186,7 +162,7 @@
     businessProcessRequest.user_id = user.pid;
     businessProcessRequest.page = self.pageNum;
     businessProcessRequest.rows = self.pageSize;
-    businessProcessRequest.is_my_biz = self.isMyBussiness;
+    businessProcessRequest.is_my_biz = NO;
     NSArray *businessProcessArr = [[ZYRoute route] businessProcessListCacheWith:businessProcessRequest];
     [self.businessProcessingArr removeAllObjects];
     [self.businessProcessingArr addObjectsFromArray:businessProcessArr];

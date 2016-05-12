@@ -26,6 +26,10 @@
 #import "ZYForeclosureHouseModel.h"
 #import "ZYBanksRequest.h"
 #import "ZYBankModel.h"
+#import "ZYMyCustomerRequest.h"
+#import "ZYCustomerModel.h"
+#import "ZYBusinessProcessingStateRequest.h"
+#import "ZYBusinessProcessingStateModel.h"
 
 @interface ZYRoute : NSObject
 
@@ -51,11 +55,19 @@
  */
 - (RACSignal*)businessProcessList:(ZYBusinessProcessRequest*)myRequest;
 - (id)businessProcessListCacheWith:(ZYBusinessProcessRequest*)myRequest;
-
+/**
+ *  业务办理每种状态条数
+ */
 - (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest;
 
 - (RACSignal*)foreclosureHouseInfo:(ZYForeclosureHouseRequest*)myRequest;
 
 - (RACSignal*)banks:(ZYBanksRequest*)myRequest;
 - (id)banksCacheWith:(ZYBanksRequest*)myRequest;
+
+- (RACSignal*)myCustomers:(ZYMyCustomerRequest*)myRequest;
+- (id)myCustomersCacheWith:(ZYMyCustomerRequest*)myRequest;
+
+- (RACSignal*)businessProcessStateList:(ZYBusinessProcessingStateRequest*)myRequest;
+
 @end

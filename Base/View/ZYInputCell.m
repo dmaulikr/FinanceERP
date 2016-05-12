@@ -136,7 +136,7 @@
     }
     
     
-    if(!_cellNullable)
+    if(!_cellNullable&&super.userInteractionEnabled)
     {
         if(!_checkInput||(_checkInput&&_cellText.length!=0))///需要检查是否为空
         {
@@ -272,14 +272,13 @@
     super.userInteractionEnabled = userInteractionEnabled;
     if(userInteractionEnabled)
     {
-        [self setCellNullable:NO];
         _cellTextField.placeholder = self.cellPlaceHolder;
     }
     else
     {
-        [self setCellNullable:YES];
         _cellTextField.placeholder = nil;
         self.accessoryType = UITableViewCellAccessoryNone;
     }
+    [self setCellTitle:_cellTitle];
 }
 @end

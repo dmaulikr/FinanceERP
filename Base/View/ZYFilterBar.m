@@ -18,8 +18,6 @@
     NSMutableArray *topButtonArr;
     NSMutableArray *dropImageArr;
     
-    CGFloat bottomGap;
-    
     UIView *bgView;
     
     NSInteger currentIndex;
@@ -54,7 +52,6 @@
         CGFloat levelHeight = frame.size.height;
         topButtonArr = [NSMutableArray arrayWithCapacity:totleLevel];
         dropImageArr = [NSMutableArray arrayWithCapacity:totleLevel];
-        bottomGap = FUll_SCREEN_HEIGHT-frame.origin.y-frame.size.height;
         
         [titles enumerateObjectsUsingBlock:^(NSString* _Nonnull title, NSUInteger idx, BOOL * _Nonnull stop) {
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -79,20 +76,20 @@
             [button setTitleEdgeInsets:UIEdgeInsetsMake(0, -image.size.width+GAP, 0, image.size.width-GAP)];
         }];
         
-        dropTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, frame.origin.y+frame.size.height, FUll_SCREEN_WIDTH, 0) style:UITableViewStylePlain];
+        dropTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.dropTableTopMargin, FUll_SCREEN_WIDTH, 0) style:UITableViewStylePlain];
         dropTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         dropTableView.delegate = self;
         dropTableView.dataSource = self;
         [controller.view addSubview:dropTableView];
         
-        dropSubTableView = [[UITableView alloc] initWithFrame:CGRectMake(FUll_SCREEN_WIDTH/2.f, frame.origin.y+frame.size.height, FUll_SCREEN_WIDTH/2.f, 0) style:UITableViewStylePlain];
+        dropSubTableView = [[UITableView alloc] initWithFrame:CGRectMake(FUll_SCREEN_WIDTH/2.f, self.dropTableTopMargin, FUll_SCREEN_WIDTH/2.f, 0) style:UITableViewStylePlain];
         dropSubTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         dropSubTableView.delegate = self;
         dropSubTableView.dataSource = self;
         dropSubTableView.backgroundColor = TEXT_COLOR;
         [controller.view addSubview:dropSubTableView];
         
-        bgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.Y+self.height, FUll_SCREEN_WIDTH, bottomGap)];
+        bgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.dropTableTopMargin, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT - self.dropTableTopMargin)];
         bgView.hidden = YES;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTap)];
         [bgView addGestureRecognizer:tap];
@@ -101,7 +98,14 @@
     }
     return self;
 }
-
+- (void)setDropTableTopMargin:(CGFloat)dropTableTopMargin
+{
+    _dropTableTopMargin = dropTableTopMargin;
+    dropTableView.Y = dropTableTopMargin;
+    dropSubTableView.Y = dropTableTopMargin;
+    bgView.height = FUll_SCREEN_HEIGHT - self.dropTableTopMargin;
+    bgView.Y = self.dropTableTopMargin;
+}
 - (void)bgTap//背景触摸
 {
     [self dropTableView:NO];
@@ -178,10 +182,10 @@
         [controller.view bringSubviewToFront:dropSubTableView];
         [controller.view bringSubviewToFront:dropTableView];
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            dropTableView.height = MIN(bottomGap*2.f/3.f, dataSource.count*[ZYTableViewCell defaultHeight]);
+            dropTableView.height = MIN((FUll_SCREEN_HEIGHT-self.dropTableTopMargin)*2.f/3.f, dataSource.count*[ZYTableViewCell defaultHeight]);
             if(levelCount==2)
             {
-                dropSubTableView.height = bottomGap*2.f/3.f;
+                dropSubTableView.height = (FUll_SCREEN_HEIGHT-self.dropTableTopMargin)*2.f/3.f;
             }
             bgView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.6];
         } completion:^(BOOL finished) {

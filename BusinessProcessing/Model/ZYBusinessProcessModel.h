@@ -42,4 +42,10 @@
  *  搜索关键字
  */
 @property (nonatomic, copy)NSString *keyword;
+
+/**
+ *  是否可以编辑贷前信息
+ */
+@property (nonatomic, assign)BOOL infoEdit;
+
 @end

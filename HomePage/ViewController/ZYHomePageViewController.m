@@ -170,7 +170,7 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     RAC(checkInCell,hasCheckIn) = RACObserve(viewModel, hasCheckIn);
     
     [[RACObserve(viewModel, error) skip:1] subscribeNext:^(NSString *checkInError) {
-        [self tip:checkInError];
+        [self tip:checkInError touch:NO];
     }];
     [checkInCell.checkInButtonPressedSignal subscribeNext:^(id x) {
         [viewModel requestCheckIn:[ZYUser user]];
@@ -178,23 +178,18 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     
 #pragma mark - 功能列表
     [founctionButtonCell.functionButtonPressSignal subscribeNext:^(NSNumber *tag) {
-        if(![ZYTools checkLogin])
-        {
-            [self tip:@"登陆中,请稍后"];
-            return;
-        }
         switch (tag.longLongValue) {
             case 0:
                 [self performSegueWithIdentifier:@"applyList" sender:nil];
                 break;
             case 1:
-                [self performSegueWithIdentifier:@"processing" sender:@(NO)];
+                [self performSegueWithIdentifier:@"processing" sender:nil];
                 break;
             case 2:
-                [self performSegueWithIdentifier:@"processing" sender:@(YES)];
+                [self performSegueWithIdentifier:@"myBussiness" sender:nil];
                 break;
             case 3:
-                [self performSegueWithIdentifier:@"customer" sender:@(YES)];
+                [self performSegueWithIdentifier:@"customer" sender:nil];
                 break;
             default:
                 break;
@@ -221,8 +216,10 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     // Pass the selected object to the new view controller.
     if([segue.identifier isEqualToString:@"processing"])
     {
-        ZYBusinessProcessingController *controller = [segue destinationViewController];
-        controller.isMyBussiness = [sender boolValue];
+//        ZYBusinessProcessingController *controller = [segue destinationViewController];
+    }
+    if([segue.identifier isEqualToString:@"myBussiness"])
+    {
     }
     if([segue.identifier isEqualToString:@"web"])
     {

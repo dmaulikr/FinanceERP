@@ -32,7 +32,12 @@ typedef enum : NSUInteger {
  *  自定义view  也需要传入一个sections 占位 方便计算
  */
 - (ZYSections*)sliderController:(ZYSliderViewController*)controller sectionsWithPage:(NSInteger)page;
+/**
+ *  每一页的坐标
+ */
 - (CGRect)sliderController:(ZYSliderViewController*)controller frameWithPage:(NSInteger)page;
+//滚动页的坐标
+- (CGRect)frameOfScrollViewSliderController:(ZYSliderViewController*)controller;
 
 - (UIView*)sliderController:(ZYSliderViewController*)controller customViewWithpage:(NSInteger)page;
 

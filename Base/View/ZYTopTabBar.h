@@ -14,5 +14,5 @@
 @property(nonatomic,strong)NSMutableArray *buttonArr;
 @property(nonatomic,assign)NSInteger highlightIndex;
 
-- (instancetype)initWithTabs:(NSArray*)tabs;
+- (instancetype)initWithTabs:(NSArray*)tabs frame:(CGRect)frame;
 @end

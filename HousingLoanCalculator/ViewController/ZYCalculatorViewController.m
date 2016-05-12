@@ -105,7 +105,7 @@
         NSString *error = value.first;
         if(error.length>0)
         {
-            [self tip:error];
+            [self tip:error touch:NO];
             return NO;
         }
         return YES;
@@ -155,7 +155,11 @@
 }
 - (CGRect)sliderController:(ZYSliderViewController*)controller frameWithPage:(NSInteger)page
 {
-    return CGRectMake(page*FUll_SCREEN_WIDTH, 64+40, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-40-64);
+    return CGRectMake(page*FUll_SCREEN_WIDTH, 0, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-40-64);
+}
+- (CGRect)frameOfScrollViewSliderController:(ZYSliderViewController *)controller
+{
+    return CGRectMake(0, 64+40, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-40-64);
 }
 - (void)sliderController:(ZYSliderViewController *)controller changingPage:(NSInteger)index direction:(ZYSliderDirection)direction rate:(CGFloat)rate
 {

@@ -30,7 +30,6 @@
 
 @property (weak, nonatomic) IBOutlet UIScrollView *stepScrollView;
 
-@property (strong, nonatomic)NSMutableArray *labelArr;
 @property (strong, nonatomic)NSMutableArray *viewArr;
 
 @end
@@ -110,7 +109,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
@@ -135,7 +134,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
@@ -160,7 +159,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
@@ -184,7 +183,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
@@ -209,7 +208,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [[(ZYApplicationSections*)sections submitSignal] subscribeNext:^(RACTuple *value) {
@@ -220,7 +219,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
@@ -231,7 +230,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
             }
             else
             {
-                [self tip:error];
+                [self tip:error touch:NO];
             }
         }];
         [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
@@ -308,7 +307,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         }
         else
         {
-            [self tip:error];
+            [self tip:error touch:NO];
         }
     }];
     [sections.lastStepSignal subscribeNext:^(RACTuple *value) {
@@ -316,32 +315,28 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
     }];
     [subSliderViewCtl blendSections:sections];
     
-    _labelArr = [NSMutableArray arrayWithCapacity:10];
     _viewArr = [NSMutableArray arrayWithCapacity:10];
     
     steps = sectionsArr.count;
     stepWidth = 1.5*FUll_SCREEN_WIDTH/steps;
-    [titles enumerateObjectsUsingBlock:^(NSString * _Nonnull title, NSUInteger idx, BOOL * _Nonnull stop) {
+    int idx = 0;
+    for (NSString * title in titles) {
         
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(stepWidth/2.f+idx*stepWidth-30, -30, 60, 15)];
-        label.font = FONT(12);
-        label.textAlignment = NSTextAlignmentCenter;
-        label.textColor = [UIColor colorWithHexString:@"c3c3c3"];
-        label.text = title;
-        
-        ZYStepView *stepView = [[ZYStepView alloc] initWithFrame:CGRectMake(stepWidth/2.f+idx*stepWidth-10, -8, 20, 20)];
+        ZYStepView *stepView = [[ZYStepView alloc] initWithPoint:CGPointMake(stepWidth/2.f+idx*stepWidth-30, 0)];
+        stepView.title = title;
         stepView.text = [NSString stringWithFormat:@"%lu",(unsigned long)idx+1];
-        [_progressBackView addSubview:stepView];
-        [_progressBackView addSubview:label];
-        [_labelArr addObject:label];
+        [_stepScrollView addSubview:stepView];
         [_viewArr addObject:stepView];
+        stepView.tag = idx;
+        [stepView.tapSignal subscribeNext:^(NSNumber *tag) {
+            [self changePage:tag.longLongValue];
+        }];
         if(idx==0)
         {
-            label.font = [UIFont systemFontOfSize:14];
-            label.textColor = [UIColor colorWithHexString:@"0086d1"];
             [stepView highlight:YES];
         }
-    }];
+        idx++;
+    }
     if(steps!=0)
         self.progressWidth.constant = (self.contentWidth.constant/steps)/2.f;
     
@@ -388,156 +383,11 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
     [self.viewModel reset];//初始化
     [self.viewModel foreclosureHouseRequest];//请求数据
 }
-//- (void)blendViewModel
-//{
-//    ZYForeclosureHouseViewModel *viewModel = self.viewModel;
-//    
-//    RACChannelTo(viewModel,projectID) = RACChannelTo(self,projectID);
-//    
-//    [bussinessInfoSections blendModel:viewModel];
-//    [applyInfoSections blendModel:viewModel];
-//    [subSliderViewCtl blendSections:foreclosureHouseInfoSections];//这个特殊子页面 需要绑定一个section
-//    [costInfoSections blendModel:viewModel];
-//    [orderInfoSections blendModel:viewModel];
-//    [applicationSections blendModel:viewModel];
-//    
-//    [RACObserve(bussinessInfoSections, sections) subscribeNext:^(id x) {
-//        [self reloadTableViewAtIndex:0];
-//    }];
-//    [RACObserve(applyInfoSections, sections) subscribeNext:^(id x) {
-//        [self reloadTableViewAtIndex:1];
-//    }];
-//    [RACObserve(costInfoSections, sections) subscribeNext:^(id x) {
-//        [self reloadTableViewAtIndex:3];
-//    }];
-//    [RACObserve(orderInfoSections, sections) subscribeNext:^(id x) {
-//        [self reloadTableViewAtIndex:4];
-//    }];
-//    [RACObserve(applicationSections, sections) subscribeNext:^(id x) {
-//        [self reloadTableViewAtIndex:5];
-//    }];
-//    
-//    [bussinessInfoSections.showSectionSignal subscribeNext:^(RACTuple *value) {
-//        [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:0];
-//    }];
-//    [orderInfoSections.showSectionSignal subscribeNext:^(RACTuple *value) {
-//        [self showSection:[value.first boolValue] sectionIndex:[value.second longLongValue] page:4];
-//    }];
-//    [[RACSignal merge:@[bussinessInfoSections.pickerByDataSourceSignal,bussinessInfoSections.pickerBySignalSignal]] subscribeNext:^(RACTuple *value) {
-//        if([value.first isKindOfClass:[ZYSelectCell class]])
-//        {
-//            firstResponderCell = (ZYSelectCell*)value.first;
-//            self.selecedRow = [(ZYSelectCell*)firstResponderCell selecedIndex];
-//        }
-//        if([value.first isKindOfClass:[ZYInputCell class]])
-//        {
-//            firstResponderCell = (ZYInputCell*)value.first;
-//            self.selecedRow = [(ZYInputCell*)firstResponderCell selecedIndex];
-//        }
-//        
-//        NSString *showKey = value.third;
-//        self.pickerShowValueKey = showKey;
-//        if([value.second isKindOfClass:[NSArray class]])
-//        {
-//            NSArray *dataSource = value.second;
-//            self.components = @[dataSource];
-//        }
-//        else if([value.second isKindOfClass:[RACSignal class]])
-//        {
-//            RACSignal *signal = value.second;
-//            [signal subscribeNext:^(NSArray *dataSource) {
-//                self.components = @[dataSource];
-//            }];
-//        }
-//        [self showPickerView:YES];
-//    }];
-//    
-//    [[RACSignal merge:@[bussinessInfoSections.datePickerSignal,foreclosureHouseInfoSections.datePickerSignal,applicationSections.datePickerSignal]] subscribeNext:^(RACTuple *value) {
-//        firstResponderCell = (ZYSelectCell*)value.first;
-//        [self showDatePickerView:YES];
-//    }];
-//    
-//    [[RACSignal merge:@[bussinessInfoSections.searchBySignalSignal,applyInfoSections.searchBySignalSignal,foreclosureHouseInfoSections.searchBySignalSignal]] subscribeNext:^(RACTuple *value) {
-//        firstResponderCell = (ZYSelectCell*)value.first;
-//        [self performSegueWithIdentifier:@"search" sender:value];
-//    }];
-//    
-//    [[RACSignal merge:@[bussinessInfoSections.nextStepSignal,applyInfoSections.nextStepSignal,costInfoSections.nextStepSignal,costInfoSections.nextStepSignal,orderInfoSections.nextStepSignal,foreclosureHouseInfoSections.nextStepSignal]] subscribeNext:^(RACTuple *value) {
-//        NSString *error = value.first;
-//        if(error.length==0)
-//        {
-//            [self nextPage];
-//        }
-//        else
-//        {
-//            [self tip:error];
-//        }
-//    }];
-//    [[RACSignal merge:@[applyInfoSections.lastStepSignal,costInfoSections.lastStepSignal,costInfoSections.lastStepSignal,orderInfoSections.lastStepSignal,applicationSections.lastStepSignal,foreclosureHouseInfoSections.lastStepSignal]] subscribeNext:^(RACTuple *value) {
-//        [self lastPage];
-//    }];
-//    [applicationSections.saveSignal subscribeNext:^(RACTuple *value) {
-//        NSString *error = value.first;
-//        if(error.length==0)
-//        {
-//            //保存
-//        }
-//        else
-//        {
-//            [self tip:error];
-//        }
-//    }];
-//    [applicationSections.submitSignal subscribeNext:^(RACTuple *value) {
-//        NSString *error = value.first;
-//        if(error.length==0)
-//        {
-//            //提交
-//        }
-//        else
-//        {
-//            [self tip:error];
-//        }
-//    }];
-//    
-//    [RACObserve(self, selecedRow) subscribeNext:^(NSNumber *index) {
-//        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
-//        {
-//            [(ZYSelectCell*)firstResponderCell setSelecedIndex:index.longLongValue];
-//        }
-//        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
-//        {
-//            [(ZYSelectCell*)firstResponderCell setSelecedIndex:index.longLongValue];
-//        }
-//    }];
-//    [RACObserve(self, selecedObj) subscribeNext:^(id obj) {
-//        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
-//        {
-//            [(ZYSelectCell*)firstResponderCell setSelecedObj:obj];
-//        }
-//        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
-//        {
-//            [(ZYInputCell*)firstResponderCell setSelecedObj:obj];
-//        }
-//    }];
-//    [RACObserve(self, selecedDate) subscribeNext:^(NSDate *date) {
-//        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//        [formatter setDateFormat:@"yyyy-MM-dd"];
-//        NSString *dateStr = [formatter stringFromDate:date];
-//        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
-//        {
-//            [(ZYSelectCell*)firstResponderCell setCellText:dateStr];
-//        }
-//        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
-//        {
-//            [(ZYInputCell*)firstResponderCell setCellText:dateStr];
-//        }
-//    }];
-//    
-//    
-//}
+
 - (ZYSections*)sliderController:(ZYSliderViewController*)controller sectionsWithPage:(NSInteger)page
 {
-    return [self buildSection:sectionsArr[page]];
+    ZYSections *sections = [self buildSection:sectionsArr[page]];
+    return sections;
 }
 - (NSInteger)countOfControllerSliderController:(ZYSliderViewController *)controller
 {
@@ -545,7 +395,11 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
 }
 - (CGRect)sliderController:(ZYSliderViewController*)controller frameWithPage:(NSInteger)page
 {
-    return CGRectMake(page*FUll_SCREEN_WIDTH, 50+64, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-64-50);
+    return CGRectMake(page*FUll_SCREEN_WIDTH, 0, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-64-50);
+}
+- (CGRect)frameOfScrollViewSliderController:(ZYSliderViewController *)controller
+{
+    return CGRectMake(0, 50+64, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT-64-50);
 }
 - (UIView*)sliderController:(ZYSliderViewController *)controller customViewWithpage:(NSInteger)page
 {
@@ -561,36 +415,34 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
 }
 - (void)sliderController:(ZYSliderViewController *)controller didChangePage:(NSInteger)index direction:(ZYSliderDirection)direction
 {
-    for(int i=0;i<_labelArr.count;i++)
+    for(int i=0;i<_viewArr.count;i++)
     {
-        UILabel *label = _labelArr[i];
         ZYStepView *view = _viewArr[i];
         if(i<=index)
         {
-            label.font = [UIFont systemFontOfSize:14];
-            label.textColor = [UIColor colorWithHexString:@"0086d1"];
             [view highlight:YES];
-            
         }
         else
         {
-            label.font = [UIFont systemFontOfSize:12];
-            label.textColor = [UIColor colorWithHexString:@"c3c3c3"];
             [view highlight:NO];
         }
     }
     
     CGPoint point = _stepScrollView.contentOffset;
     
-    if (index!=steps-1&&index>=3&&direction==ZYSliderToRight)
+
+    if(index>=2&&index<steps-1)
     {
         point.x = (index-2)*stepWidth;
         [self.stepScrollView setContentOffset:point animated:YES];
     }
-    if ((index==3||index==2)&&direction==ZYSliderToLeft)
+    else
     {
-        point.x = (index-2)*stepWidth;
-        [self.stepScrollView setContentOffset:point animated:YES];
+        if(index<2)
+        {
+            point.x = 0;
+            [self.stepScrollView setContentOffset:point animated:YES];
+        }
     }
 }
 

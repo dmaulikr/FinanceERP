@@ -251,20 +251,22 @@
     [self.tabBarController.tabBar setHidden:_tabBarHidden];
 }
 #pragma mark - hud方法
-- (void)loading
+- (void)loading:(BOOL)touch
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.userInteractionEnabled = touch;
     hud.removeFromSuperViewOnHide = YES;
 }
 - (void)stop
 {
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
 }
-- (void)tip:(NSString*)tip
+- (void)tip:(NSString*)tip touch:(BOOL)touch
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.mode = MBProgressHUDModeText;
     hud.removeFromSuperViewOnHide = YES;
+    hud.userInteractionEnabled = touch;
     hud.labelText = tip;
     [hud hide:YES afterDelay:1.5];
 }

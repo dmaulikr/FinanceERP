@@ -70,7 +70,7 @@ ZY_VIEW_MODEL_GET(ZYLoginViewModel)
     
     [[_loginButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
         @strongify(self)
-        [self loading];
+        [self loading:YES];
         [[viewModel login] subscribeNext:^(ZYUser *user) {
             [self stop];
             [viewModel saveUserNameAndPassword];
@@ -82,7 +82,7 @@ ZY_VIEW_MODEL_GET(ZYLoginViewModel)
             }
         } error:^(NSError *error) {
             [self stop];
-            [self tip:error.domain];
+            [self tip:error.domain touch:NO];
         } completed:^{
         }];
     }];

@@ -7,61 +7,104 @@
 //
 
 #import "ZYStepView.h"
-
+#define STEP_WIDTH 60
+#define STEP_HEIGHT 50
+#define STEP_ROUND_VIEW_WIDTH 20
 @implementation ZYStepView
 {
+    UILabel *titleLabel;
+    
     UIView *bgView;
+    UIView *transionView;
     UILabel *label;
+    
+    UIButton *tapButton;
 }
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithPoint:(CGPoint)point
 {
-    self = [super initWithFrame:frame];
+    self = [super initWithFrame:CGRectMake(point.x, point.y, STEP_WIDTH, STEP_HEIGHT)];
     if (self) {
         _highlightColor = [UIColor colorWithHexString:@"0086d1"];
         
-        bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, frame.size.height)];
-        bgView.backgroundColor = _highlightColor;
+        titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 3, STEP_WIDTH, 20)];
+        titleLabel.font = FONT(12);
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.textColor = [UIColor colorWithHexString:@"c3c3c3"];
+        
+        titleLabel.textColor = [UIColor colorWithHexString:@"c3c3c3"];
+        [self addSubview:titleLabel];
+        
+        bgView = [[UIView alloc] initWithFrame:CGRectMake(20, 28, STEP_ROUND_VIEW_WIDTH, STEP_ROUND_VIEW_WIDTH)];
+        bgView.backgroundColor = [UIColor colorWithHexString:@"e4e5df"];
+        bgView.layer.cornerRadius = STEP_ROUND_VIEW_WIDTH/2.f;
+        bgView.clipsToBounds = YES;
         [self addSubview:bgView];
         
-        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        transionView = [[UIView alloc] initWithFrame:CGRectMake(20, 28, 0, STEP_ROUND_VIEW_WIDTH)];
+        transionView.backgroundColor = _highlightColor;
+        transionView.layer.cornerRadius = STEP_ROUND_VIEW_WIDTH/2.f;
+        transionView.clipsToBounds = YES;
+        [self addSubview:transionView];
+        
+        label = [[UILabel alloc] initWithFrame:CGRectMake(20, 28, STEP_ROUND_VIEW_WIDTH, STEP_ROUND_VIEW_WIDTH)];
         label.textAlignment = NSTextAlignmentCenter;
         label.font = [UIFont systemFontOfSize:12];
+        label.layer.cornerRadius = STEP_ROUND_VIEW_WIDTH/2.f;
+        label.clipsToBounds = YES;
         label.backgroundColor = [UIColor clearColor];
         label.textColor = [UIColor colorWithHexString:@"c3c3c3"];
         [self addSubview:label];
+        
+        tapButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, STEP_WIDTH, STEP_HEIGHT)];
+        [self addSubview:tapButton];
     }
     return self;
 }
 - (void)layoutSubviews
 {
-    self.backgroundColor = [UIColor colorWithHexString:@"e4e5df"];
-    self.layer.cornerRadius = self.width/2.f;
-    self.clipsToBounds = YES;
+    [super layoutSubviews];
+//    self.backgroundColor = [UIColor colorWithHexString:@"e4e5df"];
+//    self.layer.cornerRadius = self.width/2.f;
+//    self.clipsToBounds = YES;
 }
 - (void)setText:(NSString *)text
 {
     _text = text;
     label.text = text;
 }
+- (void)setTitle:(NSString *)title
+{
+    _title = title;
+    titleLabel.text = title;
+}
 - (void)highlight:(BOOL)highlight
 {
     if(highlight)
     {
-        bgView.backgroundColor = _highlightColor;
+        titleLabel.font = [UIFont systemFontOfSize:14];
+        titleLabel.textColor = [UIColor colorWithHexString:@"0086d1"];
+        transionView.backgroundColor = _highlightColor;
         label.textColor = [UIColor whiteColor];
         [UIView animateWithDuration:0.1 animations:^{
-            bgView.frame = CGRectMake(0, 0, self.width, self.height);
+            transionView.width = STEP_ROUND_VIEW_WIDTH;
         }];
     }
     else
     {
+        titleLabel.font = [UIFont systemFontOfSize:12];
+        titleLabel.textColor = [UIColor colorWithHexString:@"c3c3c3"];
         label.textColor = [UIColor colorWithHexString:@"c3c3c3"];
         [UIView animateWithDuration:0.1 animations:^{
-            bgView.frame = CGRectMake(0, 0, 0, self.height);
+            transionView.width = 0;
         }completion:^(BOOL finished) {
-            bgView.backgroundColor = _highlightColor;
+            transionView.backgroundColor = _highlightColor;
         }];
     }
 }
-
+- (RACSignal*)tapSignal
+{
+    return [[tapButton rac_signalForControlEvents:UIControlEventTouchUpInside] map:^id(id value) {
+        return @(self.tag);
+    }];
+}
 @end

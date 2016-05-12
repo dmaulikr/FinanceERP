@@ -32,4 +32,9 @@
 @property(nonatomic,strong)NSString *showKey;
 
 - (void)reloadDataSource;
+/**
+ *  下拉菜单距离顶部距离
+ */
+@property(nonatomic,assign)CGFloat dropTableTopMargin;
+
 @end

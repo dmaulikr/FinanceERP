@@ -8,9 +8,15 @@
 
 #import "ZYStoreModel.h"
 
+typedef enum : NSUInteger {
+    ZYHistoryTypeBusinessProcessing = 0,
+    ZYHistoryTypeMyCustomer,
+} ZYHistoryType;
+
 @interface ZYSearchHistoryModel : ZYStoreModel
 
 @property(nonatomic,strong)NSDate *searchDate;
 @property(nonatomic,strong)NSString *searchKeyword;
+@property(nonatomic,assign)ZYHistoryType type;
 
 @end

@@ -37,7 +37,7 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     userInfoCell = [ZYUserCenterUserInfoCell cellWithXibHeight:[ZYUserCenterUserInfoCell defaultHeight] actionBlock:^{
         if(![ZYTools checkLogin])
         {
-            [self tip:@"登陆中,请稍后"];
+            [self tip:@"登陆中,请稍后" touch:NO];
             return;
         }
         
@@ -57,7 +57,7 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     } actionBlock:^(UITableView *tableView, NSInteger row) {
         if(![ZYTools checkLogin])
         {
-            [self tip:@"登陆中,请稍后"];
+            [self tip:@"登陆中,请稍后" touch:NO];
             return;
         }
     }];
@@ -67,7 +67,7 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     [[logoutCell logoutSignal] subscribeNext:^(id x) {
         if(![ZYTools checkLogin])
         {
-            [self tip:@"登陆中,请稍后"];
+            [self tip:@"登陆中,请稍后" touch:NO];
             return;
         }
         

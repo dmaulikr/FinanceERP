@@ -100,7 +100,7 @@
 @property(nonatomic,strong)NSString *bankForeclosureAccount;
 @property(nonatomic,strong)ZYBankModel *bankPublicFundBank;
 @property(nonatomic,strong)NSString *bankPublicFundMoney;
-@property(nonatomic,strong)NSString *bankSuperviseOrganization;
+@property(nonatomic,strong)ZYBankModel *bankSuperviseOrganization;
 @property(nonatomic,strong)NSString *bankSuperviseMoney;
 @property(nonatomic,strong)NSString *bankSuperviseAccount;
 @property(nonatomic,strong)NSString *bankJusticeDate;
