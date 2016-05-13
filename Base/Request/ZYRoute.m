@@ -200,6 +200,7 @@
 }
 - (RACSignal*)warningEventList:(ZYWarningEventRquest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
         CHECK_LOGIN///检查登陆
@@ -210,6 +211,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -236,6 +239,7 @@
 }
 - (RACSignal*)productList:(ZYProductRequest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
             id value = request.responseJSONObject;
@@ -243,6 +247,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -269,6 +275,7 @@
 }
 - (RACSignal*)businessProcessList:(ZYBusinessProcessRequest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
         CHECK_LOGIN///检查登陆
@@ -279,6 +286,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -311,6 +320,7 @@
 }
 - (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
         CHECK_LOGIN///检查登陆
@@ -321,6 +331,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -375,6 +387,7 @@
 
 - (RACSignal*)banks:(ZYBanksRequest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
             id value = request.responseJSONObject;
@@ -382,6 +395,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -408,6 +423,7 @@
 }
 - (RACSignal*)myCustomers:(ZYMyCustomerRequest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
         CHECK_LOGIN///检查登陆
@@ -418,6 +434,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -444,6 +462,7 @@
 }
 - (RACSignal*)businessProcessStateList:(ZYBusinessProcessingStateRequest*)myRequest
 {
+    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
         CHECK_LOGIN///检查登陆
@@ -454,6 +473,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -468,6 +489,37 @@
     }];
     return [signal map:^id(id value) {
         return [ZYBusinessProcessingStateModel mj_objectWithKeyValues:value];;
+    }];
+}
+- (RACSignal*)businessProcessStateEdit:(ZYBussinessProcessingStateEditRequest*)myRequest
+{
+    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return ERROR(value).domain;
     }];
 }
 @end

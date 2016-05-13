@@ -34,8 +34,6 @@
     
     ZYTopTabBar *topBar;
     
-//    ZYTableViewCell *firstResponderCell;
-    
     ZYDoubleButtonCell *buttonView;
     
     ZYSections *mainSections;

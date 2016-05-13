@@ -12,4 +12,5 @@
 
 @property(nonatomic,strong)RACSignal *buttonPressedSignal;
 
+@property(nonatomic,strong)NSString *buttonTitle;
 @end

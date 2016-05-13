@@ -12,4 +12,7 @@
 @interface ZYBussinessProcessingStateEditController : ZYViewController
 ZY_VIEW_MODEL_PROPERTY(ZYBussinessProcessingStateEditViewModel)
 @property(nonatomic,assign)NSInteger businessProcessingID;
+
+@property(nonatomic,strong)RACSignal *editSuccessSignal;
+
 @end

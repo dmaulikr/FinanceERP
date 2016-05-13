@@ -25,10 +25,13 @@
  *  当前共经过多少天
  */
 @property(nonatomic,assign)NSInteger businessProcessingDays;
-
-
+/**
+ *  是否提交成功
+ */
+@property(nonatomic,assign)BOOL success;
 @property(nonatomic,strong)NSString *error;
 @property(nonatomic,assign)BOOL loading;
 
 - (void)requestBusinessProcessingState;
+- (void)requestBusinessProcessingEdit;
 @end

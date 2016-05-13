@@ -40,7 +40,9 @@
                 
                 Handle_Dynamic_Map_List *dynamic = states.handle_dynamic_map_list[i];
                 
+                self.businessProcessingStatePageModel.businessProcessingStatePageStepID = dynamic.pid;
                 self.businessProcessingStatePageModel.businessProcessingStatePageName = flow.name;
+                
                 self.businessProcessingStatePageModel.businessProcessingStatePageFinishDate = dynamic.finish_date;
 //                //            model.businessProcessingStatePageHandler = @"";
                 self.businessProcessingStatePageModel.businessProcessingStatePageOperrator = dynamic.operator;
@@ -57,6 +59,31 @@
     } error:^(NSError *error) {
         self.error = error.domain;
         self.loading = NO;
+    } completed:^{
+        
+    }];
+}
+- (void)requestBusinessProcessingEdit
+{
+    ZYBussinessProcessingStateEditRequest *request = [ZYBussinessProcessingStateEditRequest request];
+    request.user_id = [ZYUser user].pid;
+    request.biz_handle_id = _businessProcessingID;
+    request.handle_dynamic_id = self.businessProcessingStatePageModel.businessProcessingStatePageStepID;
+    request.finish_date = self.businessProcessingStatePageModel.businessProcessingStatePageFinishDate;
+    request.remark = self.businessProcessingStatePageModel.businessProcessingStatePageRemark;
+    _error = nil;
+    self.loading = YES;
+    _success = NO;
+    @weakify(self)
+    [[[ZYRoute route] businessProcessStateEdit:request] subscribeNext:^(id value) {
+        @strongify(self)
+        self.loading = NO;
+        self.error = value;
+        self.success = YES;
+    } error:^(NSError *error) {
+        self.loading = NO;
+        self.error = error.domain;
+        self.success = NO;
     } completed:^{
         
     }];

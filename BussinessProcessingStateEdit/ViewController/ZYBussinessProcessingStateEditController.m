@@ -49,7 +49,17 @@ ZY_VIEW_MODEL_GET(ZYBussinessProcessingStateEditViewModel)
         self.showDateBefore = !onlyFutura;
         [self showDatePickerView:YES];
     }];
-    
+    [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+        id error = value.first;
+        if([error isKindOfClass:[NSString class]])
+        {
+            [self tip:error touch:NO];
+        }
+        else
+        {
+            [self.viewModel requestBusinessProcessingEdit];
+        }
+    }];
 }
 - (void)blendViewModel
 {
@@ -58,7 +68,7 @@ ZY_VIEW_MODEL_GET(ZYBussinessProcessingStateEditViewModel)
     [[RACObserve(self.viewModel, loading) skip:1] subscribeNext:^(NSNumber *loading) {
         if(loading.boolValue)
         {
-            [self loading:NO];
+            [self loading:YES];
         }
         else
         {
@@ -85,7 +95,31 @@ ZY_VIEW_MODEL_GET(ZYBussinessProcessingStateEditViewModel)
         [firstResponderCell setCellText:dateStr];
     }];
     
+    [[RACObserve(self.viewModel, error) skip:1] subscribeNext:^(NSString *error) {
+        [self tip:error touch:YES];
+    }];
+    
+    [[RACObserve(self.viewModel, success) skip:1] subscribeNext:^(NSNumber *success) {
+        if(success.boolValue)
+        {
+            [self editSuccess];
+            [self performSelector:@selector(dismiss) withObject:nil afterDelay:1.0];
+        }
+    }];
     [self.viewModel requestBusinessProcessingState];
+}
+- (void)dismiss
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+- (void)editSuccess{}
+- (RACSignal*)editSuccessSignal
+{
+    if(_editSuccessSignal==nil)
+    {
+        _editSuccessSignal = [self rac_signalForSelector:@selector(editSuccess)];
+    }
+    return _editSuccessSignal;
 }
 /*
 #pragma mark - Navigation

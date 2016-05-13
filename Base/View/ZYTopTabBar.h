@@ -14,5 +14,7 @@
 @property(nonatomic,strong)NSMutableArray *buttonArr;
 @property(nonatomic,assign)NSInteger highlightIndex;
 
+@property(nonatomic,assign,readonly)CGFloat tabWidth;
+
 - (instancetype)initWithTabs:(NSArray*)tabs frame:(CGRect)frame;
 @end

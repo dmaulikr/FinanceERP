@@ -9,7 +9,6 @@
 #import "ZYTopTabBar.h"
 
 @implementation ZYTopTabBar
-
 {
     NSArray *tabTitles;
 }
@@ -20,13 +19,13 @@
         tabTitles = tabs;
         
         NSInteger steps = tabTitles.count;
-        CGFloat width = (FUll_SCREEN_WIDTH-(steps+1)*GAP)/steps;
+        _tabWidth = (frame.size.width-(steps+1)*GAP)/steps;
         _buttonArr = [NSMutableArray arrayWithCapacity:steps];
         NSInteger idx = 0;
         for(NSString *title in tabTitles)
         {
             UIButton *stepButton = [UIButton buttonWithType:UIButtonTypeSystem];
-            stepButton.frame = CGRectMake(GAP+idx*(GAP+width), GAP, width, self.height-GAP);
+            stepButton.frame = CGRectMake(GAP+idx*(GAP+_tabWidth), GAP, _tabWidth, self.height-GAP);
             [stepButton setTitle:title forState:UIControlStateNormal];
             stepButton.backgroundColor = [UIColor clearColor];
             [stepButton setTitleColor:[UIColor colorWithHexString:@"888888"] forState:UIControlStateNormal];
@@ -66,10 +65,10 @@
 {
     CGFloat height = rect.size.height;
     CGFloat width = rect.size.width;
-    NSInteger steps = tabTitles.count;
-    CGFloat tabWidth = (FUll_SCREEN_WIDTH-(steps+1)*GAP)/steps;
+//    NSInteger steps = tabTitles.count;
+//    CGFloat tabWidth = (width-(steps+1)*GAP)/steps;
     
-    CGFloat leftLength = (width-GAP-tabWidth-GAP)*_rate+GAP;
+    CGFloat leftLength = (width-GAP-_tabWidth-GAP)*_rate+GAP;
     
     //    CGFloat leftLength = _selecedIndex*(tabWidth+TAB_GAP)+TAB_GAP;
     
@@ -80,8 +79,8 @@
     CGContextMoveToPoint(ctx, 0, height);
     CGContextAddLineToPoint(ctx, leftLength, height);
     CGContextAddLineToPoint(ctx, leftLength, GAP);
-    CGContextAddLineToPoint(ctx, leftLength+tabWidth, GAP);
-    CGContextAddLineToPoint(ctx, leftLength+tabWidth, height);
+    CGContextAddLineToPoint(ctx, leftLength+_tabWidth, GAP);
+    CGContextAddLineToPoint(ctx, leftLength+_tabWidth, height);
     CGContextAddLineToPoint(ctx, width, height);
     
     CGContextSetRGBStrokeColor(ctx, 136.f/255.f, 136.f/255.f, 136.f/255.f, 1);

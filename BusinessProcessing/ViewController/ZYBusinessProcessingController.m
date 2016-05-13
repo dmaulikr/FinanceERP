@@ -247,6 +247,9 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingViewModel)
     {
         ZYBussinessProcessingStateEditController *controller = [segue destinationViewController];
         controller.businessProcessingID = [(ZYBusinessProcessModel*)sender biz_handle_id];
+        [controller.editSuccessSignal subscribeNext:^(id x) {
+            [self.tableView.mj_header beginRefreshing];
+        }];
     }
     if([segue.identifier isEqualToString:@"search"])
     {

@@ -49,6 +49,7 @@ ZY_VIEW_MODEL_GET(ZYBusinessProcessingStateViewModel)
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self buildUI];
     [self blendViewModel];
 }
 - (void)buildUI

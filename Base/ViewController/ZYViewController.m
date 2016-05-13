@@ -268,6 +268,6 @@
     hud.removeFromSuperViewOnHide = YES;
     hud.userInteractionEnabled = touch;
     hud.labelText = tip;
-    [hud hide:YES afterDelay:1.5];
+    [hud hide:YES afterDelay:1.0];
 }
 @end

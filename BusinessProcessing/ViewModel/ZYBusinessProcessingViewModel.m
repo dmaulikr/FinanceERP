@@ -62,8 +62,8 @@
         }
         
     } error:^(NSError *error) {
-        self.error = error.domain;
         self.loading = NO;
+        self.error = error.domain;
     } completed:^{
         
     }];

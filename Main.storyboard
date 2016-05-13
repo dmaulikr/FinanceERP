@@ -302,6 +302,7 @@
                         <outlet property="searchBar" destination="19P-CG-vrC" id="l89-8A-xDu"/>
                         <outlet property="searchDisplayController" destination="rJL-Zx-KZy" id="nRc-MZ-miP"/>
                         <outlet property="tableView" destination="zGI-tF-WWr" id="3Ad-xk-vEH"/>
+                        <segue destination="bn3-Wl-sAm" kind="show" identifier="info" id="PLS-bh-T3X"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oO2-M1-NXw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -814,7 +815,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tCN-LN-d0d" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5290" y="-3628"/>
+            <point key="canvasLocation" x="4690" y="-2348"/>
         </scene>
         <!--产品列表-->
         <scene sceneID="lQc-Wn-20G">
@@ -1108,6 +1109,79 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7JD-cg-d1k" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3002" y="-1190"/>
+        </scene>
+        <!--客户信息-->
+        <scene sceneID="PWi-zR-BLz">
+            <objects>
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="t5t-Qq-nCN" customClass="ZYCustomerDetailViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="hVQ-Hp-bCY"/>
+                        <viewControllerLayoutGuide type="bottom" id="cjw-HW-sOj"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="UV8-MN-MRd">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t7L-Lm-Gnk">
+                                <rect key="frame" x="0.0" y="64" width="600" height="50"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pg5-By-J7f">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="600" id="2aB-XY-KHk"/>
+                                            <constraint firstAttribute="height" constant="50" id="4Wx-aN-PXb"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="Cdd-yf-7Jf"/>
+                                    <constraint firstItem="Pg5-By-J7f" firstAttribute="top" secondItem="t7L-Lm-Gnk" secondAttribute="top" id="FiM-jB-c8i"/>
+                                    <constraint firstAttribute="trailing" secondItem="Pg5-By-J7f" secondAttribute="trailing" id="V1Y-2G-zET"/>
+                                    <constraint firstAttribute="bottom" secondItem="Pg5-By-J7f" secondAttribute="bottom" id="aVL-ed-ckK"/>
+                                    <constraint firstItem="Pg5-By-J7f" firstAttribute="leading" secondItem="t7L-Lm-Gnk" secondAttribute="leading" id="eFz-ux-Ci8"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="t7L-Lm-Gnk" firstAttribute="top" secondItem="hVQ-Hp-bCY" secondAttribute="bottom" id="CLV-EE-fyd"/>
+                            <constraint firstItem="t7L-Lm-Gnk" firstAttribute="leading" secondItem="UV8-MN-MRd" secondAttribute="leading" id="EJC-Jc-ejS"/>
+                            <constraint firstAttribute="trailing" secondItem="t7L-Lm-Gnk" secondAttribute="trailing" id="ZUA-BN-nPn"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="客户信息" id="SCd-72-HBZ"/>
+                    <connections>
+                        <outlet property="scrollBackView" destination="Pg5-By-J7f" id="CXa-kL-VW8"/>
+                        <outlet property="scrollViewContentWidth" destination="2aB-XY-KHk" id="9t3-SS-0Ah"/>
+                        <outlet property="topTabScrollView" destination="t7L-Lm-Gnk" id="7ku-DY-Dl7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bkE-hp-iKd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3717" y="169"/>
+        </scene>
+        <!--基本信息-->
+        <scene sceneID="Irv-ca-OPA">
+            <objects>
+                <viewController id="bn3-Wl-sAm" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wEA-Du-V7I"/>
+                        <viewControllerLayoutGuide type="bottom" id="ZMh-MA-yMV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="eLS-Xr-Qe2">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="基本信息" id="cpt-NS-OdB"/>
+                    <connections>
+                        <segue destination="t5t-Qq-nCN" kind="show" identifier="detail" id="GZd-y8-LQA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dll-oj-TzW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3002" y="169"/>
         </scene>
         <!--房贷计算器-->
         <scene sceneID="oOJ-fr-WnS">

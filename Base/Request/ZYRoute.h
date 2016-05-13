@@ -30,6 +30,7 @@
 #import "ZYCustomerModel.h"
 #import "ZYBusinessProcessingStateRequest.h"
 #import "ZYBusinessProcessingStateModel.h"
+#import "ZYBussinessProcessingStateEditRequest.h"
 
 @interface ZYRoute : NSObject
 
@@ -70,4 +71,5 @@
 
 - (RACSignal*)businessProcessStateList:(ZYBusinessProcessingStateRequest*)myRequest;
 
+- (RACSignal*)businessProcessStateEdit:(ZYBussinessProcessingStateEditRequest*)myRequest;
 @end

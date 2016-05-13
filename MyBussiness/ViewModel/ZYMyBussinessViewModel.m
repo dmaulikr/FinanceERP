@@ -63,8 +63,8 @@
         }
         
     } error:^(NSError *error) {
-        self.error = error.domain;
         self.leftLoading = NO;
+        self.error = error.domain;
     } completed:^{
         
     }];
@@ -103,8 +103,8 @@
         }
         
     } error:^(NSError *error) {
-        self.error = error.domain;
         self.rightLoading = NO;
+        self.error = error.domain;
     } completed:^{
         
     }];

@@ -56,7 +56,10 @@
 {
     return 120.f;
 }
-- (IBAction)buttonPressed:(id)sender {
+- (void)setButtonTitle:(NSString *)buttonTitle
+{
+    _buttonTitle = buttonTitle;
+    [_button setTitle:buttonTitle forState:UIControlStateNormal];
 }
 
 @end
