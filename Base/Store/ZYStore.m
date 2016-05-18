@@ -10,6 +10,7 @@
 #import "ZYBankModel.h"
 #import "ZYForeclosureHouseViewModel.h"
 #import "ZYPaperModel.h"
+#import "ZYCustomerDetailViewModel.h"
 
 @implementation ZYStore
 
@@ -65,18 +66,16 @@
     [[[ZYRoute route] banks:request] subscribeNext:^(NSArray *banks) {
         if(banks.count>0)
         {
-            if(![[ZYBankModel getUsingLKDBHelper] getTableCreatedWithClass:[ZYBankModel class]])
-            {
-                NSLog(@"创建表失败");
-                return;
-            }
             /**
              *  清空表数据
              */
             [[ZYBankModel getUsingLKDBHelper] executeForTransaction:^BOOL(LKDBHelper *helper) {
-                if(![[ZYBankModel getUsingLKDBHelper] deleteWithClass:[ZYBankModel class] where:nil])
+                if([[ZYBankModel getUsingLKDBHelper] isExistsClass:[ZYBankModel class] where:nil])
                 {
-                    return NO;//删除失败回滚
+                    if(![[ZYBankModel getUsingLKDBHelper] deleteWithClass:[ZYBankModel class] where:nil])
+                    {
+                        return NO;//删除失败回滚
+                    }
                 }
                 NSInteger i = 1;
                 for(ZYBankModel *model in banks)
@@ -146,100 +145,180 @@
             NSLog(@"插入失败");
         }
     }
-    
-    
-    LKDBHelper *helper = [ZYBankModel getUsingLKDBHelper];
-    
-    
-    if(![helper getTableCreatedWithClass:[ZYCooperativeOrganizationModel class]])
+
+    NSArray *cooperLookDesc = @[@"随手记",@"小赢",@"融安",@"亚桐",@"中鼎在线",@"资安"];
+    NSArray *pid = @[@(13783),@(13784),@(13785),@(13786),@(13787),@(13866),];
+    for(int i=0;i<cooperLookDesc.count;i++)
     {
-        NSLog(@"创建表失败");
+        ZYCooperativeOrganizationModel *cooper = [[ZYCooperativeOrganizationModel alloc] init];
+        cooper.look_desc = cooperLookDesc[i];
+        cooper.pid = [pid[i] longLongValue];
+        cooper.num = i;
+        [[ZYCooperativeOrganizationModel getUsingLKDBHelper] insertWhenNotExists:cooper];
     }
     
-    ZYCooperativeOrganizationModel *cooper;
-    cooper = [[ZYCooperativeOrganizationModel alloc] init];
-    cooper.look_desc = @"随手记";
-    cooper.pid = 13783;
-    
-    [helper insertWhenNotExists:cooper];
-    
-    cooper = [[ZYCooperativeOrganizationModel alloc] init];
-    cooper.look_desc = @"小赢";
-    cooper.pid = 13784;
-    
-    [helper insertWhenNotExists:cooper];
-    
-    cooper = [[ZYCooperativeOrganizationModel alloc] init];
-    cooper.look_desc = @"融安";
-    cooper.pid = 13785;
-    
-    [helper insertWhenNotExists:cooper];
-    
-    cooper = [[ZYCooperativeOrganizationModel alloc] init];
-    cooper.look_desc = @"亚桐";
-    cooper.pid = 13786;
-    
-    [helper insertWhenNotExists:cooper];
-    
-    cooper = [[ZYCooperativeOrganizationModel alloc] init];
-    cooper.look_desc = @"中鼎在线";
-    cooper.pid = 13787;
-    
-    [helper insertWhenNotExists:cooper];
-    
-    cooper = [[ZYCooperativeOrganizationModel alloc] init];
-    cooper.look_desc = @"资安";
-    cooper.pid = 13866;
-    
-    [helper insertWhenNotExists:cooper];
-    
-    if(![helper getTableCreatedWithClass:[ZYIntermediaryModel class]])
+    NSArray *interLookDesc = @[@"中原地产",@"Q房网",@"链家",@"新峰地产",@"中天置业",@"中天置业",@"我爱我家"
+                               ,@"家家顺"];
+    NSArray *interpid = @[@(13772),
+                          @(13774),
+                          @(13774),
+                          @(13775),
+                          @(13776),
+                          @(13777),
+                          @(13778),];
+    for(int i=0;i<cooperLookDesc.count;i++)
     {
-        NSLog(@"创建表失败");
+        ZYIntermediaryModel *inter = [[ZYIntermediaryModel alloc] init];
+        inter.look_desc = interLookDesc[i];
+        inter.pid = [interpid[i] longLongValue];
+        inter.num = i;
+        [[ZYIntermediaryModel getUsingLKDBHelper] insertWhenNotExists:inter];
     }
     
-    ZYIntermediaryModel *inter;
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"中原地产";
-    inter.pid = 13772;
+    NSArray *educatDesc = @[@"小学",@"初中",@"高中",@"大专",@"本科",@"研究生",@"博士研究生"
+                               ,@"博士后研究生"];
+    NSArray *educatpid = @[@(13161),
+                          @(13162),
+                          @(13163),
+                          @(13164),
+                          @(13165),
+                          @(13166),
+                          @(13167),
+                          @(13168),];
+    for(int i=0;i<educatDesc.count;i++)
+    {
+        ZYEducationModel *model = [[ZYEducationModel alloc] init];
+        model.name = educatDesc[i];
+        model.pid = [educatpid[i] longLongValue];
+        model.num = i;
+        [[ZYEducationModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    [helper insertWhenNotExists:inter];
     
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"Q房网";
-    inter.pid = 13774;
+    NSArray *titleDesc = @[@"正高级",@"副高级",@"中级",@"助理级",@"技术员",@"其他"];
+    NSArray *titlepid = @[@(13185),
+                           @(13186),
+                           @(13187),
+                           @(13188),
+                           @(13189),
+                           @(13110),];
+    for(int i=0;i<titleDesc.count;i++)
+    {
+        ZYWorkTitleModel *model = [[ZYWorkTitleModel alloc] init];
+        model.name = titleDesc[i];
+        model.pid = [titlepid[i] longLongValue];
+        model.num = i;
+        [[ZYWorkTitleModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    [helper insertWhenNotExists:inter];
+    NSArray *incomeTypeDesc = @[@"工资卡",@"现金",@"红包",@"保险",@"实物",@"其他"];
+    NSArray *incomeTypepid = @[@(13201),
+                          @(13202),
+                          @(13203),
+                          @(13204),
+                          @(13205),
+                          @(13206),];
+    for(int i=0;i<incomeTypeDesc.count;i++)
+    {
+        ZYIncomeTypeModel *model = [[ZYIncomeTypeModel alloc] init];
+        model.name = incomeTypeDesc[i];
+        model.pid = [incomeTypepid[i] longLongValue];
+        model.num = i;
+        [[ZYIncomeTypeModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"链家";
-    inter.pid = 13774;
+    NSArray *sucialPayTypeDesc = @[@"是",@"否"];
+    NSArray *sucialPayTypepid = @[@(1),
+                               @(2),];
+    for(int i=0;i<sucialPayTypeDesc.count;i++)
+    {
+        ZYSocialSecurityPayStatuModel *model = [[ZYSocialSecurityPayStatuModel alloc] init];
+        model.name = sucialPayTypeDesc[i];
+        model.pid = [sucialPayTypepid[i] longLongValue];
+        model.num = i;
+        [[ZYSocialSecurityPayStatuModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    [helper insertWhenNotExists:inter];
+    NSArray *accountTypeDesc = @[@"个人结算账户",@"储蓄账户",@"个人支票帐户",@"信用卡账户",@"其他"];
+    NSArray *accountTypepid = @[@(13221),
+                                @(13222),
+                                @(13223),
+                                @(13224),
+                                @(13225),];
+    for(int i=0;i<accountTypeDesc.count;i++)
+    {
+        ZYAccountTypeModel *model = [[ZYAccountTypeModel alloc] init];
+        model.name = accountTypeDesc[i];
+        model.pid = [accountTypepid[i] longLongValue];
+        model.num = i;
+        [[ZYAccountTypeModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"新峰地产";
-    inter.pid = 13775;
+    NSArray *accountPurDesc = @[@"贷款还款账户",@"贷款回款账户",@"代发工资账户"];
+    NSArray *accountPurpid = @[@(13234),
+                                @(13235),
+                                @(13236)];
+    for(int i=0;i<accountPurDesc.count;i++)
+    {
+        ZYAccountPurposeModel *model = [[ZYAccountPurposeModel alloc] init];
+        model.name = accountPurDesc[i];
+        model.pid = [accountPurpid[i] longLongValue];
+        model.num = i;
+        [[ZYAccountPurposeModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    [helper insertWhenNotExists:inter];
+    NSArray *liveStateDesc = @[@"自有居住",@"住房按揭",@"租房",@"其他"];
+    NSArray *liveStatepid = @[@(13213),
+                               @(13214),
+                               @(13215),
+                              @(13216)];
+    for(int i=0;i<liveStateDesc.count;i++)
+    {
+        ZYLiveStatuModel *model = [[ZYLiveStatuModel alloc] init];
+        model.name = liveStateDesc[i];
+        model.pid = [liveStatepid[i] longLongValue];
+        model.num = i;
+        [[ZYLiveStatuModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"中天置业";
-    inter.pid = 13776;
+    NSArray *liveTypeDesc = @[@"别墅",@"商品房",@"小产权房",@"其他"];
+    NSArray *liveTypepid = @[@(13217),
+                              @(13218),
+                              @(13219),
+                              @(13220)];
+    for(int i=0;i<liveStateDesc.count;i++)
+    {
+        ZYLiveTypeModel *model = [[ZYLiveTypeModel alloc] init];
+        model.name = liveTypeDesc[i];
+        model.pid = [liveTypepid[i] longLongValue];
+        model.num = i;
+        [[ZYLiveTypeModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    [helper insertWhenNotExists:inter];
+    NSArray *liveIndentityDesc = @[@"是",@"否"];
+    NSArray *liveIndentitypid = @[@(1),
+                                  @(2),];
+    for(int i=0;i<liveIndentityDesc.count;i++)
+    {
+        ZYLiveIdentityModel *model = [[ZYLiveIdentityModel alloc] init];
+        model.name = liveIndentityDesc[i];
+        model.pid = [liveIndentitypid[i] longLongValue];
+        model.num = i;
+        [[ZYLiveIdentityModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
     
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"我爱我家";
-    inter.pid = 13777;
-    
-    [helper insertWhenNotExists:inter];
-    
-    inter = [[ZYIntermediaryModel alloc] init];
-    inter.look_desc = @"家家顺";
-    inter.pid = 13778;
-    
-    [helper insertWhenNotExists:inter];
+    NSArray *relationDesc = @[@"亲属",@"朋友",@"上下级"];
+    NSArray *relationpid = @[@(13244),
+                             @(13245),
+                             @(13246)];
+    for(int i=0;i<relationDesc.count;i++)
+    {
+        ZYRelationModel *model = [[ZYRelationModel alloc] init];
+        model.name = relationDesc[i];
+        model.pid = [relationpid[i] longLongValue];
+        model.num = i;
+        [[ZYRelationModel getUsingLKDBHelper] insertWhenNotExists:model];
+    }
 }
 - (NSArray*)foreclosureHouseBussinessInfoComeFromArr
 {

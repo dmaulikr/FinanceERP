@@ -53,19 +53,16 @@
         switch (bussinessInfoComeFromTypeCell.selecedIndex) {
             case ZYForeclosureHouseBussinessInfoComeFromBank:
             {
-                bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";
                 [self cellSearch:bussinessInfoComeFromTypeSubSelecedCell withDataSourceSignal:[ZYForeclosureHouseViewModel bankSearchSignal] showKey:@"look_desc"];///银行数据较多 跳转可搜索页面
             }
                 break;
             case ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization:
             {
-                bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";
                 [self cellPicker:bussinessInfoComeFromTypeSubSelecedCell withDataSourceSignal:[ZYForeclosureHouseViewModel cooperativeOrganizationArrSignal] showKey:@"look_desc"];
             }
                 break;
             case ZYForeclosureHouseBussinessInfoComeFromIntermediary:
             {
-                bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";
                 [self cellPicker:bussinessInfoComeFromTypeSubSelecedCell withDataSourceSignal:[ZYForeclosureHouseViewModel intermediaryArrSignal] showKey:@"look_desc"];
             }
                 break;
@@ -150,31 +147,56 @@
 - (void)blendModel:(ZYForeclosureHouseViewModel*)model
 {
     RACChannelTo(bussinessInfoComeFromTypeCell,selecedObj) = RACChannelTo(model,bussinessInfoComeFromType);
+   
 
-    RACChannelTo(bussinessInfoComeFromTypeSubSelecedCell,selecedObj) = RACChannelTo(model,bussinessInfoComeFromObj);
+    [RACObserve(bussinessInfoComeFromTypeSubSelecedCell,selecedObj) subscribeNext:^(id x) {
+        if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromBank)
+        {
+            model.bussinessInfoComeFromBank = x;
+        }
+        else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization)
+        {
+            model.bussinessInfoComeFromCooperativeOrganization = x;
+        }
+        else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromIntermediary)
+        {
+            model.bussinessInfoComeFromIntermediary = x;
+        }
+        else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromOther)
+        {
+            model.bussinessInfoComeFromOther = x;
+        }
+        else
+        {
+            
+        }
+    }];
     
     //其他类型 填入的自定义信息
     RACChannelTo(bussinessInfoComeFromTypeSubInputCell,cellText) = RACChannelTo(model,bussinessInfoComeFromOther);
     
 
-    if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromBank||model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization||model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromIntermediary)
-    {
-        comeFromTypeSubSelecedSection.hasFold = NO;
-        comeFromTypeSubInputSection.hasFold = YES;
-    }
-    else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromOther)
-    {
-        comeFromTypeSubSelecedSection.hasFold = YES;
-        comeFromTypeSubInputSection.hasFold = NO;
-    }
-    else
-    {
-        comeFromTypeSubSelecedSection.hasFold = NO;
-        comeFromTypeSubInputSection.hasFold = NO;
-    }
     [RACObserve(model, bussinessInfoComeFromType) subscribeNext:^(id x) {
-        if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromBank||model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization||model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromIntermediary)
+        if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromBank)
         {
+            bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";
+            bussinessInfoComeFromTypeSubSelecedCell.selecedObj = model.bussinessInfoComeFromBank;
+            [self showSection:YES sectionIndex:1];
+            [self showSection:NO sectionIndex:2];
+        }
+        else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization)
+        {
+            bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";
+            bussinessInfoComeFromTypeSubSelecedCell.selecedIndex = model.bussinessInfoComeFromCooperativeOrganization.num;
+            bussinessInfoComeFromTypeSubSelecedCell.selecedObj = model.bussinessInfoComeFromCooperativeOrganization;
+            [self showSection:YES sectionIndex:1];
+            [self showSection:NO sectionIndex:2];
+        }
+        else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromIntermediary)
+        {
+            bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";
+            bussinessInfoComeFromTypeSubSelecedCell.selecedIndex = model.bussinessInfoComeFromIntermediary.num;
+            bussinessInfoComeFromTypeSubSelecedCell.selecedObj = model.bussinessInfoComeFromIntermediary;
             [self showSection:YES sectionIndex:1];
             [self showSection:NO sectionIndex:2];
         }

@@ -56,4 +56,16 @@
 {
     return 120.f;
 }
+- (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
+{
+    super.userInteractionEnabled = userInteractionEnabled;
+    if(userInteractionEnabled)
+    {
+        _textContent.textColor = TITLE_COLOR;
+    }
+    else
+    {
+        _textContent.textColor = TEXT_COLOR;
+    }
+}
 @end

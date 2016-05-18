@@ -7,7 +7,14 @@
 //
 
 #import "ZYViewController.h"
-
+#import "ZYCustomerBaseInfoViewModel.h"
 @interface ZYCustomerBaseInfoController : ZYViewController
+ZY_VIEW_MODEL_PROPERTY(ZYCustomerBaseInfoViewModel)
+
+@property(nonatomic,assign)BOOL edit;
+
+@property(nonatomic,assign)NSInteger customerID;
+
+@property(nonatomic,strong)RACSignal *hasEditSignal;
 
 @end

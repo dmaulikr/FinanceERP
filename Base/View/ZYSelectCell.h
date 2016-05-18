@@ -16,8 +16,6 @@
 @property(nonatomic,assign)BOOL cellNullable;/// 默认不能为空
 
 
-
-
 #pragma mark - cell关联的 已选 选项
 //自动加载选择内容
 @property(nonatomic,assign)BOOL hiddenSelecedObj;
@@ -27,7 +25,6 @@
 @property(nonatomic,strong)id selecedObj;
 //显示类的属性名称
 @property(nonatomic,strong)NSString *showKey;
-
 
 @property(nonatomic,strong)NSString *cellError;
 @end

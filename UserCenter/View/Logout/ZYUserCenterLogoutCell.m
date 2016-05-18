@@ -29,4 +29,8 @@
 {
     return [_logoutButton rac_signalForControlEvents:UIControlEventTouchUpInside];
 }
+- (void)setHidden:(BOOL)hidden
+{
+    self.logoutButton.hidden = hidden;
+}
 @end

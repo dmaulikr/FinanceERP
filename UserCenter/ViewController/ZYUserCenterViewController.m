@@ -37,8 +37,7 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     userInfoCell = [ZYUserCenterUserInfoCell cellWithXibHeight:[ZYUserCenterUserInfoCell defaultHeight] actionBlock:^{
         if(![ZYTools checkLogin])
         {
-            [self tip:@"登陆中,请稍后" touch:NO];
-            return;
+            [self performSegueWithIdentifier:@"login" sender:nil];
         }
         
     }];
@@ -57,18 +56,17 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     } actionBlock:^(UITableView *tableView, NSInteger row) {
         if(![ZYTools checkLogin])
         {
-            [self tip:@"登陆中,请稍后" touch:NO];
-            return;
+            [self performSegueWithIdentifier:@"login" sender:nil];
         }
     }];
     
     ZYUserCenterLogoutCell *logoutCell = [ZYUserCenterLogoutCell cellWithXibHeight:[ZYUserCenterLogoutCell defaultHeight] actionBlock:nil];
+    logoutCell.hidden = YES;
     [logoutCell setLineHidden:YES];
     [[logoutCell logoutSignal] subscribeNext:^(id x) {
         if(![ZYTools checkLogin])
         {
-            [self tip:@"登陆中,请稍后" touch:NO];
-            return;
+            [self performSegueWithIdentifier:@"login" sender:nil];
         }
         
         NSMutableDictionary *usernamepasswordKVPairs = [NSMutableDictionary dictionary];
@@ -81,6 +79,13 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     ZYSection *logoutSection = [ZYSection sectionWithCells:@[logoutCell]];
     
     self.sections = @[userInfoSection,section,logoutSection];
+    
+    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:LOGIN_NOTIFICATION object:nil] subscribeNext:^(NSNotification *notification) {
+        logoutCell.hidden = NO;
+    }];
+    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:LOGOUT_NOTIFICATION object:nil] subscribeNext:^(NSNotification *notification) {
+        logoutCell.hidden = YES;
+    }];
 }
 
 - (void)blendViewModel

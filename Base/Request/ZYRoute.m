@@ -44,6 +44,7 @@
     }
     return self;
 }
+#pragma mark - 登陆
 - (RACSignal*)loginWith:(ZYLoginRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -108,6 +109,7 @@
     }
     return nil;
 }
+#pragma mark - 获取广告
 - (RACSignal*)bannersWith:(ZYBannerRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -144,6 +146,7 @@
     }
     return nil;
 }
+#pragma mark - 签到
 - (RACSignal*)checkInWith:(ZYCheckInRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -171,6 +174,7 @@
         return value;
     }];
 }
+#pragma mark - 获取签到天数
 - (RACSignal*)checkInDaysWith:(ZYCheckInDaysRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -198,6 +202,7 @@
         return [ZYCheckInModel mj_objectWithKeyValues:value];
     }];
 }
+#pragma mark - 获取预警列表
 - (RACSignal*)warningEventList:(ZYWarningEventRquest*)myRequest
 {
     @weakify(myRequest)
@@ -237,6 +242,7 @@
     }
     return nil;
 }
+#pragma mark - 获取产品列表
 - (RACSignal*)productList:(ZYProductRequest*)myRequest
 {
     @weakify(myRequest)
@@ -273,6 +279,7 @@
     }
     return nil;
 }
+#pragma mark - 获取业务办理列表
 - (RACSignal*)businessProcessList:(ZYBusinessProcessRequest*)myRequest
 {
     @weakify(myRequest)
@@ -318,6 +325,7 @@
     }
     return nil;
 }
+#pragma mark - 根据业务办理状态 获取条数
 - (RACSignal*)businessProcessStateCount:(ZYBussinessStateCountRequest*)myRequest
 {
     @weakify(myRequest)
@@ -357,6 +365,7 @@
         return result;
     }];
 }
+#pragma mark - 获取赎楼信息
 - (RACSignal*)foreclosureHouseInfo:(ZYForeclosureHouseRequest*)myRequest
 {
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -384,7 +393,7 @@
         return [ZYForeclosureHouseModel mj_objectWithKeyValues:value];
     }];
 }
-
+#pragma mark - 获取银行列表
 - (RACSignal*)banks:(ZYBanksRequest*)myRequest
 {
     @weakify(myRequest)
@@ -412,6 +421,7 @@
         return [ZYBankModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
     }];
 }
+
 - (id)banksCacheWith:(ZYBanksRequest*)myRequest
 {
     if(myRequest.cacheJson)
@@ -421,6 +431,7 @@
     }
     return nil;
 }
+#pragma mark - 获取我的客户
 - (RACSignal*)myCustomers:(ZYMyCustomerRequest*)myRequest
 {
     @weakify(myRequest)
@@ -460,6 +471,7 @@
     }
     return nil;
 }
+#pragma mark - 获取贷款中状态
 - (RACSignal*)businessProcessStateList:(ZYBusinessProcessingStateRequest*)myRequest
 {
     @weakify(myRequest)
@@ -491,9 +503,10 @@
         return [ZYBusinessProcessingStateModel mj_objectWithKeyValues:value];;
     }];
 }
+#pragma mark - 贷款中 状态编辑
 - (RACSignal*)businessProcessStateEdit:(ZYBussinessProcessingStateEditRequest*)myRequest
 {
-    @weakify(myRequest)
+//    @weakify(myRequest)
     RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         
         CHECK_LOGIN///检查登陆
@@ -504,8 +517,8 @@
             {
                 [subscriber sendNext:value];
                 [subscriber sendCompleted];
-                @strongify(myRequest)
-                [myRequest saveJsonResponseToCacheFile:value];
+//                @strongify(myRequest)
+//                [myRequest saveJsonResponseToCacheFile:value];
             }
             else
             {
@@ -520,6 +533,101 @@
     }];
     return [signal map:^id(id value) {
         return ERROR(value).domain;
+    }];
+}
+#pragma mark - 获取客户信息
+- (RACSignal*)customerInfo:(ZYCustomerInfoRequest*)myRequest
+{
+//    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+//                @strongify(myRequest)
+//                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return [ZYCustomerModel mj_objectWithKeyValues:value];
+    }];
+}
+#pragma mark - 客户信息编辑
+- (RACSignal*)customerBaseInfoEdit:(ZYCustomerBaseInfoEditRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return ERROR(value).domain;
+    }];
+}
+- (RACSignal*)uploadFile:(ZYUploadFileRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return value[@"file_id"];
     }];
 }
 @end

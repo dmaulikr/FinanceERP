@@ -7,10 +7,25 @@
 //
 
 #import "ZYViewModel.h"
+#import "ZYEducationModel.h"
+#import "ZYWorkTitleModel.h"
+#import "ZYIncomeTypeModel.h"
+#import "ZYSocialSecurityPayStatuModel.h"
+#import "ZYLiveStatuModel.h"
+#import "ZYAccountPurposeModel.h"
+#import "ZYRelationModel.h"
+#import "ZYLiveIdentityModel.h"
+#import "ZYAccountTypeModel.h"
+#import "ZYLiveTypeModel.h"
 
 @interface ZYCustomerDetailViewModel : ZYViewModel
 
 @property(nonatomic,strong)NSArray *customerDetailTabTitles;
+
++ (RACSignal*)customerEducationArrSignal;
++ (RACSignal*)workTitleArrSignal;
++ (RACSignal*)incomeTypeArrSignal;
++ (RACSignal*)incomeDayArrSignal;
 
 
 @end

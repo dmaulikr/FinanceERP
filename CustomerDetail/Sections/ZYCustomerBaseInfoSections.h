@@ -11,6 +11,18 @@
 
 @interface ZYCustomerBaseInfoSections : ZYSections
 
+@property(nonatomic,assign)BOOL edit;
+@property(nonatomic,strong)NSString *error;
+
 - (void)blendModel:(ZYCustomerBaseInfoViewModel*)model;
+
+- (void)becomeFirstResponder;
+
+
+@property(nonatomic,strong)RACSignal *headImagePickSignal;
+
+@property(nonatomic,strong)RACSignal *returnSignal;
+
+@property(nonatomic,strong)RACSignal *detailCellPressedSignal;
 
 @end

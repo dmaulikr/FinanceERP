@@ -41,7 +41,7 @@
         }
         else
         {
-            self.navLoading = YES;//正在登录
+            self.navLoading = NO;//正在登录
             self.navState = @"未登录";
         }
     } completed:^{

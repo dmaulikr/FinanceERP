@@ -19,4 +19,6 @@
 + (NSString *)checkTelephone;
 
 + (NSString *)checkCardNum;
+
++ (NSString *)fileName;
 @end

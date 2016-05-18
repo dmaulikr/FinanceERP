@@ -30,6 +30,10 @@
 
 @property(nonatomic,assign)UIKeyboardType keyboardType;
 
+@property(nonatomic,assign)UIReturnKeyType keyboardReturnType;
+
+@property(nonatomic,assign)RACSignal *returnSignal;
+
 @property(nonatomic,assign)BOOL cellNullable;/// 默认不能为空
 
 
@@ -48,4 +52,5 @@
 @property(nonatomic,strong)NSString *cellError;
 
 - (NSString*)checkInput:(BOOL)checkInput;
+
 @end

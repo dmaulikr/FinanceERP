@@ -15,5 +15,5 @@
 
 @property(nonatomic,assign)NSInteger pid;
 
-@property(nonatomic,assign)NSInteger rowid;
+@property(nonatomic,assign)NSInteger num;
 @end

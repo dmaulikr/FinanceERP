@@ -93,9 +93,22 @@
  */
 -(void)keyboardWillShow:(NSNotification*)aNotification;
 -(void)keyboardWillHidden:(NSNotification*)aNotification;
-
+/**
+ *  加载。。
+ *
+ *  @param touch hud是否可以触摸 可以的话 hud就获取触摸响应 后面的层无法接收触摸
+ */
 - (void)loading:(BOOL)touch;
+/**
+ *  停止加载
+ */
 - (void)stop;
+/**
+ *  提示
+ *
+ *  @param tip   提示
+ *  @param touch hud是否可以触摸 可以的话 hud就获取触摸响应 后面的层无法接收触摸
+ */
 - (void)tip:(NSString*)tip touch:(BOOL)touch;
 
 @end

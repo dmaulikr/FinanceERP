@@ -45,6 +45,7 @@
         [self addSubview:_tailLabel];
         
         _cellTextField = [[UITextField alloc] initWithFrame:CGRectMake(_cellTitleLabel.width+2*GAP, 0, FUll_SCREEN_WIDTH-4*GAP-_cellTitleLabel.width-_tailLabel.width, [ZYInputCell defaultHeight])];
+        _cellTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
         _cellTextField.font = FONT(12);
         _cellTextField.textColor = TITLE_COLOR;
         [self addSubview:_cellTextField];
@@ -92,6 +93,20 @@
     _keyboardType = keyboardType;
     _cellTextField.keyboardType = keyboardType;
 }
+- (void)setKeyboardReturnType:(UIReturnKeyType)keyboardReturnType
+{
+    _keyboardReturnType = keyboardReturnType;
+    _cellTextField.returnKeyType = keyboardReturnType;
+}
+- (RACSignal*)returnSignal
+{
+    if(_returnSignal==nil)
+    {
+        _returnSignal = [self rac_signalForSelector:@selector(textFieldShouldReturn:) fromProtocol:@protocol(UITextFieldDelegate)];
+    }
+    return _returnSignal;
+}
+
 - (void)setCellText:(NSString *)cellText
 {
     _cellText = cellText;
@@ -121,12 +136,19 @@
     {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", self.cellRegular];
         isValid = [predicate evaluateWithObject:_cellText];
-        if(!isValid)
+        if(!isValid&&super.userInteractionEnabled)
         {
             NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"* %@",cellTitle]];
             [attrStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0, attrStr.length)];
             _cellTitleLabel.attributedText = attrStr;
             self.cellError = [NSString stringWithFormat:@"请输入正确的%@",cellTitle];
+        }
+        else if(super.userInteractionEnabled)
+        {
+            NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"* %@",cellTitle]];
+            [attrStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0, 1)];
+            _cellTitleLabel.attributedText = attrStr;
+            self.cellError = @"";
         }
         else
         {
@@ -273,12 +295,21 @@
     if(userInteractionEnabled)
     {
         _cellTextField.placeholder = self.cellPlaceHolder;
+        _cellTextField.textColor = TITLE_COLOR;
     }
     else
     {
         _cellTextField.placeholder = nil;
+        _cellTextField.textColor = TEXT_COLOR;
         self.accessoryType = UITableViewCellAccessoryNone;
     }
     [self setCellTitle:_cellTitle];
 }
+- (BOOL)becomeFirstResponder
+{
+    [super becomeFirstResponder];
+    [self.cellTextField becomeFirstResponder];
+    return YES;
+}
+
 @end

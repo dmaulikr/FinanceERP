@@ -10,6 +10,7 @@
 
 @interface ZYCustomerModel : NSObject
 
+@property (nonatomic, assign) NSInteger pid;
 
 @property (nonatomic, assign) NSInteger house_shape;
 

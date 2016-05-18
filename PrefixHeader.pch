@@ -23,7 +23,9 @@
 #import "UIView+custom.h"
 #import "NSString+tools.h"
 #import "NSNumber+tools.h"
+#import "UIImage+tools.h"
 #import "ZYRoute.h"
 #import "ZYTools.h"
 #import "ZYStore.h"
+#import "ZYCameraController.h"
 #endif /* PrefixHeader_pch */

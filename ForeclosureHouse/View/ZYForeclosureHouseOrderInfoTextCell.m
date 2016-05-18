@@ -66,5 +66,16 @@
     _titleLabel.text = cellTitle;
     _cellTitle = cellTitle;
 }
-
+- (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
+{
+    super.userInteractionEnabled = userInteractionEnabled;
+    if(userInteractionEnabled)
+    {
+        _cellTextView.textColor = TITLE_COLOR;
+    }
+    else
+    {
+        _cellTextView.textColor = TEXT_COLOR;
+    }
+}
 @end

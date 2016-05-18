@@ -45,7 +45,9 @@
 #pragma mark - 第一页
 @property(nonatomic,strong)ZYForeclosureHouseComeFromTypeModel *bussinessInfoComeFromType;
 
-@property(nonatomic,strong)id bussinessInfoComeFromObj;
+@property(nonatomic,strong)ZYBankModel *bussinessInfoComeFromBank;
+@property(nonatomic,strong)ZYCooperativeOrganizationModel *bussinessInfoComeFromCooperativeOrganization;
+@property(nonatomic,strong)ZYIntermediaryModel *bussinessInfoComeFromIntermediary;
 @property(nonatomic,strong)NSString *bussinessInfoComeFromOther;
 
 @property(nonatomic,strong)NSString *bussinessInfoArea;

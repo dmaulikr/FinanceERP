@@ -53,4 +53,10 @@
 {
     return @"^(\\d{14}|\\d{17})(\\d|[xX])$";
 }
++ (NSString *)fileName
+{
+    NSString *timeSp = [NSString stringWithFormat:@"%lld", (long long)[[NSDate date] timeIntervalSince1970]];
+    NSString *x = [NSString stringWithFormat:@"%lld", (long long)(arc4random() % 1000)];
+    return [NSString stringWithFormat:@"%@%@",timeSp,x];
+}
 @end

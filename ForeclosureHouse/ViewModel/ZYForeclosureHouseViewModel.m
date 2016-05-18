@@ -40,15 +40,15 @@
     self.bussinessInfoComeFromType = [self foreclosureHouseBussinessInfoComeFromType:model.business_source];
     switch (self.bussinessInfoComeFromType.type) {
         case ZYForeclosureHouseBussinessInfoComeFromBank:
-            self.bussinessInfoComeFromObj = [self bank:model.business_source_no];
+            self.bussinessInfoComeFromBank = [self bank:model.business_source_no];
             break;
         case ZYForeclosureHouseBussinessInfoComeFromIntermediary:
-            self.bussinessInfoComeFromObj = [self intermediaryModel:model.business_source_no];
+            self.bussinessInfoComeFromIntermediary = [self intermediaryModel:model.business_source_no];
             break;
         case ZYForeclosureHouseBussinessInfoComeFromFriend:
             break;
         case ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization:
-            self.bussinessInfoComeFromObj = [self cooperativeOrganizationModel:model.business_source_no];
+            self.bussinessInfoComeFromCooperativeOrganization = [self cooperativeOrganizationModel:model.business_source_no];
             break;
         case ZYForeclosureHouseBussinessInfoComeFromOther:
             self.bussinessInfoComeFromOther = model.other_source;

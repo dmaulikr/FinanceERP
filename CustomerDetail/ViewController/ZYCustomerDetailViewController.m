@@ -8,6 +8,7 @@
 
 #import "ZYCustomerDetailViewController.h"
 #import "ZYTopTabBar.h"
+#import "ZYCustomerWorkInfoSections.h"
 
 @interface ZYCustomerDetailViewController ()
 @property (weak, nonatomic) IBOutlet UIScrollView *topTabScrollView;
@@ -22,6 +23,8 @@
     CGFloat stepWidth;
     
     ZYTopTabBar *topBar;
+    
+    ZYTableViewCell *firstResponderCell;
 }
 ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
 - (void)viewWillAppear:(BOOL)animated
@@ -37,7 +40,7 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
 - (void)updateViewConstraints
 {
     [super updateViewConstraints];
-    self.scrollViewContentWidth.constant = 2.0*FUll_SCREEN_WIDTH;
+    self.scrollViewContentWidth.constant = 1.5*FUll_SCREEN_WIDTH;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -49,8 +52,13 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
 - (void)buildUI
 {
     self.singelLoad = YES;
+    [self buildDatePickerView];
+    [self buildPickerView];
+    self.pickerViewTapBlankHidden = YES;
+    self.datePickerViewTapBlankHidden = YES;
+    
     steps = self.viewModel.customerDetailTabTitles.count;
-    topBar = [[ZYTopTabBar alloc] initWithTabs:self.viewModel.customerDetailTabTitles frame:CGRectMake(0, 0, 2.0*FUll_SCREEN_WIDTH, 50)];
+    topBar = [[ZYTopTabBar alloc] initWithTabs:self.viewModel.customerDetailTabTitles frame:CGRectMake(0, 0, 1.5*FUll_SCREEN_WIDTH, 50)];
     topBar.backgroundColor = [UIColor whiteColor];
     [topBar.tabButtonPressedSignal subscribeNext:^(NSNumber *index) {
         [self changePage:index.longLongValue];
@@ -62,11 +70,129 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
 }
 - (void)blendViewModel
 {
-    
+    [RACObserve(self, selecedRow) subscribeNext:^(NSNumber *index) {
+        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
+        {
+            [(ZYSelectCell*)firstResponderCell setSelecedIndex:index.longLongValue];
+        }
+        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
+        {
+            [(ZYSelectCell*)firstResponderCell setSelecedIndex:index.longLongValue];
+        }
+    }];
+    [RACObserve(self, selecedObj) subscribeNext:^(id obj) {
+        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
+        {
+            [(ZYSelectCell*)firstResponderCell setSelecedObj:obj];
+        }
+        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
+        {
+            [(ZYInputCell*)firstResponderCell setSelecedObj:obj];
+        }
+    }];
+    [RACObserve(self, selecedDate) subscribeNext:^(NSDate *date) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd"];
+        NSString *dateStr = [formatter stringFromDate:date];
+        if([firstResponderCell isKindOfClass:[ZYSelectCell class]])
+        {
+            [(ZYSelectCell*)firstResponderCell setCellText:dateStr];
+        }
+        if([firstResponderCell isKindOfClass:[ZYInputCell class]])
+        {
+            [(ZYInputCell*)firstResponderCell setCellText:dateStr];
+        }
+    }];
 }
-
+- (void)picker:(RACTuple*)value
+{
+    if([value.first isKindOfClass:[ZYSelectCell class]])
+    {
+        firstResponderCell = (ZYSelectCell*)value.first;
+        self.selecedRow = [(ZYSelectCell*)firstResponderCell selecedIndex];
+    }
+    if([value.first isKindOfClass:[ZYInputCell class]])
+    {
+        firstResponderCell = (ZYInputCell*)value.first;
+        self.selecedRow = [(ZYInputCell*)firstResponderCell selecedIndex];
+    }
+    
+    NSString *showKey = value.third;
+    self.pickerShowValueKey = showKey;
+    if([value.second isKindOfClass:[NSArray class]])
+    {
+        NSArray *dataSource = value.second;
+        self.components = @[dataSource];
+    }
+    else if([value.second isKindOfClass:[RACSignal class]])
+    {
+        RACSignal *signal = value.second;
+        [signal subscribeNext:^(NSArray *dataSource) {
+            self.components = @[dataSource];
+        }];
+    }
+    [self showPickerView:YES];
+}
 - (ZYSections*)buildSection:(NSInteger)index
 {
+    if(index==0)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        [sections.pickerBySignalSignal subscribeNext:^(id x) {
+            [self picker:x];
+        }];
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            self.showDateBefore = ![value.second boolValue];
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self showDatePickerView:YES];
+        }];
+        return sections;
+    }
+    if(index==1)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==2)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==3)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==4)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==5)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==6)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==7)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==8)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
+    if(index==9)
+    {
+        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        return sections;
+    }
     return nil;
 }
 - (ZYSections*)sliderController:(ZYSliderViewController*)controller sectionsWithPage:(NSInteger)page
@@ -98,7 +224,7 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
     topBar.highlightIndex = index;
     
     CGPoint point = _topTabScrollView.contentOffset;
-    if(index>=2&&index<steps-1)
+    if(index>=2&&index<steps-2)
     {
         point.x = (index-2)*stepWidth;
         [_topTabScrollView setContentOffset:point animated:YES];
@@ -108,6 +234,11 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
         if(index<2)
         {
             point.x = 0;
+            [_topTabScrollView setContentOffset:point animated:YES];
+        }
+        if(index>=steps-2)
+        {
+            point.x = 0.5*FUll_SCREEN_WIDTH;
             [_topTabScrollView setContentOffset:point animated:YES];
         }
     }

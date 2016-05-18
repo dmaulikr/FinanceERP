@@ -42,7 +42,7 @@
 - (void)setSelecedObj:(id)selecedObj
 {
     _selecedObj = selecedObj;
-    if(!self.hiddenSelecedObj&&selecedObj)
+    if(!self.hiddenSelecedObj)
     {
         if([selecedObj isKindOfClass:[NSString class]])
         {
@@ -112,10 +112,12 @@
     if(userInteractionEnabled)
     {
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        _cellTextLabel.textColor = TITLE_COLOR;
     }
     else
     {
         self.accessoryType = UITableViewCellAccessoryNone;
+        _cellTextLabel.textColor = TEXT_COLOR;
     }
     [self setCellTitle:_cellTitle];
 }

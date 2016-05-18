@@ -61,7 +61,7 @@
 - (void)showActionSheet:(NSArray*)buttonTitles
 {
     [self showPickerView:NO];
-    
+    self.actionSheet = nil;
     self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil];
     for(NSString *title in buttonTitles)
     {
@@ -114,6 +114,10 @@
     if(!showDateBefore)
     {
         self.datePickerView.minimumDate = [NSDate date];
+    }
+    else
+    {
+        self.datePickerView.minimumDate = nil;
     }
 }
 - (void)showDatePickerView:(BOOL)show

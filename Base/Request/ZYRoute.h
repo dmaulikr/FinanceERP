@@ -31,6 +31,10 @@
 #import "ZYBusinessProcessingStateRequest.h"
 #import "ZYBusinessProcessingStateModel.h"
 #import "ZYBussinessProcessingStateEditRequest.h"
+#import "ZYCustomerInfoRequest.h"
+#import "ZYCustomerModel.h"
+#import "ZYCustomerBaseInfoEditRequest.h"
+#import "ZYUploadFileRequest.h"
 
 @interface ZYRoute : NSObject
 
@@ -70,6 +74,23 @@
 - (id)myCustomersCacheWith:(ZYMyCustomerRequest*)myRequest;
 
 - (RACSignal*)businessProcessStateList:(ZYBusinessProcessingStateRequest*)myRequest;
-
+/**
+ *  贷款状态编辑
+ */
 - (RACSignal*)businessProcessStateEdit:(ZYBussinessProcessingStateEditRequest*)myRequest;
+/**
+ *  用户基本信息
+ */
+- (RACSignal*)customerInfo:(ZYCustomerInfoRequest*)myRequest;
+
+
+/**
+ *  上传文件
+ */
+- (RACSignal*)uploadFile:(ZYUploadFileRequest*)myRequest;
+/**
+ *  编辑用户基本信息
+ */
+- (RACSignal*)customerBaseInfoEdit:(ZYCustomerBaseInfoEditRequest*)myRequest;
+
 @end

@@ -10,6 +10,7 @@
 #import "ZYTableViewCell.h"
 #import <MJRefresh.h>
 #import <CYLTableViewPlaceHolder.h>
+#import "ZYCustomerBaseInfoController.h"
 
 @interface ZYMyCustomerController ()<UITableViewDataSource,UITableViewDelegate,CYLTableViewPlaceHolderDelegate,UISearchDisplayDelegate,UISearchBarDelegate>
 
@@ -110,7 +111,7 @@ ZY_VIEW_MODEL_GET(ZYMyCustomerViewModel)
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self performSegueWithIdentifier:@"detail" sender:nil];
+    [self performSegueWithIdentifier:@"info" sender:self.viewModel.customerArr[indexPath.row]];
 }
 
 
@@ -123,4 +124,30 @@ ZY_VIEW_MODEL_GET(ZYMyCustomerViewModel)
 {
     return YES;
 }
+
+
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+     
+     if([segue.identifier isEqualToString:@"info"])
+     {
+         ZYCustomerModel *model = sender;
+         ZYCustomerBaseInfoController *customerInfoCtl = [segue destinationViewController];
+         customerInfoCtl.customerID = model.pid;
+         [customerInfoCtl.hasEditSignal subscribeNext:^(ZYCustomerModel *customer) {
+//             if([self.viewModel.customerArr indexOfObject:model]!=NSNotFound)
+//             {
+//                 NSInteger index = [self.viewModel.customerArr indexOfObject:model];
+//                 [self.viewModel.customerArr replaceObjectAtIndex:index withObject:customer];
+//                 [self.tableView cyl_reloadData];
+//             }
+             [self.tableView.mj_header beginRefreshing];
+         }];
+     }
+ }
+
 @end
