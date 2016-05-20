@@ -27,7 +27,7 @@
     _searchBySignalSignal = [self rac_signalForSelector:@selector(cellSearch:withDataSourceSignal:showKey:)];
     _pickerByDataSourceSignal = [self rac_signalForSelector:@selector(cellPicker:withDataSource:showKey:)];
     _pickerBySignalSignal = [self rac_signalForSelector:@selector(cellPicker:withDataSourceSignal:showKey:)];
-    _nextStepSignal = [self rac_signalForSelector:@selector(cellNextStep:)];
+    _nextStepSignal = [self rac_signalForSelector:@selector(cellNextStep:sender:)];
     _lastStepSignal = [self rac_signalForSelector:@selector(cellLastStep)];
     _datePickerSignal = [self rac_signalForSelector:@selector(cellDatePicker:onlyFutura:)];
     _showSectionSignal = [self rac_signalForSelector:@selector(showSection:sectionIndex:)];
@@ -41,7 +41,7 @@
 //onlyFutura 只显示将来 默认显示全部
 - (void)cellDatePicker:(ZYTableViewCell*)cell onlyFutura:(BOOL)onlyFutura{}
 
-- (void)cellNextStep:(NSString*)error{}
+- (void)cellNextStep:(NSString*)error sender:(id)sender{}
 - (void)cellLastStep{}
 
 

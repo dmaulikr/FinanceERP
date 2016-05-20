@@ -28,24 +28,48 @@
 
     // Configure the view for the selected state
 }
-- (void)setModel:(ZYBusinessProcessModel *)model
+- (void)setModel:(id)model
 {
     _model = model;
-    
-    if(model.keyword)
+    if([model isKindOfClass:[ZYBusinessProcessModel class]])
     {
-        NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:model.project_name];
-        [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:[model.project_name rangeOfString:model.keyword]];
-        _cellTitleLabel.attributedText = str;
+        ZYBusinessProcessModel *obj = (ZYBusinessProcessModel*)model;
+        
+        if(obj.keyword)
+        {
+            NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:obj.project_name];
+            [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:[obj.project_name rangeOfString:obj.keyword]];
+            _cellTitleLabel.attributedText = str;
+        }
+        else
+        {
+            _cellTitleLabel.text = obj.project_name;
+        }
+        
+        _cellSubTitleLabel.text = obj.product_name;
+        _cellPriceLabel.text = [NSString stringWithFormat:@"%lld",obj.loan_money];
+        _cellDateLabel.text = obj.project_pass_date;
     }
-    else
+    if([model isKindOfClass:[ZYApplyMattersModel class]])
     {
-        _cellTitleLabel.text = model.project_name;
+        ZYApplyMattersModel *obj = (ZYApplyMattersModel*)model;
+        
+        if(obj.keyword)
+        {
+            NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:obj.project_name];
+            [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:[obj.project_name rangeOfString:obj.keyword]];
+            _cellTitleLabel.attributedText = str;
+        }
+        else
+        {
+            _cellTitleLabel.text = obj.project_name;
+        }
+        
+        _cellSubTitleLabel.text = obj.product_name;
+        _cellPriceLabel.text = [NSString stringWithFormat:@"%lld",obj.loan_money];
+        _cellDateLabel.text = obj.request_date;
+        
     }
-    
-    _cellSubTitleLabel.text = model.product_name;
-    _cellPriceLabel.text = [NSString stringWithFormat:@"%lld",model.loan_money];
-    _cellDateLabel.text = model.project_pass_date;
     
 }
 @end

@@ -23,47 +23,82 @@
     // Drawing code
 }
 */
-- (void)setModel:(ZYBusinessProcessModel *)model
+- (void)setModel:(id)model
 {
-    self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    self.userInteractionEnabled = YES;
-    if(model.project_status==1)///可以修改 可以保存 可以提交审批
+    if([model isKindOfClass:[ZYBusinessProcessModel class]])
     {
-        _cellTitleLabel.text = @"待申请";
-        model.infoEdit = YES;
-    }
-    else if (model.project_status<=9&&model.project_status>=2)
-    {
-        
-    }
-    else if (model.project_status==10)
-    {
-        if(model.rec_status == 1)
+        ZYBusinessProcessModel *obj = (ZYBusinessProcessModel*)model;
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        self.userInteractionEnabled = YES;
+        if(obj.project_status==1)///可以修改 可以保存 可以提交审批
         {
-            _cellTitleLabel.text = @"未收费";
-            self.accessoryType = UITableViewCellAccessoryNone;
-            self.userInteractionEnabled = NO;
+            _cellTitleLabel.text = @"待申请";
+            obj.infoEdit = YES;
         }
-        else if(model.rec_status == 2)
+        else if (obj.project_status<=9&&obj.project_status>=2)
         {
-            _cellTitleLabel.text = @"待放款";
+            
         }
-        else
+        else if (obj.project_status==10)
         {
-            //其他情况不考虑
+            if(obj.rec_status == 1)
+            {
+                _cellTitleLabel.text = @"未收费";
+                self.accessoryType = UITableViewCellAccessoryNone;
+                self.userInteractionEnabled = NO;
+            }
+            else if(obj.rec_status == 2)
+            {
+                _cellTitleLabel.text = @"待放款";
+            }
+            else
+            {
+                //其他情况不考虑
+            }
+        }
+        else if (obj.project_status==11)
+        {
+            _cellTitleLabel.text = obj.dynamic_name;
+        }
+        else if (obj.project_status==12)
+        {
+            _cellTitleLabel.text = @"已完成";
+        }
+        else if (obj.project_status==13)
+        {
+            _cellTitleLabel.text = @"已归档";
         }
     }
-    else if (model.project_status==11)
+    if([model isKindOfClass:[ZYApplyMattersModel class]])
     {
-        _cellTitleLabel.text = model.dynamic_name;
+        ZYApplyMattersModel *obj = (ZYApplyMattersModel*)model;
+        switch (obj.back_fee_apply_status) {
+            case 1:
+                _cellTitleLabel.text = @"未申请";
+                break;
+            case 2:
+                _cellTitleLabel.text = @"申请中";
+                break;
+            case 3:
+                _cellTitleLabel.text = @"驳回";
+                break;
+            case 4:
+                _cellTitleLabel.text = @"审核中";
+                break;
+            case 5:
+                _cellTitleLabel.text = @"申请通过";
+                break;
+            case 6:
+                _cellTitleLabel.text = @"申请不通过";
+                break;
+            case 7:
+                _cellTitleLabel.text = @"已归档";
+                break;
+            default:
+                break;
+        }
     }
-    else if (model.project_status==12)
-    {
-        _cellTitleLabel.text = @"已完成";
-    }
-    else if (model.project_status==13)
-    {
-        _cellTitleLabel.text = @"已归档";
-    }
+    
+    
 }
 @end

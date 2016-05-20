@@ -10,4 +10,6 @@
 #import "ZYCustomerDetailViewModel.h"
 @interface ZYCustomerFamilyInfoSections : ZYSections
 - (void)blendModel:(ZYCustomerDetailViewModel*)model;
+@property(nonatomic,assign)BOOL edit;
+- (NSString*)error;
 @end

@@ -9,5 +9,9 @@
 #import "ZYTableViewController.h"
 
 @interface ZYBusinessApplyListController : ZYTableViewController
+/**
+ *  申请事项
+ */
+@property(nonatomic,assign)BOOL isApplicationMatters;
 
 @end

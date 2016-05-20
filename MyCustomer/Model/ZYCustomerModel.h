@@ -20,7 +20,7 @@
 
 @property (nonatomic, copy) NSString *credit_no;
 
-@property (nonatomic, assign) NSInteger reg_money;
+@property (nonatomic, assign) float reg_money;
 
 @property (nonatomic, copy) NSString *file_url;
 
@@ -32,9 +32,9 @@
 
 @property (nonatomic, copy) NSString *spouse_phone;
 
-@property (nonatomic, assign) NSInteger month_income;
+@property (nonatomic, assign) float month_income;
 
-@property (nonatomic, assign) NSInteger safe_num;
+@property (nonatomic, assign) float safe_num;
 
 @property (nonatomic, assign) NSInteger total_safe_time;
 
@@ -60,25 +60,25 @@
 
 @property (nonatomic, copy) NSString *bus_lic_cert;
 
-@property (nonatomic, assign) NSInteger total_liab;
+@property (nonatomic, assign) float total_liab;
 
 @property (nonatomic, copy) NSString *entry_time;
 
 @property (nonatomic, copy) NSString *relation_phone_num;
 
-@property (nonatomic, assign) NSInteger pen_money;
+@property (nonatomic, assign) float pen_money;
 
 @property (nonatomic, copy) NSString *spouse_card_no;
 
 @property (nonatomic, copy) NSString *rep_query_date;
 
-@property (nonatomic, assign) NSInteger total_assets;
+@property (nonatomic, assign) float total_assets;
 
 @property (nonatomic, copy) NSString *relation_name;
 
-@property (nonatomic, assign) NSInteger family_income;
+@property (nonatomic, assign) float family_income;
 
-@property (nonatomic, assign) NSInteger med_money;
+@property (nonatomic, assign) float med_money;
 
 @property (nonatomic, assign) NSInteger pay_way;
 
@@ -88,7 +88,7 @@
 
 @property (nonatomic, assign) NSInteger month_pay_day;
 
-@property (nonatomic, assign) NSInteger house_area;
+@property (nonatomic, assign) float house_area;
 
 @property (nonatomic, copy) NSString *phone_num;
 
@@ -110,7 +110,7 @@
 
 @property (nonatomic, copy) NSString *safe_unit;
 
-@property (nonatomic, assign) NSInteger month_wage;
+@property (nonatomic, assign) float month_wage;
 
 @property (nonatomic, copy) NSString *loan_card_id;
 

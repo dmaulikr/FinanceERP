@@ -34,6 +34,9 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.cellHeadImage = [UIImage imageNamed:@"headImage"];
+        self.cellHeadImageUrl = [[NSBundle mainBundle] URLForResource:@"headImage" withExtension:@"png"];
+        
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
         _cellTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(GAP, 0, 100, [ZYHeadImageCell defaultHeight])];

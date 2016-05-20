@@ -151,7 +151,7 @@ ZY_VIEW_MODEL_GET(ZYForeclosureHouseViewModel)
         {
             if(self.currentPage == sectionsArr.count-1)
             {
-                [mainSections cellNextStep:nil];
+                [mainSections cellNextStep:nil sender:nil];
             }
             else
             {

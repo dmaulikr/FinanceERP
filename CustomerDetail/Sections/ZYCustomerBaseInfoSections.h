@@ -25,4 +25,5 @@
 
 @property(nonatomic,strong)RACSignal *detailCellPressedSignal;
 
+@property(nonatomic,assign)BOOL add;
 @end

@@ -181,7 +181,7 @@
         [self reset];
     }];
     [buttonCell.rightButtonPressedSignal subscribeNext:^(id x) {
-        [self cellNextStep:viewModel.computeError];
+        [self cellNextStep:viewModel.computeError sender:nil];
     }];
     [RACObserve(viewModel, calculatorComputingFormulaSelected) subscribeNext:^(id x) {
         [self reloadCells];

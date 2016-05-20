@@ -596,7 +596,7 @@
         return nil;
     }];
     return [signal map:^id(id value) {
-        return ERROR(value).domain;
+        return RACTuplePack(ERROR(value).domain,value[@"customer_id"]);
     }];
 }
 - (RACSignal*)uploadFile:(ZYUploadFileRequest*)myRequest
@@ -628,6 +628,244 @@
     }];
     return [signal map:^id(id value) {
         return value[@"file_id"];
+    }];
+}
+- (RACSignal*)customerDetailInfoFirstEdit:(ZYCustomerFirstUpdateRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return ERROR(value).domain;
+    }];
+}
+- (RACSignal*)customerDetailInfoSecondEdit:(ZYCustomerSecondUpdateRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return ERROR(value).domain;
+    }];
+}
+#pragma mark - 申请事项
+
+- (RACSignal*)applyMatters:(ZYApplyMattersRequest*)myRequest
+{
+    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                @strongify(myRequest)
+                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        NSArray *arr = [ZYApplyMattersModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+        for(ZYApplyMattersModel *model in arr)
+        {
+            model.keyword = myRequest.project_name;//纪录关键字
+        }
+        return arr;
+    }];
+}
+- (id)applyMattersCacheWith:(ZYApplyMattersRequest*)myRequest
+{
+    if(myRequest.cacheJson)
+    {
+        id value = myRequest.cacheJson;///使用缓存
+        return [ZYApplyMattersModel mj_objectArrayWithKeyValuesArray:value[@"result_list"]];
+    }
+    return nil;
+}
+
+#pragma mark - 问题反馈
+
+- (RACSignal*)feedback:(ZYFeedbackRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新 忽略缓存
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return ERROR(value).domain;
+    }];
+}
+#pragma mark - 绑定用户头像
+
+- (RACSignal*)blendHeadImageRequest:(ZYBlendHeadImageRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新 忽略缓存
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return value[@"photo_url"];
+    }];
+}
+- (RACSignal*)feeInfoRequest:(ZYFeeInfoRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新 忽略缓存
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return [ZYFeeModel mj_objectWithKeyValues:value];
+    }];
+}
+- (RACSignal*)refundFeeRequest:(ZYRefundFeeRequest*)myRequest
+{
+    //    @weakify(myRequest)
+    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        
+        CHECK_LOGIN///检查登陆
+        
+        [myRequest setCompletionBlockWithSuccess:^(__kindof YTKBaseRequest *request) {
+            id value = request.responseJSONObject;
+            if(REQUEST_SUCCESS(value))
+            {
+                [subscriber sendNext:value];
+                [subscriber sendCompleted];
+                //                @strongify(myRequest)
+                //                [myRequest saveJsonResponseToCacheFile:value];
+            }
+            else
+            {
+                [subscriber sendError:ERROR(value)];
+            }
+        } failure:^(__kindof YTKBaseRequest *request) {
+            [subscriber sendError:NET_ERROR];
+        }];
+        [myRequest startWithoutCache];//强制刷新 忽略缓存
+        
+        return nil;
+    }];
+    return [signal map:^id(id value) {
+        return ERROR(value).domain;
     }];
 }
 @end

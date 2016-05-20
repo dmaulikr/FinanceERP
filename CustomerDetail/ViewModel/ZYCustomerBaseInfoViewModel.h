@@ -47,4 +47,8 @@
 @property(nonatomic,assign)BOOL headImageUploadSuccess;
 
 - (void)uploadHeadImage;
+
+//添加一个客户
+@property(nonatomic,assign)BOOL add;
+
 @end

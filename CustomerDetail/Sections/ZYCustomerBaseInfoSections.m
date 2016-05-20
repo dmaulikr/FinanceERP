@@ -18,6 +18,8 @@
     ZYInputCell *customerAddressCell;
     
     ZYTableViewCell *customerDetailCell;
+    
+    ZYSingleButtonCell *buttonCell;
 }
 - (instancetype)initWithTitle:(NSString *)title
 {
@@ -40,6 +42,8 @@
     customerCardNumCell = [ZYInputCell cellWithActionBlock:nil];
     customerCardNumCell.cellTitle = @"身份证号码";
     customerCardNumCell.cellPlaceHolder = @"请输入身份证号码";
+    customerCardNumCell.maxLength = 18;
+    customerCardNumCell.cellRegular = [NSString checkCardNum];
     customerCardNumCell.keyboardReturnType = UIReturnKeyDone;
     
     customerTelephoneCell = [ZYInputCell cellWithActionBlock:nil];
@@ -54,7 +58,6 @@
     customerAddressCell.cellPlaceHolder = @"请输入通讯地址";
     customerAddressCell.keyboardReturnType = UIReturnKeyDone;
     
-    ZYSection *section = [ZYSection sectionWithCells:@[customerHeadImageCell,customerNameCell,customerCardNumCell,customerTelephoneCell,customerAddressCell]];
     
     customerDetailCell = [ZYTableViewCell cellWithActionBlock:^{
         [self detailCellPressed];
@@ -65,14 +68,37 @@
     customerDetailCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     
-    ZYSection *detailSection = [ZYSection sectionWithHeaderTitle:@" " cells:@[customerDetailCell]];
+    buttonCell = [ZYSingleButtonCell cellWithActionBlock:nil];
+    buttonCell.buttonTitle = @"保存";
+    [buttonCell.buttonPressedSignal subscribeNext:^(id x) {
+        [self cellNextStep:[self error] sender:nil];
+    }];
     
-    self.sections = @[section,detailSection];
+    [RACObserve(self, add) subscribeNext:^(id x) {
+        if(self.add)
+        {
+            ZYSection *section = [ZYSection sectionWithCells:@[customerHeadImageCell,customerNameCell,customerCardNumCell,customerTelephoneCell,customerAddressCell,buttonCell]];
+            
+            self.sections = @[section];
+            
+        }
+        else
+        {
+            ZYSection *section = [ZYSection sectionWithCells:@[customerHeadImageCell,customerNameCell,customerCardNumCell,customerTelephoneCell,customerAddressCell]];
+            
+            
+            ZYSection *detailSection = [ZYSection sectionWithHeaderTitle:@" " cells:@[customerDetailCell]];
+            
+            self.sections = @[section,detailSection];
+        }
+    }];
     
     self.returnSignal = [RACSignal merge:@[customerNameCell.returnSignal,
                                            customerCardNumCell.returnSignal,
                                            customerTelephoneCell.returnSignal,
                                            customerAddressCell.returnSignal]];
+    
+    
 }
 - (void)blendModel:(ZYCustomerBaseInfoViewModel*)model
 {
@@ -90,6 +116,8 @@
     RACChannelTo(customerCardNumCell, userInteractionEnabled) = RACChannelTo(self, edit);
     RACChannelTo(customerTelephoneCell, userInteractionEnabled) = RACChannelTo(self, edit);
     RACChannelTo(customerAddressCell, userInteractionEnabled) = RACChannelTo(self, edit);
+    
+    RACChannelTo(self,add) = RACChannelTo(model,add);
 }
 - (RACSignal*)headImagePickSignal
 {

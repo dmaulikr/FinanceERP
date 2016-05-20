@@ -13,4 +13,8 @@
 
 - (void)blendModel:(ZYCustomerDetailViewModel*)model;
 
+- (NSString*)error;
+
+@property(nonatomic,assign)BOOL edit;
+
 @end

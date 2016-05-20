@@ -11,6 +11,7 @@
 typedef enum : NSUInteger {
     ZYHistoryTypeBusinessProcessing = 0,
     ZYHistoryTypeMyCustomer,
+    ZYHistoryTypeApply,
 } ZYHistoryType;
 
 @interface ZYSearchHistoryModel : ZYStoreModel

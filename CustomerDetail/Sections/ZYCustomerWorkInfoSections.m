@@ -19,6 +19,8 @@
     ZYSelectCell *customerIncomeType;//发薪方式
     ZYSelectCell *customerEntryCompanyDate;
     ZYSelectCell *customerIncomeDay;//发薪日
+    
+    ZYSingleButtonCell *buttonCell;
 }
 - (instancetype)initWithTitle:(NSString *)title
 {
@@ -40,12 +42,10 @@
     customerCompeny = [ZYInputCell cellWithActionBlock:nil];
     customerCompeny.cellTitle = @"工作单位";
     customerCompeny.cellPlaceHolder = @"请输入工作单位";
-    customerCompeny.cellNullable = YES;
     
     customerCompenyAddress = [ZYInputCell cellWithActionBlock:nil];
     customerCompenyAddress.cellTitle = @"单位地址";
     customerCompenyAddress.cellPlaceHolder = @"请输入单位地址";
-    customerCompenyAddress.cellNullable = YES;
     
     customerCompenyTelephone = [ZYInputCell cellWithActionBlock:nil];
     customerCompenyTelephone.cellTitle = @"单位电话";
@@ -89,19 +89,88 @@
     customerIncomeDay.cellTitle = @"发薪日期";
     customerIncomeDay.cellNullable = YES;
     
-    ZYSection *section = [ZYSection sectionWithCells:@[customerEducation,
-                                                       customerCompeny,
-                                                       customerCompenyAddress,
-                                                       customerCompenyTelephone,
-                                                       customerCompenyTitle,
-                                                       customerIncome,
-                                                       customerIncomeType,
-                                                       customerEntryCompanyDate,
-                                                       customerIncomeDay]];
-    self.sections = @[section];
+    buttonCell = [ZYSingleButtonCell cellWithActionBlock:nil];
+    buttonCell.buttonTitle = @"保存";
+    [buttonCell.buttonPressedSignal subscribeNext:^(id x) {
+        [self cellNextStep:[self error] sender:nil];
+    }];
+    
+    [RACObserve(self, edit) subscribeNext:^(id x) {
+        if(self.edit)
+        {
+            ZYSection *section = [ZYSection sectionWithCells:@[customerEducation,
+                                                               customerCompeny,
+                                                               customerCompenyAddress,
+                                                               customerCompenyTelephone,
+                                                               customerCompenyTitle,
+                                                               customerIncome,
+                                                               customerIncomeType,
+                                                               customerEntryCompanyDate,
+                                                               customerIncomeDay,
+                                                               buttonCell]];
+            self.sections = @[section];
+        }
+        else
+        {
+            ZYSection *section = [ZYSection sectionWithCells:@[customerEducation,
+                                                               customerCompeny,
+                                                               customerCompenyAddress,
+                                                               customerCompenyTelephone,
+                                                               customerCompenyTitle,
+                                                               customerIncome,
+                                                               customerIncomeType,
+                                                               customerEntryCompanyDate,
+                                                               customerIncomeDay]];
+            self.sections = @[section];
+        }
+    }];
+    
+    
 }
 - (void)blendModel:(ZYCustomerDetailViewModel*)model
 {
+    RACChannelTo(customerEducation,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerCompeny,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerCompenyAddress,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerCompenyTelephone,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerCompenyTitle,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerIncome,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerIncomeType,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerEntryCompanyDate,userInteractionEnabled) = RACChannelTo(self,edit);
+    RACChannelTo(customerIncomeDay,userInteractionEnabled) = RACChannelTo(self,edit);
     
+    
+    RACChannelTo(customerEducation,selecedObj) = RACChannelTo(model,customerEducation);
+    RACChannelTo(customerCompeny,cellText) = RACChannelTo(model,customerCompeny);
+    RACChannelTo(customerCompenyAddress,cellText) = RACChannelTo(model,customerCompenyAddress);
+    RACChannelTo(customerCompenyTelephone,cellText) = RACChannelTo(model,customerCompenyTelephone);
+    RACChannelTo(customerCompenyTitle,selecedObj) = RACChannelTo(model,customerCompenyTitle);
+    RACChannelTo(customerIncome,cellText) = RACChannelTo(model,customerIncome);
+    RACChannelTo(customerIncomeType,selecedObj) = RACChannelTo(model,customerIncomeType);
+    RACChannelTo(customerEntryCompanyDate,cellText) = RACChannelTo(model,customerEntryCompanyDate);
+    RACChannelTo(customerIncomeDay,selecedObj) = RACChannelTo(model,customerIncomeDay);
+}
+- (NSString*)error
+{
+    NSArray *errorArr = @[customerCompeny,
+                          customerCompenyAddress];
+    NSString *result = nil;
+    for(id cell in errorArr)
+    {
+        if([cell respondsToSelector:@selector(checkInput:)])
+        {
+            NSString *error  = [cell checkInput:YES];
+            if(error.length>0&&result==nil)
+                result = error;
+            else
+                continue;
+        }
+        else
+        {
+            continue;
+        }
+    }
+    errorArr = nil;
+    return result;
 }
 @end

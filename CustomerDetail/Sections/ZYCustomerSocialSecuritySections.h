@@ -9,5 +9,11 @@
 #import "ZYSections.h"
 #import "ZYCustomerDetailViewModel.h"
 @interface ZYCustomerSocialSecuritySections : ZYSections
+
 - (void)blendModel:(ZYCustomerDetailViewModel*)model;
+
+@property(nonatomic,assign)BOOL edit;
+
+- (NSString*)error;
+
 @end

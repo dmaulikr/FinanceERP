@@ -32,8 +32,17 @@
 - (void)setUser:(ZYUser *)user
 {
     _user = user;
-    [_headImageView setImageWithURL:[NSURL URLWithString:user.photo_url] placeholderImage:[UIImage imageNamed:@"headImage"]];
-    _userNameLabel.text = user.real_name;
-    _userInfoLabel.text = [NSString stringWithFormat:@"%@ %@",user.org_name,user.job_title];
+    if(user)
+    {
+        [_headImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",HOST,user.photo_url]] placeholderImage:[UIImage imageNamed:@"headImage"]];
+        _userNameLabel.text = user.real_name;
+        _userInfoLabel.text = [NSString stringWithFormat:@"%@ %@",user.org_name,user.job_title];
+    }
+    else
+    {
+        _headImageView.image = [UIImage imageNamed:@"headImage"];
+        _userNameLabel.text = @"未登陆";
+        _userInfoLabel.text = @"";
+    }
 }
 @end

@@ -164,7 +164,7 @@
 //    }];
     ZYDoubleButtonCell *buttonCell = [ZYDoubleButtonCell cellWithActionBlock:nil];
     [buttonCell.rightButtonPressedSignal subscribeNext:^(id x) {
-        [self cellNextStep:nil];
+        [self cellNextStep:nil sender:nil];
     }];
     [buttonCell.leftButtonPressedSignal subscribeNext:^(id x) {
         [self cellLastStep];

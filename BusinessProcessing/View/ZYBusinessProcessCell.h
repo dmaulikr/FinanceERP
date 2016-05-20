@@ -10,5 +10,5 @@
 #import "ZYTableViewCell.h"
 #import "ZYBusinessProcessModel.h"
 @interface ZYBusinessProcessCell : ZYTableViewCell
-@property(nonatomic,strong)ZYBusinessProcessModel *model;
+@property(nonatomic,strong)id model;
 @end

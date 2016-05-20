@@ -187,6 +187,25 @@
         return;
     [self changePage:_currentPage-1];
 }
+//- (void)reloadFrame
+//{
+//    for(int i=0;i<totalNumber;i++)
+//    {
+//        ZYTableViewController *tableViewCtl = tableViewArr[i];
+//        if([tableViewCtl isKindOfClass:[ZYTableViewController class]])
+//        {
+//            CGRect rect = [self sliderController:self frameWithPage:i];
+//            tableViewCtl.frame = rect;
+//        }
+//        else
+//        {
+//            UIView *view = (UIView*)tableViewCtl;
+//            CGRect rect = [self sliderController:self frameWithPage:i];
+//            view.frame = rect;
+//        }
+//    }
+//    _scrollView.frame = [self frameOfScrollViewSliderController:self];
+//}
 #pragma mark - 重写以下方法
 
 - (NSInteger)countOfControllerSliderController:(ZYSliderViewController*)controller

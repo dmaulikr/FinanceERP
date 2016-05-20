@@ -29,7 +29,7 @@
 
 - (void)cellDatePicker:(ZYTableViewCell*)cell onlyFutura:(BOOL)onlyFutura;
 
-- (void)cellNextStep:(NSString*)error;
+- (void)cellNextStep:(NSString*)error sender:(id)sender;
 - (void)cellLastStep;
 //折叠section
 - (void)showSection:(BOOL)show sectionIndex:(NSInteger)index;

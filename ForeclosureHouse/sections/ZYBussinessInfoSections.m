@@ -141,7 +141,7 @@
     
     buttonCell = [ZYSingleButtonCell cellWithActionBlock:nil];
     [buttonCell.buttonPressedSignal subscribeNext:^(id x) {
-        [self cellNextStep:[self error]];
+        [self cellNextStep:[self error] sender:nil];
     }];
 }
 - (void)blendModel:(ZYForeclosureHouseViewModel*)model
@@ -175,8 +175,32 @@
     //其他类型 填入的自定义信息
     RACChannelTo(bussinessInfoComeFromTypeSubInputCell,cellText) = RACChannelTo(model,bussinessInfoComeFromOther);
     
-
-    [RACObserve(model, bussinessInfoComeFromType) subscribeNext:^(id x) {
+    if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromBank)
+    {
+        comeFromTypeSubSelecedSection.hasFold = NO;
+        comeFromTypeSubInputSection.hasFold = YES;
+    }
+    else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromCooperativeOrganization)
+    {
+        comeFromTypeSubSelecedSection.hasFold = NO;
+        comeFromTypeSubInputSection.hasFold = YES;
+    }
+    else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromIntermediary)
+    {
+        comeFromTypeSubSelecedSection.hasFold = NO;
+        comeFromTypeSubInputSection.hasFold = YES;
+    }
+    else if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromOther)
+    {
+        comeFromTypeSubSelecedSection.hasFold = YES;
+        comeFromTypeSubInputSection.hasFold = NO;
+    }
+    else
+    {
+        comeFromTypeSubSelecedSection.hasFold = NO;
+        comeFromTypeSubInputSection.hasFold = NO;
+    }
+    [[RACObserve(model, bussinessInfoComeFromType) skip:1] subscribeNext:^(id x) {
         if(model.bussinessInfoComeFromType.type==ZYForeclosureHouseBussinessInfoComeFromBank)
         {
             bussinessInfoComeFromTypeSubSelecedCell.showKey = @"look_desc";

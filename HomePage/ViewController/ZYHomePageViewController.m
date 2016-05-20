@@ -17,6 +17,7 @@
 #import "ZYNavCenterView.h"
 #import "ZYBusinessProcessingController.h"
 #import "ZYWebController.h"
+#import "ZYBusinessApplyListController.h"
 
 @interface ZYHomePageViewController ()
 
@@ -180,7 +181,7 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     [founctionButtonCell.functionButtonPressSignal subscribeNext:^(NSNumber *tag) {
         switch (tag.longLongValue) {
             case 0:
-                [self performSegueWithIdentifier:@"applyList" sender:nil];
+                [self performSegueWithIdentifier:@"applyList" sender:@(NO)];
                 break;
             case 1:
                 [self performSegueWithIdentifier:@"processing" sender:nil];
@@ -190,6 +191,9 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
                 break;
             case 3:
                 [self performSegueWithIdentifier:@"customer" sender:nil];
+                break;
+            case 4:
+                [self performSegueWithIdentifier:@"applyList" sender:@(YES)];
                 break;
             default:
                 break;
@@ -225,6 +229,11 @@ ZY_VIEW_MODEL_GET(ZYHomePageViewModel)
     {
         ZYWebController *controller = [segue destinationViewController];
         controller.url = sender;
+    }
+    if([segue.identifier isEqualToString:@"applyList"])
+    {
+        ZYBusinessApplyListController *apply = [segue destinationViewController];
+        apply.isApplicationMatters = [sender boolValue];
     }
 }
 

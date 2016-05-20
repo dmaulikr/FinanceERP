@@ -20,8 +20,11 @@
 {
     self = [super init];
     if (self) {
-        self.dataSource = [NSMutableArray arrayWithArray:@[@"我的业务",@"我的客户",@"我的积分",@"问题反馈",@"电话咨询",@"检查更新"]];
-        self.imageArr = @[@"user-ic1",@"user-ic2",@"user-ic3",@"user-ic4",@"user-ic5",@"user-ic6"];
+//        self.dataSource = [NSMutableArray arrayWithArray:@[@"我的业务",@"我的客户",@"我的积分",@"问题反馈",@"电话咨询",@"检查更新"]];
+//        self.imageArr = @[@"user-ic1",@"user-ic2",@"user-ic3",@"user-ic4",@"user-ic5",@"user-ic6"];
+        
+        self.dataSource = [NSMutableArray arrayWithArray:@[@"我的业务",@"我的客户",@"我的积分",@"问题反馈",@"电话咨询"]];
+        self.imageArr = @[@"user-ic1",@"user-ic2",@"user-ic3",@"user-ic4",@"user-ic5"];
     }
     return self;
 }

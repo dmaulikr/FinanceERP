@@ -14,9 +14,7 @@
 
 @property(nonatomic,strong)NSArray *cellSegmentedArr;
 @property(nonatomic,strong)NSString *showKey;
-/**
- *  对obj赋值  无法自动 按下对应的按钮 需要对 index 赋值
- */
+
 @property(nonatomic,strong)id cellSegmentedSelecedObj;
 
 @property(nonatomic,assign)NSInteger cellSegmentedSelecedIndex;

@@ -51,6 +51,8 @@ typedef enum : NSUInteger {
 - (void)nextPage;
 - (void)lastPage;
 
+//- (void)reloadFrame;
+
 - (void)reloadTableViewAtIndex:(NSInteger)index;
 
 - (void)showSection:(BOOL)show sectionIndex:(NSInteger)sectionIndex page:(NSInteger)page;

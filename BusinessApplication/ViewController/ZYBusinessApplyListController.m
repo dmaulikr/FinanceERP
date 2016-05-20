@@ -9,6 +9,7 @@
 #import "ZYBusinessApplyListController.h"
 #import "ZYBusinessApplyListCell.h"
 #import "ZYForeclosureHouseController.h"
+#import "ZYApplicationMattersController.h"
 
 @interface ZYBusinessApplyListController()
 @property (weak, nonatomic) IBOutlet UITableView *myTableView;
@@ -18,30 +19,90 @@
 @implementation ZYBusinessApplyListController
 {
     ZYBusinessApplyListCell *foreclosureHouseCell;
-    ZYBusinessApplyListCell *downPaymentMortgageCell;
-    ZYBusinessApplyListCell *houseMortgageCell;
-    ZYBusinessApplyListCell *customerFundMortgageCell;
-    ZYBusinessApplyListCell *creditMortgageCell;
+    
+//    ZYBusinessApplyListCell *downPaymentMortgageCell;
+//    ZYBusinessApplyListCell *houseMortgageCell;
+//    ZYBusinessApplyListCell *customerFundMortgageCell;
+//    ZYBusinessApplyListCell *creditMortgageCell;
+    
+    ZYBusinessApplyListCell *refundCounterFeeCell;
+    ZYBusinessApplyListCell *refundConsultingFeeCell;
+    ZYBusinessApplyListCell *refundRetainageFeeCell;
 }
 - (void)viewDidLoad
 {
+    if(self.isApplicationMatters)
+    {
+        self.navigationItem.title = @"申请事项";
+    }
     [super viewDidLoad];
     [self buildUI];
 }
 - (void)buildUI
 {
-    @weakify(self)
-    foreclosureHouseCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
-        @strongify(self)
-        [self performSegueWithIdentifier:@"foreclosureHouse" sender:nil];
-    }];
-    foreclosureHouseCell.cellImageName = @"prim01";
-    foreclosureHouseCell.cellTitleText = @"赎楼";
-    foreclosureHouseCell.cellSubTitleText = @"详细介绍";
-    [foreclosureHouseCell.cellButtonPressSignal subscribeNext:^(id x) {
-        @strongify(self)
-        [self performSegueWithIdentifier:@"foreclosureHouse" sender:nil];
-    }];
+    if(self.isApplicationMatters)
+    {
+        @weakify(self)
+        refundCounterFeeCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
+            @strongify(self)
+            [self performSegueWithIdentifier:@"apply" sender:@(1)];
+        }];
+        refundCounterFeeCell.cellImageName = @"apply-1";
+        refundCounterFeeCell.cellTitleText = @"退手续费";
+        refundCounterFeeCell.cellSubTitleText = @"详细介绍";
+        [refundCounterFeeCell.cellButtonPressSignal subscribeNext:^(id x) {
+            @strongify(self)
+            [self performSegueWithIdentifier:@"apply" sender:@(1)];
+        }];
+        
+        refundConsultingFeeCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
+            @strongify(self)
+            [self performSegueWithIdentifier:@"apply" sender:@(3)];
+        }];
+        refundConsultingFeeCell.cellImageName = @"apply-2";
+        refundConsultingFeeCell.cellTitleText = @"退咨询费";
+        refundConsultingFeeCell.cellSubTitleText = @"详细介绍";
+        [refundConsultingFeeCell.cellButtonPressSignal subscribeNext:^(id x) {
+            @strongify(self)
+            [self performSegueWithIdentifier:@"apply" sender:@(3)];
+        }];
+        
+        refundRetainageFeeCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
+            @strongify(self)
+            [self performSegueWithIdentifier:@"apply" sender:@(4)];
+        }];
+        refundRetainageFeeCell.cellImageName = @"apply-3";
+        refundRetainageFeeCell.cellTitleText = @"退尾款";
+        refundRetainageFeeCell.cellSubTitleText = @"详细介绍";
+        [refundRetainageFeeCell.cellButtonPressSignal subscribeNext:^(id x) {
+            @strongify(self)
+            [self performSegueWithIdentifier:@"apply" sender:@(4)];
+        }];
+        
+        ZYSection *section = [ZYSection sectionWithCells:@[refundCounterFeeCell,
+                                                           refundConsultingFeeCell,
+                                                           refundRetainageFeeCell]];
+        self.sections = @[section];
+    }
+    else
+    {
+        @weakify(self)
+        foreclosureHouseCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
+            @strongify(self)
+            [self performSegueWithIdentifier:@"foreclosureHouse" sender:nil];
+        }];
+        foreclosureHouseCell.cellImageName = @"prim01";
+        foreclosureHouseCell.cellTitleText = @"赎楼";
+        foreclosureHouseCell.cellSubTitleText = @"详细介绍";
+        [foreclosureHouseCell.cellButtonPressSignal subscribeNext:^(id x) {
+            @strongify(self)
+            [self performSegueWithIdentifier:@"foreclosureHouse" sender:nil];
+        }];
+        
+        ZYSection *section = [ZYSection sectionWithCells:@[foreclosureHouseCell]];
+        self.sections = @[section];
+    }
+    
 //
 //    downPaymentMortgageCell = [ZYBusinessApplyListCell cellWithActionBlock:^{
 //        @strongify(self)
@@ -92,13 +153,8 @@
 //    }];
     
 //    ZYSection *section = [ZYSection sectionWithCells:@[foreclosureHouseCell,downPaymentMortgageCell,houseMortgageCell,customerFundMortgageCell,creditMortgageCell]];
-     ZYSection *section = [ZYSection sectionWithCells:@[foreclosureHouseCell]];
-    self.sections = @[section];
     
-    [self.rac_willDeallocSignal subscribeNext:^(id x) {
-        @strongify(self)
-        self.sections = nil;
-    }];
+    
 }
 - (UITableView*)tableView
 {
@@ -115,6 +171,11 @@
     {
         ZYForeclosureHouseController *controller = [segue destinationViewController];
         controller.edit = YES;//允许编辑
+    }
+    if([segue.identifier isEqualToString:@"apply"])
+    {
+        ZYApplicationMattersController *controller = [segue destinationViewController];
+        controller.type = [sender longLongValue];
     }
 }
 @end

@@ -68,7 +68,7 @@
     
     buttonCell = [ZYDoubleButtonCell cellWithActionBlock:nil];
     [buttonCell.rightButtonPressedSignal subscribeNext:^(id x) {
-        [self cellNextStep:[self error]];
+        [self cellNextStep:[self error] sender:nil];
     }];
     [buttonCell.leftButtonPressedSignal subscribeNext:^(id x) {
         [self cellLastStep];

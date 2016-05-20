@@ -63,7 +63,11 @@
     self.tableView.width = frame.size.width;
     self.tableView.height = frame.size.height;
 }
-
+- (void)setTableFrame:(CGRect)tableFrame
+{
+    _tableFrame = tableFrame;
+    self.tableView.frame = tableFrame;
+}
 #pragma mark - 折叠
 
 - (void)showSection:(BOOL)show sectionIndex:(NSInteger)sectionIndex

@@ -71,6 +71,9 @@ ZY_VIEW_MODEL_GET(ZYMyCustomerViewModel)
         [self tip:error touch:NO];
     }];
 }
+- (IBAction)addButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:@"info" sender:nil];
+}
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     ZYSearchHistoryModel *model = [[ZYSearchHistoryModel alloc] init];
@@ -136,17 +139,33 @@ ZY_VIEW_MODEL_GET(ZYMyCustomerViewModel)
      if([segue.identifier isEqualToString:@"info"])
      {
          ZYCustomerModel *model = sender;
-         ZYCustomerBaseInfoController *customerInfoCtl = [segue destinationViewController];
-         customerInfoCtl.customerID = model.pid;
-         [customerInfoCtl.hasEditSignal subscribeNext:^(ZYCustomerModel *customer) {
-//             if([self.viewModel.customerArr indexOfObject:model]!=NSNotFound)
-//             {
-//                 NSInteger index = [self.viewModel.customerArr indexOfObject:model];
-//                 [self.viewModel.customerArr replaceObjectAtIndex:index withObject:customer];
-//                 [self.tableView cyl_reloadData];
-//             }
-             [self.tableView.mj_header beginRefreshing];
-         }];
+         if(sender)//编辑查看
+         {
+             ZYCustomerBaseInfoController *customerInfoCtl = [segue destinationViewController];
+             customerInfoCtl.customerID = model.pid;
+             [customerInfoCtl.hasEditSignal subscribeNext:^(ZYCustomerModel *customer) {
+                 //             if([self.viewModel.customerArr indexOfObject:model]!=NSNotFound)
+                 //             {
+                 //                 NSInteger index = [self.viewModel.customerArr indexOfObject:model];
+                 //                 [self.viewModel.customerArr replaceObjectAtIndex:index withObject:customer];
+                 //                 [self.tableView cyl_reloadData];
+                 //             }
+                 [self.tableView.mj_header beginRefreshing];
+             }];
+         }
+         else
+         {
+             ZYCustomerBaseInfoController *customerInfoCtl = [segue destinationViewController];
+             [customerInfoCtl.hasEditSignal subscribeNext:^(ZYCustomerModel *customer) {
+                 //             if([self.viewModel.customerArr indexOfObject:model]!=NSNotFound)
+                 //             {
+                 //                 NSInteger index = [self.viewModel.customerArr indexOfObject:model];
+                 //                 [self.viewModel.customerArr replaceObjectAtIndex:index withObject:customer];
+                 //                 [self.tableView cyl_reloadData];
+                 //             }
+                 [self.tableView.mj_header beginRefreshing];
+             }];
+         }
      }
  }
 

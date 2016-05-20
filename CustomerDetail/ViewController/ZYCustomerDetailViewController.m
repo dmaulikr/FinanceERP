@@ -9,12 +9,20 @@
 #import "ZYCustomerDetailViewController.h"
 #import "ZYTopTabBar.h"
 #import "ZYCustomerWorkInfoSections.h"
+#import "ZYCustomerSocialSecuritySections.h"
+#import "ZYCustomerFamilyInfoSections.h"
+#import "ZYCustomerAccountSections.h"
+#import "ZYCustomerCompanyInfoSections.h"
+#import "ZYCustomerCreditInfoSections.h"
+#import "ZYCustomerRelationInfoSections.h"
+
+#define BUTTON_HEIGHT 50
 
 @interface ZYCustomerDetailViewController ()
 @property (weak, nonatomic) IBOutlet UIScrollView *topTabScrollView;
 @property (weak, nonatomic) IBOutlet UIView *scrollBackView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollViewContentWidth;
-
+@property (weak, nonatomic) IBOutlet UIButton *editButton;
 @end
 
 @implementation ZYCustomerDetailViewController
@@ -27,6 +35,7 @@
     ZYTableViewCell *firstResponderCell;
 }
 ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -66,7 +75,6 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
     stepWidth = topBar.tabWidth+GAP;
     [self.scrollBackView addSubview:topBar];
     
-    [self buildTableViewController];
 }
 - (void)blendViewModel
 {
@@ -103,6 +111,33 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
             [(ZYInputCell*)firstResponderCell setCellText:dateStr];
         }
     }];
+    
+    RACChannelTo(self.viewModel,customer) = RACChannelTo(self,customer);
+    
+    [RACObserve(self, edit) subscribeNext:^(id x) {
+        [self.editButton setTitle:self.edit?@"取消":@"编辑" forState:UIControlStateNormal];
+    }];
+    
+    
+    [RACObserve(self.viewModel, loading) subscribeNext:^(NSNumber *loading) {
+        if(loading.boolValue)
+        {
+            [self loading:YES];
+        }
+        else
+        {
+            [self stop];
+        }
+    }];
+    [RACObserve(self.viewModel, error) subscribeNext:^(NSString *error) {
+        [self tip:error touch:NO];
+    }];
+    
+    [self buildTableViewController];
+}
+- (IBAction)editButtonPressed:(UIButton *)sender {
+    self.edit = !self.edit;
+    [self reloadTableViewAtIndex:self.currentPage];
 }
 - (void)picker:(RACTuple*)value
 {
@@ -138,6 +173,8 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
     if(index==0)
     {
         ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections blendModel:self.viewModel];
         [sections.pickerBySignalSignal subscribeNext:^(id x) {
             [self picker:x];
         }];
@@ -146,51 +183,145 @@ ZY_VIEW_MODEL_GET(ZYCustomerDetailViewModel)
             firstResponderCell = (ZYSelectCell*)value.first;
             [self showDatePickerView:YES];
         }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailFirst];
+            }
+        }];
         return sections;
     }
     if(index==1)
     {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        ZYCustomerSocialSecuritySections *sections = [[ZYCustomerSocialSecuritySections alloc] initWithTitle:@"社保信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections blendModel:self.viewModel];
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            self.showDateBefore = ![value.second boolValue];
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self showDatePickerView:YES];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailFirst];
+            }
+        }];
         return sections;
     }
     if(index==2)
     {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        ZYCustomerFamilyInfoSections *sections = [[ZYCustomerFamilyInfoSections alloc] initWithTitle:@"家庭信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections blendModel:self.viewModel];
+        [sections.pickerBySignalSignal subscribeNext:^(id x) {
+            [self picker:x];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailFirst];
+            }
+        }];
         return sections;
     }
     if(index==3)
     {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        ZYCustomerAccountSections *sections = [[ZYCustomerAccountSections alloc] initWithTitle:@"开户信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections blendModel:self.viewModel];
+        [sections.pickerBySignalSignal subscribeNext:^(id x) {
+            [self picker:x];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailSecond];
+            }
+        }];
         return sections;
     }
     if(index==4)
     {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        ZYCustomerCompanyInfoSections *sections = [[ZYCustomerCompanyInfoSections alloc] initWithTitle:@"公司信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections blendModel:self.viewModel];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailSecond];
+            }
+        }];
         return sections;
     }
     if(index==5)
     {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        ZYCustomerRelationInfoSections *sections = [[ZYCustomerRelationInfoSections alloc] initWithTitle:@"关系人信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections.pickerBySignalSignal subscribeNext:^(id x) {
+            [self picker:x];
+        }];
+        [sections blendModel:self.viewModel];
+        
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailSecond];
+            }
+        }];
         return sections;
     }
     if(index==6)
     {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
-        return sections;
-    }
-    if(index==7)
-    {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
-        return sections;
-    }
-    if(index==8)
-    {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
-        return sections;
-    }
-    if(index==9)
-    {
-        ZYCustomerWorkInfoSections *sections = [[ZYCustomerWorkInfoSections alloc] initWithTitle:@"工作信息"];
+        ZYCustomerCreditInfoSections *sections = [[ZYCustomerCreditInfoSections alloc] initWithTitle:@"征信信息"];
+        RACChannelTo(sections,edit) = RACChannelTo(self,edit);
+        [sections blendModel:self.viewModel];
+        [sections.datePickerSignal subscribeNext:^(RACTuple *value) {
+            self.showDateBefore = ![value.second boolValue];
+            firstResponderCell = (ZYSelectCell*)value.first;
+            [self showDatePickerView:YES];
+        }];
+        [sections.nextStepSignal subscribeNext:^(RACTuple *value) {
+            NSString *error = value.first;
+            if(error)
+            {
+                [self tip:error touch:NO];
+            }
+            else
+            {
+                [self.viewModel updateCustomerInfoDetailSecond];
+            }
+        }];
         return sections;
     }
     return nil;

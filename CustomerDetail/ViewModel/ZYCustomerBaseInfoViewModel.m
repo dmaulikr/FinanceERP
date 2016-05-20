@@ -54,7 +54,14 @@
     request.customer_name = self.customerName;
     self.loading = YES;
     self.editSuccess = NO;
-    [[[ZYRoute route] customerBaseInfoEdit:request] subscribeNext:^(NSString *editSuccess) {
+    [[[ZYRoute route] customerBaseInfoEdit:request] subscribeNext:^(RACTuple *value) {
+        if(self.add)
+        {
+            self.customer = [[ZYCustomerModel alloc] init];
+            self.customer.customer_id = [value.second longLongValue];
+            self.customer.pid = [value.second longLongValue];
+            self.customerID = self.customer.customer_id;
+        }
         self.editSuccess = YES;
         self.loading = NO;
     } error:^(NSError *error) {

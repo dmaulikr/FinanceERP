@@ -27,6 +27,7 @@
 - (void)showSection:(BOOL)show sectionIndex:(NSInteger)sectionIndex;
 
 @property(nonatomic,assign)CGRect frame;
+@property(nonatomic,assign)CGRect tableFrame;
 
 - (void)reloadData;
 - (void)reloadDataWithType:(ZYPlaceHolderViewType)type;

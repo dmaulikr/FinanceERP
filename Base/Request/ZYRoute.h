@@ -35,6 +35,15 @@
 #import "ZYCustomerModel.h"
 #import "ZYCustomerBaseInfoEditRequest.h"
 #import "ZYUploadFileRequest.h"
+#import "ZYCustomerFirstUpdateRequest.h"
+#import "ZYCustomerSecondUpdateRequest.h"
+#import "ZYApplyMattersRequest.h"
+#import "ZYApplyMattersModel.h"
+#import "ZYFeedbackRequest.h"
+#import "ZYBlendHeadImageRequest.h"
+#import "ZYFeeInfoRequest.h"
+#import "ZYRefundFeeRequest.h"
+#import "ZYFeeModel.h"
 
 @interface ZYRoute : NSObject
 
@@ -92,5 +101,23 @@
  *  编辑用户基本信息
  */
 - (RACSignal*)customerBaseInfoEdit:(ZYCustomerBaseInfoEditRequest*)myRequest;
+- (RACSignal*)customerDetailInfoFirstEdit:(ZYCustomerFirstUpdateRequest*)myRequest;
+- (RACSignal*)customerDetailInfoSecondEdit:(ZYCustomerSecondUpdateRequest*)myRequest;
+/**
+ *  申请信息
+ */
+- (RACSignal*)applyMatters:(ZYApplyMattersRequest*)myRequest;
+- (id)applyMattersCacheWith:(ZYApplyMattersRequest*)myRequest;
 
+/**
+ *  问题反馈
+ */
+- (RACSignal*)feedback:(ZYFeedbackRequest*)myRequest;
+/**
+ *  将上传的文件和用户绑定
+ */
+- (RACSignal*)blendHeadImageRequest:(ZYBlendHeadImageRequest*)myRequest;
+
+- (RACSignal*)feeInfoRequest:(ZYFeeInfoRequest*)myRequest;
+- (RACSignal*)refundFeeRequest:(ZYRefundFeeRequest*)myRequest;
 @end

@@ -66,7 +66,7 @@
     buttonCell = [ZYSingleButtonCell cellWithActionBlock:nil];
     buttonCell.buttonTitle = @"提交";
     [buttonCell.buttonPressedSignal subscribeNext:^(id x) {
-        [self cellNextStep:[self error]];
+        [self cellNextStep:[self error] sender:nil];
     }];
     
 }

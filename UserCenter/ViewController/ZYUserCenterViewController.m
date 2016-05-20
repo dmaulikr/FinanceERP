@@ -13,7 +13,7 @@
 
 @interface ZYUserCenterViewController ()
 
-@property (weak, nonatomic) IBOutlet UITableView *myTableView;
+//@property (weak, nonatomic) IBOutlet UITableView *myTableView;
 
 @end
 
@@ -22,6 +22,11 @@
     ZYUserCenterUserInfoCell *userInfoCell;
 }
 ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    userInfoCell.user = [ZYTools checkLogin]?[ZYUser user]:nil;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -39,7 +44,10 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
         {
             [self performSegueWithIdentifier:@"login" sender:nil];
         }
-        
+        else
+        {
+            [self performSegueWithIdentifier:@"info" sender:nil];
+        }
     }];
     ZYSection *userInfoSection = [ZYSection sectionWithCells:@[userInfoCell]];
     
@@ -47,7 +55,7 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ZYUserCenterCell class]) bundle:nil] forCellReuseIdentifier:[ZYUserCenterCell defaultIdentifier]];
     
     ZYSection *section = [ZYSection sectionSupportingReuseWithTitle:nil cellHeight:[ZYUserCenterCell defaultHeight] cellCount:^NSInteger(UITableView *tableView, NSInteger section) {
-        return 6;
+        return self.viewModel.dataSource.count;
     } cellForRowBlock:^UITableViewCell *(UITableView *tableView, NSInteger row) {
         ZYUserCenterCell *cell = [tableView dequeueReusableCellWithIdentifier:[ZYUserCenterCell defaultIdentifier]];
         cell.imageName = [viewModel imageForIndex:row];
@@ -58,10 +66,31 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
         {
             [self performSegueWithIdentifier:@"login" sender:nil];
         }
+        if(row==0)
+        {
+            [self performSegueWithIdentifier:@"myBussiness" sender:nil];
+        }
+        if(row==1)
+        {
+            [self performSegueWithIdentifier:@"customer" sender:nil];
+        }
+        if(row==2)
+        {
+            [self tip:@"功能建设中" touch:NO];
+        }
+        if(row==3)
+        {
+            [self performSegueWithIdentifier:@"feedback" sender:nil];
+        }
+        if(row==4)
+        {
+            NSMutableString * str=[[NSMutableString alloc] initWithFormat:@"telprompt://%@",@"4009393888"];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
+        }
     }];
     
     ZYUserCenterLogoutCell *logoutCell = [ZYUserCenterLogoutCell cellWithXibHeight:[ZYUserCenterLogoutCell defaultHeight] actionBlock:nil];
-    logoutCell.hidden = YES;
+    logoutCell.hidden = ![ZYTools checkLogin];
     [logoutCell setLineHidden:YES];
     [[logoutCell logoutSignal] subscribeNext:^(id x) {
         if(![ZYTools checkLogin])
@@ -82,24 +111,22 @@ ZY_VIEW_MODEL_GET(ZYUserCenterViewModel)
     
     [[[NSNotificationCenter defaultCenter] rac_addObserverForName:LOGIN_NOTIFICATION object:nil] subscribeNext:^(NSNotification *notification) {
         logoutCell.hidden = NO;
+        userInfoCell.user = [ZYUser user];
     }];
     [[[NSNotificationCenter defaultCenter] rac_addObserverForName:LOGOUT_NOTIFICATION object:nil] subscribeNext:^(NSNotification *notification) {
         logoutCell.hidden = YES;
+        userInfoCell.user = nil;
     }];
+    
+    self.tableFrame = CGRectMake(0, 64, FUll_SCREEN_WIDTH, FUll_SCREEN_HEIGHT);
 }
 
 - (void)blendViewModel
 {
-//    ZYUserCenterViewModel *viewModel = self.viewModel;
-    userInfoCell.user = [ZYUser user];
     [[[NSNotificationCenter defaultCenter] rac_addObserverForName:LOGIN_NOTIFICATION object:nil] subscribeNext:^(id x) {
         userInfoCell.user = [ZYUser user];
     }];
-    [self.myTableView reloadData];
+    [self.tableView reloadData];
 }
 
-- (UITableView*)tableView
-{
-    return _myTableView;
-}
 @end
